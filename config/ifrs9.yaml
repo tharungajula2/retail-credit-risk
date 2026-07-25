@@ -1,0 +1,14 @@
+# IFRS 9 Financial Instruments - Staging & SICR Configuration
+
+# Quantitative SICR Thresholds
+sicr_relative_threshold: 2.0    # Current PD / Origination PD >= 2.0x
+sicr_absolute_pd: 0.06          # Current 12-month PD > 6.0%
+
+# Regulatory Backstop
+dpd_backstop_days: 30           # 30+ Days Past Due triggers Stage 2
+
+# Default Statuses (Stage 3)
+default_statuses:
+  - "Charged Off"
+  - "Default"
+  - "Late (31-120 days)"

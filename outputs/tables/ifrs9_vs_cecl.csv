@@ -1,0 +1,5 @@
+accounting_framework,horizon_scope,total_provision_usd,coverage_pct_ead,notes
+Basel III Regulatory EL,12-Month EL (PD_12m * LGD * EAD),58666169.31281012,3.2118169268733308,Regulatory capital baseline (undiscounted 12m expected loss)
+IFRS 9 Financial Instruments,"Staged (Stage 1: 12m, Stage 2: Lifetime, Stage 3: Default)",278476609.5550045,15.245854617471291,"International accounting standard (discounted EIR, staged SICR)"
+US CECL (ASC 326),Lifetime for ALL performing loans (Day-1 Lifetime),327465234.9484787,17.927851722550052,"US GAAP accounting standard (no staging, lifetime from origination)"
+CECL vs IFRS 9 Difference (Delta),Lifetime Day-1 Impact on Stage 1 Loans,48988625.39347422,2.6819971050787608,Additional provision required by US GAAP over IFRS 9

@@ -1,0 +1,22 @@
+# PD Logistic Regression Model Configuration
+
+target_column: default_12m
+
+# Model A excludes LendingClub's internal risk pricing to assess borrower fundamentals alone
+model_a_exclude:
+  - grade
+  - sub_grade
+  - int_rate
+
+# Features dropped due to structural missingness prior to late 2012 (CSI ~3.96)
+drop_unstable:
+  - tot_cur_bal
+  - total_rev_hi_lim
+
+# Features with IV < 0.02 are dropped as useless predictors
+min_iv_threshold: 0.02
+
+# Scorecard Scaling Parameters
+target_points: 600
+target_odds: 50
+pts_double_odds: 20

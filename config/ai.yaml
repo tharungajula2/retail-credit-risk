@@ -1,0 +1,5 @@
+# AI Analyst Configuration
+gemini_model: "gemini-flash-latest"
+rag_index_dir: "outputs/models/rag_index"
+retrieval_min_score: 0.30
+retrieval_top_k: 5

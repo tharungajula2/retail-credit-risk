@@ -1,0 +1,15 @@
+# IFRS 9 Forward-Looking Macroeconomic Scenarios
+
+scenarios:
+  baseline:
+    pd_multiplier: 1.00
+    weight: 0.50
+    description: "Central macroeconomic baseline forecast"
+  upside:
+    pd_multiplier: 0.85
+    weight: 0.20
+    description: "Favorable economic growth and low unemployment scenario"
+  downside:
+    pd_multiplier: 1.50
+    weight: 0.30
+    description: "Recessionary stress scenario with rising unemployment and defaults"

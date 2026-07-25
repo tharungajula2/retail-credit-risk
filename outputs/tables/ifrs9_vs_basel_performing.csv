@@ -1,0 +1,4 @@
+scope,metric,count,total_ead,provision_usd,coverage_pct_ead,description
+Performing Portfolio (Stage 1 + Stage 2),Basel III Regulatory EL,216187,1586569553.71,48468569.303182706,3.0549287416895687,12-Month Expected Loss on performing loans
+Performing Portfolio (Stage 1 + Stage 2),IFRS 9 Performing ECL (Staged),216187,1586569553.71,54677252.09751802,3.4462562305990248,Staged ECL (Stage 1 12m + Stage 2 Lifetime) on performing loans
+Performing Portfolio (Stage 1 + Stage 2),IFRS 9 vs Basel Delta (Difference),216187,0.0,6208682.794335313,0.3913274889094565,Additional performing-book provision under IFRS 9 due to Stage 2 Lifetime ECL

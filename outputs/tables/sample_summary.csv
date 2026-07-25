@@ -1,0 +1,4 @@
+sample,n_loans,n_defaults,default_rate,min_issue_d,max_issue_d
+train,184525,6329,0.03429887549112586,Apr-08,Sep-13
+test,46132,1582,0.03429289863868898,Apr-08,Sep-13
+oot,235628,8107,0.034405927988184766,Apr-14,Sep-14

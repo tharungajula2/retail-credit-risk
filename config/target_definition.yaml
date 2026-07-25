@@ -1,0 +1,25 @@
+# Target Definition Configuration for 12-Month Probability of Default (PD) Modeling
+
+# Statuses categorized as Default (bad loans)
+default_statuses:
+  - "Charged Off"
+  - "Default"
+  - "Late (31-120 days)"
+  - "Does not meet the credit policy. Status:Charged Off"
+
+# Statuses categorized as Non-Default (good loans / active)
+non_default_statuses:
+  - "Fully Paid"
+  - "Current"
+  - "In Grace Period"
+  - "Late (16-30 days)"
+  - "Does not meet the credit policy. Status:Fully Paid"
+
+# Standard 12-month observation window for Basel / IFRS 9 PD modeling
+performance_window_months: 12
+
+# Estimated months from last payment date to 90+ days past due default event
+days_past_due_lag_months: 3
+
+# Dataset cutoff snapshot date
+snapshot_date: "2016-01-31"

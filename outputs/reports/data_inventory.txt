@@ -1,0 +1,176 @@
+==================================================
+         LENDINGCLUB RAW DATA INVENTORY REPORT     
+==================================================
+
+Source File: loan_data_2007_2014.csv
+Total Rows: 466,285
+Total Columns: 75
+
+--------------------------------------------------
+1. COLUMN METADATA, MISSING VALUES & CARDINALITY
+--------------------------------------------------
+Col #  Column Name                    Sample Dtype    Missing Count   Missing %    Unique Count
+------------------------------------------------------------------------------------------
+1      Unnamed: 0                     int64           0               0.00        % 466,285     
+2      id                             int64           0               0.00        % 466,285     
+3      member_id                      int64           0               0.00        % 466,285     
+4      loan_amnt                      int64           0               0.00        % 1,352       
+5      funded_amnt                    int64           0               0.00        % 1,354       
+6      funded_amnt_inv                float64         0               0.00        % 9,854       
+7      term                           str             0               0.00        % 2           
+8      int_rate                       float64         0               0.00        % 506         
+9      installment                    float64         0               0.00        % 55,622      
+10     grade                          str             0               0.00        % 7           
+11     sub_grade                      str             0               0.00        % 35          
+12     emp_title                      str             27,588          5.92        % 205,475     
+13     emp_length                     str             21,008          4.51        % 11          
+14     home_ownership                 str             0               0.00        % 6           
+15     annual_inc                     float64         4               0.00        % 31,901      
+16     verification_status            str             0               0.00        % 3           
+17     issue_d                        str             0               0.00        % 91          
+18     loan_status                    str             0               0.00        % 9           
+19     pymnt_plan                     str             0               0.00        % 2           
+20     url                            str             0               0.00        % 466,285     
+21     desc                           str             340,304         72.98       % 124,435     
+22     purpose                        str             0               0.00        % 14          
+23     title                          str             21              0.00        % 63,098      
+24     zip_code                       str             0               0.00        % 888         
+25     addr_state                     str             0               0.00        % 50          
+26     dti                            float64         0               0.00        % 3,997       
+27     delinq_2yrs                    float64         29              0.01        % 24          
+28     earliest_cr_line               str             29              0.01        % 664         
+29     inq_last_6mths                 float64         29              0.01        % 28          
+30     mths_since_last_delinq         float64         250,351         53.69       % 145         
+31     mths_since_last_record         float64         403,647         86.57       % 123         
+32     open_acc                       float64         29              0.01        % 62          
+33     pub_rec                        float64         29              0.01        % 26          
+34     revol_bal                      int64           0               0.00        % 58,142      
+35     revol_util                     float64         340             0.07        % 1,269       
+36     total_acc                      float64         29              0.01        % 112         
+37     initial_list_status            str             0               0.00        % 2           
+38     out_prncp                      float64         0               0.00        % 135,665     
+39     out_prncp_inv                  float64         0               0.00        % 141,189     
+40     total_pymnt                    float64         0               0.00        % 351,609     
+41     total_pymnt_inv                float64         0               0.00        % 347,659     
+42     total_rec_prncp                float64         0               0.00        % 172,713     
+43     total_rec_int                  float64         0               0.00        % 270,249     
+44     total_rec_late_fee             float64         0               0.00        % 5,808       
+45     recoveries                     float64         0               0.00        % 22,773      
+46     collection_recovery_fee        float64         0               0.00        % 20,275      
+47     last_pymnt_d                   str             376             0.08        % 98          
+48     last_pymnt_amnt                float64         0               0.00        % 198,194     
+49     next_pymnt_d                   str             227,214         48.73       % 100         
+50     last_credit_pull_d             str             42              0.01        % 103         
+51     collections_12_mths_ex_med     float64         145             0.03        % 9           
+52     mths_since_last_major_derog    float64         367,311         78.77       % 162         
+53     policy_code                    int64           0               0.00        % 1           
+54     application_type               str             0               0.00        % 1           
+55     annual_inc_joint               float64         466,285         100.00      % 0           
+56     dti_joint                      float64         466,285         100.00      % 0           
+57     verification_status_joint      float64         466,285         100.00      % 0           
+58     acc_now_delinq                 float64         29              0.01        % 6           
+59     tot_coll_amt                   float64         70,276          15.07       % 6,321       
+60     tot_cur_bal                    float64         70,276          15.07       % 220,690     
+61     open_acc_6m                    float64         466,285         100.00      % 0           
+62     open_il_6m                     float64         466,285         100.00      % 0           
+63     open_il_12m                    float64         466,285         100.00      % 0           
+64     open_il_24m                    float64         466,285         100.00      % 0           
+65     mths_since_rcnt_il             float64         466,285         100.00      % 0           
+66     total_bal_il                   float64         466,285         100.00      % 0           
+67     il_util                        float64         466,285         100.00      % 0           
+68     open_rv_12m                    float64         466,285         100.00      % 0           
+69     open_rv_24m                    float64         466,285         100.00      % 0           
+70     max_bal_bc                     float64         466,285         100.00      % 0           
+71     all_util                       float64         466,285         100.00      % 0           
+72     total_rev_hi_lim               float64         70,276          15.07       % 14,612      
+73     inq_fi                         float64         466,285         100.00      % 0           
+74     total_cu_tl                    float64         466,285         100.00      % 0           
+75     inq_last_12m                   float64         466,285         100.00      % 0           
+
+--------------------------------------------------
+2. CATEGORICAL VALUE COUNTS
+--------------------------------------------------
+
+--- Value Counts for: loan_status ---
+  Current                             :    224,226 ( 48.09%)
+  Fully Paid                          :    184,739 ( 39.62%)
+  Charged Off                         :     42,475 (  9.11%)
+  Late (31-120 days)                  :      6,900 (  1.48%)
+  In Grace Period                     :      3,146 (  0.67%)
+  Does not meet the credit policy. Status:Fully Paid :      1,988 (  0.43%)
+  Late (16-30 days)                   :      1,218 (  0.26%)
+  Default                             :        832 (  0.18%)
+  Does not meet the credit policy. Status:Charged Off :        761 (  0.16%)
+
+--- Value Counts for: term ---
+   36 months                          :    337,953 ( 72.48%)
+   60 months                          :    128,332 ( 27.52%)
+
+--- Value Counts for: grade ---
+  B                                   :    136,929 ( 29.37%)
+  C                                   :    125,293 ( 26.87%)
+  D                                   :     76,888 ( 16.49%)
+  A                                   :     74,867 ( 16.06%)
+  E                                   :     35,757 (  7.67%)
+  F                                   :     13,229 (  2.84%)
+  G                                   :      3,322 (  0.71%)
+
+--- Value Counts for: home_ownership ---
+  MORTGAGE                            :    235,875 ( 50.59%)
+  RENT                                :    188,473 ( 40.42%)
+  OWN                                 :     41,704 (  8.94%)
+  OTHER                               :        182 (  0.04%)
+  NONE                                :         50 (  0.01%)
+  ANY                                 :          1 (  0.00%)
+
+--- Value Counts for: verification_status ---
+  Verified                            :    168,055 ( 36.04%)
+  Source Verified                     :    149,993 ( 32.17%)
+  Not Verified                        :    148,237 ( 31.79%)
+
+--- Value Counts for: initial_list_status ---
+  f                                   :    303,005 ( 64.98%)
+  w                                   :    163,280 ( 35.02%)
+
+--- Value Counts for: purpose ---
+  debt_consolidation                  :    274,195 ( 58.80%)
+  credit_card                         :    104,157 ( 22.34%)
+  home_improvement                    :     26,537 (  5.69%)
+  other                               :     23,690 (  5.08%)
+  major_purchase                      :      9,828 (  2.11%)
+  small_business                      :      7,013 (  1.50%)
+  car                                 :      5,397 (  1.16%)
+  medical                             :      4,602 (  0.99%)
+  moving                              :      2,994 (  0.64%)
+  vacation                            :      2,487 (  0.53%)
+  wedding                             :      2,343 (  0.50%)
+  house                               :      2,269 (  0.49%)
+  educational                         :        422 (  0.09%)
+  renewable_energy                    :        351 (  0.08%)
+
+--- Value Counts for: application_type ---
+  INDIVIDUAL                          :    466,285 (100.00%)
+
+--------------------------------------------------
+3. DATE COLUMNS SUMMARY (Min, Max, Sample Values)
+--------------------------------------------------
+
+--- Date Column: issue_d ---
+  Min Date       : Jun-2007
+  Max Date       : Dec-2014
+  First 5 Distinct: ['Sep-12', 'Aug-14', 'Aug-10', 'Jul-10', 'Oct-08']
+
+--- Date Column: last_pymnt_d ---
+  Min Date       : Dec-2007
+  Max Date       : Jan-2016
+  First 5 Distinct: ['Sep-12', 'Aug-14', 'Aug-10', 'Jul-10', 'May-15']
+
+--- Date Column: earliest_cr_line ---
+  Min Date       : Jan-1969
+  Max Date       : Dec-2068
+  First 5 Distinct: ['Jan-81', 'Sep-92', 'Sep-06', 'Mar-01', 'Aug-64']
+
+--- Date Column: last_credit_pull_d ---
+  Min Date       : May-2007
+  Max Date       : Jan-2016
+  First 5 Distinct: ['Sep-12', 'Aug-14', 'Aug-10', 'Jul-10', 'May-15']

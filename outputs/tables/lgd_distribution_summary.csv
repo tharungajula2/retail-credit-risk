@@ -1,0 +1,2 @@
+count_defaulted_loans,count_ead_zero,fraction_ead_zero,mean_lgd,median_lgd,std_lgd,mean_recovery_rate,median_recovery_rate,std_recovery_rate,fraction_total_loss_lgd1,fraction_zero_loss_lgd0,fraction_has_post_default_recovery
+50968,3,5.886046146601789e-05,0.9300551768630226,1.0,0.1104295730578391,0.0699448231369775,0.0,0.1104295730578391,0.5217783707424266,0.0034727672264950557,0.47816276879610736

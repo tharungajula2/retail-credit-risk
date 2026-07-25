@@ -1,0 +1,48 @@
+﻿# ── Virtual environment ────────────────────────────────────────────
+.venv/
+
+# ── Python artefacts ───────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# ── Secrets / keys ─────────────────────────────────────────────────
+.env
+*.env
+GEMINI_API_KEY
+
+# ── Raw & processed data (never commit source data) ───────────────
+data/
+datasets/
+
+# ── Knowledge base PDFs (large; re-downloadable) ──────────────────
+knowledge_base/
+
+# ── Model serialisation & large outputs ───────────────────────────
+outputs/models/
+outputs/figures/
+
+# ── Raw data spreadsheets ─────────────────────────────────────────
+*.xlsx
+*.xls
+
+# ── CSV: exclude by default, but allow outputs/tables/ ────────────
+# (output tables are small <5KB model results, not raw data)
+*.csv
+!outputs/tables/*.csv
+!outputs/tables/.gitkeep
+
+# ── PDFs (regulatory docs sit in knowledge_base/, excluded above) ──
+*.pdf
+
+# ── OS / editor noise ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+365_course_files/
+
+# pip install -e . artefact
+*.egg-info/
+

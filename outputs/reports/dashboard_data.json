@@ -1,0 +1,694 @@
+{
+  "portfolio_headline": {
+    "total_loans": 235628,
+    "total_ead": 1826572642.48,
+    "total_el": 58666169.31,
+    "el_rate": 3.21,
+    "total_rwa_irb": 2294666890.82,
+    "total_rwa_std": 1369929481.86,
+    "avg_risk_weight": 125.63,
+    "total_ecl_ifrs9": 278476609.56,
+    "total_ecl_cecl": 327465234.95,
+    "ecl_coverage": 15.25,
+    "mean_pd": 0.0345,
+    "mean_lgd": 0.9339
+  },
+  "rating_grades": [
+    {
+      "grade": "1",
+      "score_range": "614-639",
+      "n_loans": 21930,
+      "default_rate": 0.0086
+    },
+    {
+      "grade": "2",
+      "score_range": "604-613",
+      "n_loans": 23998,
+      "default_rate": 0.0134
+    },
+    {
+      "grade": "3",
+      "score_range": "597-603",
+      "n_loans": 22475,
+      "default_rate": 0.0194
+    },
+    {
+      "grade": "4",
+      "score_range": "591-596",
+      "n_loans": 21074,
+      "default_rate": 0.0252
+    },
+    {
+      "grade": "5",
+      "score_range": "584-590",
+      "n_loans": 24353,
+      "default_rate": 0.0308
+    },
+    {
+      "grade": "6",
+      "score_range": "577-583",
+      "n_loans": 22564,
+      "default_rate": 0.0431
+    },
+    {
+      "grade": "7",
+      "score_range": "568-576",
+      "n_loans": 23203,
+      "default_rate": 0.0519
+    },
+    {
+      "grade": "8",
+      "score_range": "522-567",
+      "n_loans": 24928,
+      "default_rate": 0.0772
+    }
+  ],
+  "el_by_grade": [
+    {
+      "grade": "A",
+      "count": 36108,
+      "total_ead": 221209241.42,
+      "total_el": 2138197.38,
+      "el_pct_ead": 0.97,
+      "mean_pd": 0.011,
+      "mean_lgd": 0.9344
+    },
+    {
+      "grade": "B",
+      "count": 61935,
+      "total_ead": 389715718.6,
+      "total_el": 6793880.72,
+      "el_pct_ead": 1.74,
+      "mean_pd": 0.0205,
+      "mean_lgd": 0.9357
+    },
+    {
+      "grade": "C",
+      "count": 66565,
+      "total_ead": 508147783.93,
+      "total_el": 15101496.3,
+      "el_pct_ead": 2.97,
+      "mean_pd": 0.0354,
+      "mean_lgd": 0.9368
+    },
+    {
+      "grade": "D",
+      "count": 42991,
+      "total_ead": 403007108.84,
+      "total_el": 17029658.91,
+      "el_pct_ead": 4.23,
+      "mean_pd": 0.0505,
+      "mean_lgd": 0.9332
+    },
+    {
+      "grade": "E",
+      "count": 20121,
+      "total_ead": 215856557.4,
+      "total_el": 11436735.29,
+      "el_pct_ead": 5.3,
+      "mean_pd": 0.0631,
+      "mean_lgd": 0.9252
+    },
+    {
+      "grade": "F",
+      "count": 6223,
+      "total_ead": 66470619.04,
+      "total_el": 4591984.45,
+      "el_pct_ead": 6.91,
+      "mean_pd": 0.0835,
+      "mean_lgd": 0.9203
+    },
+    {
+      "grade": "G",
+      "count": 1685,
+      "total_ead": 22165613.25,
+      "total_el": 1574216.26,
+      "el_pct_ead": 7.1,
+      "mean_pd": 0.0823,
+      "mean_lgd": 0.9207
+    }
+  ],
+  "capital_by_grade": [
+    {
+      "grade": "A",
+      "ead": 221209241.42,
+      "irb_rwa": 208371169.25,
+      "risk_weight": 94.2
+    },
+    {
+      "grade": "B",
+      "ead": 389715718.6,
+      "irb_rwa": 449945003.18,
+      "risk_weight": 115.45
+    },
+    {
+      "grade": "C",
+      "ead": 508147783.93,
+      "irb_rwa": 659304543.37,
+      "risk_weight": 129.75
+    },
+    {
+      "grade": "D",
+      "ead": 403007108.84,
+      "irb_rwa": 547819062.03,
+      "risk_weight": 135.93
+    },
+    {
+      "grade": "E",
+      "ead": 215856557.4,
+      "irb_rwa": 300377626.48,
+      "risk_weight": 139.16
+    },
+    {
+      "grade": "F",
+      "ead": 66470619.04,
+      "irb_rwa": 96556623.78,
+      "risk_weight": 145.26
+    },
+    {
+      "grade": "G",
+      "ead": 22165613.25,
+      "irb_rwa": 32292862.73,
+      "risk_weight": 145.69
+    }
+  ],
+  "staging": [
+    {
+      "stage": "Stage 1",
+      "n_loans": 189633,
+      "ead": 1417203315.73,
+      "mean_pd": 0.0273
+    },
+    {
+      "stage": "Stage 2",
+      "n_loans": 26554,
+      "ead": 169366237.98,
+      "mean_pd": 0.0764
+    },
+    {
+      "stage": "Stage 3",
+      "n_loans": 19441,
+      "ead": 240003088.77,
+      "mean_pd": 1.0
+    },
+    {
+      "stage": "Total",
+      "n_loans": 235628,
+      "ead": 1826572642.48,
+      "mean_pd": 0.1131
+    }
+  ],
+  "ecl_by_stage": [
+    {
+      "stage": "Stage 1",
+      "count": 189633,
+      "total_ead": 1417203315.73,
+      "total_ecl": 30272773.85,
+      "coverage_ratio": 0.0214
+    },
+    {
+      "stage": "Stage 2",
+      "count": 26554,
+      "total_ead": 169366237.98,
+      "total_ecl": 24404478.25,
+      "coverage_ratio": 0.1441
+    },
+    {
+      "stage": "Stage 3",
+      "count": 19441,
+      "total_ead": 240003088.77,
+      "total_ecl": 223799357.46,
+      "coverage_ratio": 0.9325
+    },
+    {
+      "stage": "Total Portfolio",
+      "count": 235628,
+      "total_ead": 1826572642.48,
+      "total_ecl": 278476609.56,
+      "coverage_ratio": 0.1525
+    }
+  ],
+  "framework_comparison": [
+    {
+      "framework": "Basel III Regulatory EL",
+      "horizon_scope": "12-Month EL (PD_12m * LGD * EAD)",
+      "total_provision_usd": 58666169.31,
+      "coverage_pct_ead": 3.21,
+      "notes": "Regulatory capital baseline (undiscounted 12m expected loss)"
+    },
+    {
+      "framework": "IFRS 9 Financial Instruments",
+      "horizon_scope": "Staged (Stage 1: 12m, Stage 2: Lifetime, Stage 3: Default)",
+      "total_provision_usd": 278476609.56,
+      "coverage_pct_ead": 15.25,
+      "notes": "International accounting standard (discounted EIR, staged SICR)"
+    },
+    {
+      "framework": "US CECL (ASC 326)",
+      "horizon_scope": "Lifetime for ALL performing loans (Day-1 Lifetime)",
+      "total_provision_usd": 327465234.95,
+      "coverage_pct_ead": 17.93,
+      "notes": "US GAAP accounting standard (no staging, lifetime from origination)"
+    },
+    {
+      "framework": "CECL vs IFRS 9 Difference (Delta)",
+      "horizon_scope": "Lifetime Day-1 Impact on Stage 1 Loans",
+      "total_provision_usd": 48988625.39,
+      "coverage_pct_ead": 2.68,
+      "notes": "Additional provision required by US GAAP over IFRS 9"
+    }
+  ],
+  "vintage_curves": [
+    {
+      "vintage_year": 2007,
+      "total_loans": 603,
+      "mob_0": 0.0,
+      "mob_1": 0.0,
+      "mob_2": 0.0,
+      "mob_3": 0.0,
+      "mob_4": 0.0,
+      "mob_5": 0.005,
+      "mob_6": 0.01,
+      "mob_7": 0.0149,
+      "mob_8": 0.0216,
+      "mob_9": 0.0282,
+      "mob_10": 0.0398,
+      "mob_11": 0.0464,
+      "mob_12": 0.0514,
+      "mob_13": 0.0697,
+      "mob_14": 0.0846,
+      "mob_15": 0.0962,
+      "mob_16": 0.1111,
+      "mob_17": 0.1227,
+      "mob_18": 0.1393,
+      "mob_19": 0.1493,
+      "mob_20": 0.1658,
+      "mob_21": 0.1774,
+      "mob_22": 0.1824,
+      "mob_23": 0.1891,
+      "mob_24": 0.194
+    },
+    {
+      "vintage_year": 2008,
+      "total_loans": 2393,
+      "mob_0": 0.0,
+      "mob_1": 0.0013,
+      "mob_2": 0.0013,
+      "mob_3": 0.0013,
+      "mob_4": 0.0046,
+      "mob_5": 0.01,
+      "mob_6": 0.0155,
+      "mob_7": 0.0234,
+      "mob_8": 0.0305,
+      "mob_9": 0.0384,
+      "mob_10": 0.0447,
+      "mob_11": 0.0556,
+      "mob_12": 0.0656,
+      "mob_13": 0.0752,
+      "mob_14": 0.0827,
+      "mob_15": 0.0915,
+      "mob_16": 0.0978,
+      "mob_17": 0.1057,
+      "mob_18": 0.1141,
+      "mob_19": 0.1199,
+      "mob_20": 0.1279,
+      "mob_21": 0.1337,
+      "mob_22": 0.1417,
+      "mob_23": 0.1458,
+      "mob_24": 0.1525
+    },
+    {
+      "vintage_year": 2009,
+      "total_loans": 5281,
+      "mob_0": 0.0,
+      "mob_1": 0.003,
+      "mob_2": 0.003,
+      "mob_3": 0.003,
+      "mob_4": 0.0062,
+      "mob_5": 0.0104,
+      "mob_6": 0.0142,
+      "mob_7": 0.0214,
+      "mob_8": 0.0265,
+      "mob_9": 0.0311,
+      "mob_10": 0.0365,
+      "mob_11": 0.0418,
+      "mob_12": 0.0464,
+      "mob_13": 0.0513,
+      "mob_14": 0.0576,
+      "mob_15": 0.0612,
+      "mob_16": 0.0651,
+      "mob_17": 0.0699,
+      "mob_18": 0.0733,
+      "mob_19": 0.0776,
+      "mob_20": 0.082,
+      "mob_21": 0.0846,
+      "mob_22": 0.0896,
+      "mob_23": 0.0947,
+      "mob_24": 0.0988
+    },
+    {
+      "vintage_year": 2010,
+      "total_loans": 12537,
+      "mob_0": 0.0,
+      "mob_1": 0.0021,
+      "mob_2": 0.0021,
+      "mob_3": 0.0021,
+      "mob_4": 0.0032,
+      "mob_5": 0.0058,
+      "mob_6": 0.0089,
+      "mob_7": 0.0125,
+      "mob_8": 0.0166,
+      "mob_9": 0.0203,
+      "mob_10": 0.0254,
+      "mob_11": 0.0301,
+      "mob_12": 0.0345,
+      "mob_13": 0.0398,
+      "mob_14": 0.0447,
+      "mob_15": 0.0498,
+      "mob_16": 0.0532,
+      "mob_17": 0.0576,
+      "mob_18": 0.0617,
+      "mob_19": 0.0662,
+      "mob_20": 0.0692,
+      "mob_21": 0.0723,
+      "mob_22": 0.0756,
+      "mob_23": 0.0793,
+      "mob_24": 0.0832
+    },
+    {
+      "vintage_year": 2011,
+      "total_loans": 21721,
+      "mob_0": 0.0,
+      "mob_1": 0.0017,
+      "mob_2": 0.0017,
+      "mob_3": 0.0017,
+      "mob_4": 0.0028,
+      "mob_5": 0.0057,
+      "mob_6": 0.009,
+      "mob_7": 0.0131,
+      "mob_8": 0.0172,
+      "mob_9": 0.0219,
+      "mob_10": 0.0267,
+      "mob_11": 0.0314,
+      "mob_12": 0.0355,
+      "mob_13": 0.0412,
+      "mob_14": 0.0456,
+      "mob_15": 0.0506,
+      "mob_16": 0.0557,
+      "mob_17": 0.06,
+      "mob_18": 0.0651,
+      "mob_19": 0.0689,
+      "mob_20": 0.0732,
+      "mob_21": 0.0773,
+      "mob_22": 0.0817,
+      "mob_23": 0.0859,
+      "mob_24": 0.0897
+    },
+    {
+      "vintage_year": 2012,
+      "total_loans": 53367,
+      "mob_0": 0.0,
+      "mob_1": 0.0011,
+      "mob_2": 0.0011,
+      "mob_3": 0.0011,
+      "mob_4": 0.0025,
+      "mob_5": 0.0052,
+      "mob_6": 0.0082,
+      "mob_7": 0.0125,
+      "mob_8": 0.0168,
+      "mob_9": 0.0214,
+      "mob_10": 0.0263,
+      "mob_11": 0.0316,
+      "mob_12": 0.0373,
+      "mob_13": 0.0434,
+      "mob_14": 0.0499,
+      "mob_15": 0.0557,
+      "mob_16": 0.0613,
+      "mob_17": 0.0668,
+      "mob_18": 0.0717,
+      "mob_19": 0.0765,
+      "mob_20": 0.0819,
+      "mob_21": 0.0873,
+      "mob_22": 0.0921,
+      "mob_23": 0.0971,
+      "mob_24": 0.1019
+    },
+    {
+      "vintage_year": 2013,
+      "total_loans": 134755,
+      "mob_0": 0.0,
+      "mob_1": 0.0007,
+      "mob_2": 0.0007,
+      "mob_3": 0.0007,
+      "mob_4": 0.0019,
+      "mob_5": 0.0039,
+      "mob_6": 0.0066,
+      "mob_7": 0.0096,
+      "mob_8": 0.0132,
+      "mob_9": 0.0172,
+      "mob_10": 0.0217,
+      "mob_11": 0.0265,
+      "mob_12": 0.0318,
+      "mob_13": 0.0369,
+      "mob_14": 0.0425,
+      "mob_15": 0.0478,
+      "mob_16": 0.0532,
+      "mob_17": 0.0583,
+      "mob_18": 0.0634,
+      "mob_19": 0.0684,
+      "mob_20": 0.0734,
+      "mob_21": 0.0785,
+      "mob_22": 0.0832,
+      "mob_23": 0.0881,
+      "mob_24": 0.0929
+    },
+    {
+      "vintage_year": 2014,
+      "total_loans": 235628,
+      "mob_0": 0.0,
+      "mob_1": 0.0006,
+      "mob_2": 0.0006,
+      "mob_3": 0.0006,
+      "mob_4": 0.0017,
+      "mob_5": 0.0037,
+      "mob_6": 0.0064,
+      "mob_7": 0.0098,
+      "mob_8": 0.0138,
+      "mob_9": 0.0186,
+      "mob_10": 0.0235,
+      "mob_11": 0.0288,
+      "mob_12": 0.0344,
+      "mob_13": 0.0402,
+      "mob_14": 0.0466,
+      "mob_15": 0.0529,
+      "mob_16": 0.0585,
+      "mob_17": 0.0634,
+      "mob_18": 0.0677,
+      "mob_19": 0.0713,
+      "mob_20": 0.0744,
+      "mob_21": 0.077,
+      "mob_22": 0.0788,
+      "mob_23": 0.0804,
+      "mob_24": 0.0814
+    }
+  ],
+  "vintage_maturity": [
+    {
+      "vintage_year": 2007,
+      "total_loans": 603,
+      "default_rate_mob_12_pct": 5.14,
+      "default_rate_mob_18_pct": 13.93,
+      "default_rate_mob_24_pct": 19.4
+    },
+    {
+      "vintage_year": 2008,
+      "total_loans": 2393,
+      "default_rate_mob_12_pct": 6.56,
+      "default_rate_mob_18_pct": 11.41,
+      "default_rate_mob_24_pct": 15.25
+    },
+    {
+      "vintage_year": 2009,
+      "total_loans": 5281,
+      "default_rate_mob_12_pct": 4.64,
+      "default_rate_mob_18_pct": 7.33,
+      "default_rate_mob_24_pct": 9.88
+    },
+    {
+      "vintage_year": 2010,
+      "total_loans": 12537,
+      "default_rate_mob_12_pct": 3.45,
+      "default_rate_mob_18_pct": 6.17,
+      "default_rate_mob_24_pct": 8.32
+    },
+    {
+      "vintage_year": 2011,
+      "total_loans": 21721,
+      "default_rate_mob_12_pct": 3.55,
+      "default_rate_mob_18_pct": 6.51,
+      "default_rate_mob_24_pct": 8.97
+    },
+    {
+      "vintage_year": 2012,
+      "total_loans": 53367,
+      "default_rate_mob_12_pct": 3.73,
+      "default_rate_mob_18_pct": 7.17,
+      "default_rate_mob_24_pct": 10.19
+    },
+    {
+      "vintage_year": 2013,
+      "total_loans": 134755,
+      "default_rate_mob_12_pct": 3.18,
+      "default_rate_mob_18_pct": 6.34,
+      "default_rate_mob_24_pct": 9.29
+    },
+    {
+      "vintage_year": 2014,
+      "total_loans": 235628,
+      "default_rate_mob_12_pct": 3.44,
+      "default_rate_mob_18_pct": 6.77,
+      "default_rate_mob_24_pct": 8.14
+    }
+  ],
+  "transition_matrix": [
+    {
+      "grade": "A",
+      "total_loans": 74769,
+      "fully_paid": 0.4876,
+      "current": 0.4707,
+      "late": 0.0076,
+      "default": 0.0342
+    },
+    {
+      "grade": "B",
+      "total_loans": 136575,
+      "fully_paid": 0.4464,
+      "current": 0.4687,
+      "late": 0.0168,
+      "default": 0.0681
+    },
+    {
+      "grade": "C",
+      "total_loans": 124664,
+      "fully_paid": 0.3675,
+      "current": 0.5082,
+      "late": 0.0266,
+      "default": 0.0977
+    },
+    {
+      "grade": "D",
+      "total_loans": 76197,
+      "fully_paid": 0.3424,
+      "current": 0.4916,
+      "late": 0.0353,
+      "default": 0.1307
+    },
+    {
+      "grade": "E",
+      "total_loans": 35221,
+      "fully_paid": 0.3001,
+      "current": 0.4892,
+      "late": 0.0449,
+      "default": 0.1658
+    },
+    {
+      "grade": "F",
+      "total_loans": 12982,
+      "fully_paid": 0.3025,
+      "current": 0.4388,
+      "late": 0.049,
+      "default": 0.2097
+    },
+    {
+      "grade": "G",
+      "total_loans": 3128,
+      "fully_paid": 0.2938,
+      "current": 0.4121,
+      "late": 0.0566,
+      "default": 0.2375
+    }
+  ],
+  "validation": {
+    "train": {
+      "auc": 0.6839,
+      "gini": 0.3678,
+      "ks": 0.2736
+    },
+    "test": {
+      "auc": 0.6817,
+      "gini": 0.3634,
+      "ks": 0.2728
+    },
+    "oot": {
+      "auc": 0.6923,
+      "gini": 0.3845,
+      "ks": 0.2843
+    }
+  },
+  "lifetime_pd": [
+    {
+      "month": 1,
+      "n_at_risk": 466285,
+      "n_defaults": 376,
+      "hazard": 0.000806,
+      "survival": 0.9992,
+      "cumulative_pd": 0.0008
+    },
+    {
+      "month": 6,
+      "n_at_risk": 464326,
+      "n_defaults": 1305,
+      "hazard": 0.002811,
+      "survival": 0.993,
+      "cumulative_pd": 0.007
+    },
+    {
+      "month": 12,
+      "n_at_risk": 452806,
+      "n_defaults": 2539,
+      "hazard": 0.005607,
+      "survival": 0.9656,
+      "cumulative_pd": 0.0344
+    },
+    {
+      "month": 18,
+      "n_at_risk": 437211,
+      "n_defaults": 2188,
+      "hazard": 0.005004,
+      "survival": 0.933,
+      "cumulative_pd": 0.067
+    },
+    {
+      "month": 24,
+      "n_at_risk": 426453,
+      "n_defaults": 1304,
+      "hazard": 0.003058,
+      "survival": 0.9118,
+      "cumulative_pd": 0.0882
+    },
+    {
+      "month": 36,
+      "n_at_risk": 417002,
+      "n_defaults": 309,
+      "hazard": 0.000741,
+      "survival": 0.8936,
+      "cumulative_pd": 0.1064
+    },
+    {
+      "month": 48,
+      "n_at_risk": 415576,
+      "n_defaults": 36,
+      "hazard": 8.7e-05,
+      "survival": 0.8912,
+      "cumulative_pd": 0.1088
+    },
+    {
+      "month": 60,
+      "n_at_risk": 415331,
+      "n_defaults": 2,
+      "hazard": 5e-06,
+      "survival": 0.8907,
+      "cumulative_pd": 0.1093
+    }
+  ]
+}

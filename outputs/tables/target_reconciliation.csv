@@ -1,0 +1,8 @@
+item,count,pct_of_total
+Total Loans,466285,100.0
+"- Non-Default (Current, Paid, etc.)",415317,89.0693460008364
+= Ever Default,50968,10.930653999163601
+   of which: default_12m = 1 (months 0 to 12),16018,3.435238105450529
+   of which: default_12m = 0 (months > 12),34950,7.495415893713073
+   of which: NEGATIVE timing anomaly,0,0.0
+   of which: MISSING est_default_date,0,0.0
