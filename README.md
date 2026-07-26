@@ -1,4 +1,4 @@
-﻿# Retail Credit Risk Analytics Suite
+# Retail Credit Risk Analytics Suite
 
 > An end-to-end Basel III IRB capital + IFRS 9 / CECL provisioning model built on 466,285 real LendingClub loans (2007–2014), with a PD scorecard, LGD fractional regression, EAD drawdown analysis, interactive dashboard, and an AI credit analyst.
 
@@ -197,7 +197,27 @@ retail-credit-risk/
 ## Key Model Decisions
 
 **Why Model B over Model A?**  
-Model B adds `grade`, `int_rate`, and `sub_grade` to Model A's 7 variables. OOT Gini improves from 0.2715 to 0.3845 (+13 points). OOT AUC exceeds training AUC (0.6923 vs 0.6839) — no overfitting. Hosmer-Lemeshow p-value 0.494 confirms calibration. Both models are documented; no cherry-picking.
+Model B adds `grade`, `int_rate`, and `sub_grade` to Model A's 7 variables (`inq_last_6mths`, `annual_inc`, `purpose`, `home_ownership`, `term`, `dti`, `revol_util`). OOT Gini improves from 0.2715 to 0.3845 (+13 points). OOT AUC exceeds training AUC (0.6923 vs 0.6839) — no overfitting. Hosmer-Lemeshow p-value 0.494 confirms calibration.
+
+### Model B Scorecard & Rating Master Scale
+Scorecard PDO scaling: 600 points = 50:1 odds, PDO = 20. OOT score range: 522–639.
+
+| Grade | Score Range | Loans | Default Rate | Grade | Score Range | Loans | Default Rate |
+|---|---|---|---|---|---|---|---|
+| **1** | 614–639 | 21,930 | 0.86% | **5** | 584–590 | 24,353 | 3.08% |
+| **2** | 604–613 | 23,998 | 1.34% | **6** | 577–583 | 22,564 | 4.31% |
+| **3** | 597–603 | 22,475 | 1.94% | **7** | 568–576 | 23,203 | 5.19% |
+| **4** | 591–596 | 21,074 | 2.52% | **8** | 522–567 | 24,928 | 7.72% |
+
+### LGD & IFRS 9 Provisioning Summary
+- **LGD Model:** Fractional Response Regression on 50,968 resolved defaults. Mean LGD = 93.4%, Median = 100%, 52.2% total write-offs.
+- **Staging & ECL Breakdown:**
+
+| Stage | Definition / Trigger | Loans | EAD ($M) | ECL ($M) | Coverage |
+|---|---|---|---|---|---|
+| **Stage 1** | Performing (12-month ECL) | 189,633 | 1,417.2 | 30.3 | 2.14% |
+| **Stage 2** | SICR (PD_12m > 7.64%, Lifetime ECL) | 26,554 | 169.4 | 24.4 | 14.41% |
+| **Stage 3** | Defaulted (Lifetime ECL) | 19,441 | 240.0 | 223.8 | 93.25% |
 
 **Why a 12-month default target?**  
 Aligns with Basel III retail PD horizon and IFRS 9 Stage 1. The `last_pymnt_d` field provides a clean default timing proxy. Longer windows introduce right-censoring for 2013–2014 vintages; shorter windows produce insufficient defaults for early vintages. The 12-month cumulative Kaplan-Meier PD of 3.44% matches the OOT observed default rate exactly.
