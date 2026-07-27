@@ -1,4 +1,4 @@
-﻿# ── Virtual environment ────────────────────────────────────────────
+# ── Virtual environment ────────────────────────────────────────────
 .venv/
 
 # ── Python artefacts ───────────────────────────────────────────────
@@ -44,5 +44,13 @@ Thumbs.db
 365_course_files/
 
 # pip install -e . artefact
-*.egg-info/
 
+# Environment & build ignores
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+*.egg-info/
+.env

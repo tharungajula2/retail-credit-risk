@@ -1,7 +1,13 @@
-numpy
-pandas
-scikit-learn
-scipy
-statsmodels
-matplotlib
-pytest
+# Direct dependencies. Pip resolves transitive versions.
+# Canonical declaration lives in pyproject.toml.
+numpy>=2.0
+pandas>=2.2
+scikit-learn>=1.5
+scipy>=1.13
+statsmodels>=0.14
+matplotlib>=3.9
+PyYAML>=6.0
+pypdf>=4.0
+google-generativeai>=0.8
+sentence-transformers>=3.0
+pytest>=8.0
