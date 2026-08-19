@@ -58,6 +58,10 @@ retail-credit-risk/
 
 This section details the 16 sequential execution stages of the retail credit risk modeling system from raw data ingest to reporting and AI indexing.
 
+---
+
+### Stage 1 — Target Engineering & Date Parsing
+
 ```
       [datasets/loan_data_2007_2014.csv (466,285 rows)]
                             │
@@ -73,7 +77,7 @@ This section details the 16 sequential execution stages of the retail credit ris
 
 **Formula**
 
-$$\text{default\_12m} = \mathbb{I}\left(\text{ever\_default} = 1 \;\wedge\; 0 \le \text{months\_to\_default} \le 12\right)$$
+$$Y_{12\text{m}} = \begin{cases} 1 & \text{if } Y_{\text{ever}} = 1 \text{ and } 0 \le M_{\text{default}} \le 12 \\ 0 & \text{otherwise} \end{cases}$$
 
 **Key numbers** — Raw load: 466,285 total loans; Ever Default: 50,968 loans (10.93%); 12-Month Default: 16,018 loans (3.44% portfolio 12m default rate).
 
@@ -84,6 +88,8 @@ $$\text{default\_12m} = \mathbb{I}\left(\text{ever\_default} = 1 \;\wedge\; 0 \l
 **Files** — target.py, run_target_generation.py, target_definition.yaml.
 
 ---
+
+### Stage 2 — Sampling & Temporal Partitioning
 
 ```
    [Cleaned DataFrame (466,285 rows)]
@@ -98,6 +104,10 @@ $$\text{default\_12m} = \mathbb{I}\left(\text{ever\_default} = 1 \;\wedge\; 0 \l
 
 **How it's done** — Filters loans by `issue_d` year. Loans originated between 2007 and 2013 form the Development cohort (230,657 loans). Loans originated in 2014 form the Out-Of-Time (OOT) validation cohort (235,628 loans). Development loans undergo an 80/20 stratified random split based on `default_12m` using `random_state=42`. Partitions are saved as binary Parquet files.
 
+**Formula**
+
+$$N_{\text{train}} = 0.80 \times N_{\text{dev}} = 184,\!525, \qquad N_{\text{test}} = 0.20 \times N_{\text{dev}} = 46,\!132$$
+
 **Key numbers** — Train set: 184,525 loans (3.43% default rate); Test set: 46,132 loans (3.43% default rate); OOT set: 235,628 loans (3.44% default rate).
 
 **Why this choice** — Temporal out-of-time partitioning tests model performance on future unobserved macroeconomic cohorts, preventing random-sampling data leakage across origination years.
@@ -107,6 +117,8 @@ $$\text{default\_12m} = \mathbb{I}\left(\text{ever\_default} = 1 \;\wedge\; 0 \l
 **Files** — sampling.py, run_sampling.py, sampling.yaml.
 
 ---
+
+### Stage 3 — Feature Binning & WoE Transformation
 
 ```
    [data/processed/train.parquet]
@@ -123,9 +135,9 @@ $$\text{default\_12m} = \mathbb{I}\left(\text{ever\_default} = 1 \;\wedge\; 0 \l
 
 **Formula**
 
-$$\text{WoE}_i = \ln\!\left( \frac{\frac{\text{non-defaults}_i + 0.5}{\text{total non-defaults} + 1.0}}{\frac{\text{defaults}_i + 0.5}{\text{total defaults} + 1.0}} \right)$$
+$$\text{WoE}_i = \ln\left( \frac{\text{Non-Defaults}_i / \text{Total Non-Defaults}}{\text{Defaults}_i / \text{Total Defaults}} \right)$$
 
-$$\text{IV} = \sum_{i=1}^{k} \left( \%\,\text{non-defaults}_i - \%\,\text{defaults}_i \right) \cdot \text{WoE}_i$$
+$$\text{IV} = \sum_{i=1}^{k} \left( P_{\text{non-default}, i} - P_{\text{default}, i} \right) \times \text{WoE}_i$$
 
 **Key numbers** — 48 features binned; top predictive features selected by IV (e.g. `sub_grade` IV = 0.325 [strong], `term` IV = 0.158 [medium], `dti` IV = 0.089 [medium], `annual_inc` IV = 0.052 [weak]).
 
@@ -136,6 +148,8 @@ $$\text{IV} = \sum_{i=1}^{k} \left( \%\,\text{non-defaults}_i - \%\,\text{defaul
 **Files** — binning.py, run_binning.py, variables.yaml.
 
 ---
+
+### Stage 4 — Logistic Regression PD Estimation
 
 ```
    [WoE-Transformed Features + train.parquet]
@@ -152,9 +166,9 @@ $$\text{IV} = \sum_{i=1}^{k} \left( \%\,\text{non-defaults}_i - \%\,\text{defaul
 
 **Formula**
 
-$$\ln\!\left(\frac{PD}{1 - PD}\right) = \alpha + \sum_{j=1}^{p} \beta_j \cdot \text{WoE}_j$$
+$$\ln\left(\frac{PD}{1 - PD}\right) = \alpha + \sum_{j=1}^{p} \beta_j \times \text{WoE}_j$$
 
-$$PD = \frac{1}{1 + e^{-\left(\alpha + \sum_{j=1}^{p} \beta_j \cdot \text{WoE}_j\right)}}$$
+$$PD = \frac{1}{1 + \exp\left(-\left(\alpha + \sum_{j=1}^{p} \beta_j \times \text{WoE}_j\right)\right)}$$
 
 **Key numbers** — Model A intercept = -3.3364; Model B intercept = -3.3392; all feature coefficients show positive signs aligned with WoE direction.
 
@@ -165,6 +179,8 @@ $$PD = \frac{1}{1 + e^{-\left(\alpha + \sum_{j=1}^{p} \beta_j \cdot \text{WoE}_j
 **Files** — pd_model.py, run_pd_model.py, pd_model.yaml.
 
 ---
+
+### Stage 5 — Scorecard Point Scaling
 
 ```
    [Fitted Logit Models (pd_model_a/b.pkl)]
@@ -185,9 +201,9 @@ $$\text{Factor} = \frac{PDO}{\ln(2)} = \frac{20}{\ln(2)} \approx 28.8539$$
 
 $$\text{Offset} = \text{Base Score} - \text{Factor} \times \ln(50) = 600 - 28.8539 \times 3.9120 \approx 487.123$$
 
-$$\text{Score} = \text{Offset} + \text{Factor} \times \ln\!\left(\frac{1 - PD}{PD}\right)$$
+$$\text{Score} = \text{Offset} + \text{Factor} \times \ln\left(\frac{1 - PD}{PD}\right)$$
 
-$$\text{Bin Point}_i = -\left( \beta_i \cdot \text{WoE}_i + \frac{\alpha}{N} \right) \cdot \text{Factor} + \frac{\text{Offset}}{N}$$
+$$\text{Points}_i = -\left( \beta_i \times \text{WoE}_i + \frac{\alpha}{N} \right) \times \text{Factor} + \frac{\text{Offset}}{N}$$
 
 **Key numbers** — Base Score 600 at 50:1 odds ($PD = 1.96\%$); PDO 20 (score 620 = 100:1 odds / $PD = 0.99\%$).
 
@@ -199,6 +215,8 @@ $$\text{Bin Point}_i = -\left( \beta_i \cdot \text{WoE}_i + \frac{\alpha}{N} \ri
 
 ---
 
+### Stage 6 — Validation & Discrimination Diagnostics
+
 ```
    [Predicted Probabilities across Datasets]
                        │
@@ -208,7 +226,7 @@ $$\text{Bin Point}_i = -\left( \beta_i \cdot \text{WoE}_i + \frac{\alpha}{N} \ri
    └──────────────────────────────────────────────┘
 ```
 
-**What happens** — Evaluates rank-ordering discrimination (AUROC, Gini, KS) and probability calibration (Hosmer-Lemeshow test) across Train, Test, and OOT datasets.
+**What happens** — Evaluates rank-ordering discrimination (AUROC, Gini, KS statistic) and probability calibration (Hosmer-Lemeshow test) across Train, Test, and OOT datasets.
 
 **How it's done** — Computes Area Under Receiver Operating Characteristic (AUROC), Gini coefficient ($2 \cdot AUROC - 1$), and Kolmogorov-Smirnov ($KS$) separation statistic. Runs a 10-decile Hosmer-Lemeshow chi-square test comparing observed defaults vs expected defaults.
 
@@ -218,7 +236,7 @@ $$\text{Gini} = 2 \times \text{AUROC} - 1$$
 
 $$KS = \max_{t} \left| \text{TPR}(t) - \text{FPR}(t) \right|$$
 
-$$H = \sum_{g=1}^{10} \frac{(O_g - N_g \bar{p}_g)^2}{N_g \bar{p}_g (1 - \bar{p}_g)} \sim \chi^2_8$$
+$$H = \sum_{g=1}^{10} \frac{(O_g - E_g)^2}{E_g (1 - \bar{p}_g)} \sim \chi^2_{8}$$
 
 **Key numbers** —
 - Model A: Train Gini = 0.3013, Test Gini = 0.2969, OOT Gini = 0.2715; Test KS = 0.2233; Test HL p-value = 0.2363.
@@ -231,6 +249,8 @@ $$H = \sum_{g=1}^{10} \frac{(O_g - N_g \bar{p}_g)^2}{N_g \bar{p}_g (1 - \bar{p}_
 **Files** — metrics.py, run_validation.py.
 
 ---
+
+### Stage 7 — Probability Recalibration
 
 ```
    [Uncalibrated Predicted Probabilities]
@@ -247,9 +267,9 @@ $$H = \sum_{g=1}^{10} \frac{(O_g - N_g \bar{p}_g)^2}{N_g \bar{p}_g (1 - \bar{p}_
 
 **Formula**
 
-$$\alpha_{\text{new}} = \alpha + \ln\!\left(\frac{\bar{y}}{1 - \bar{y}}\right) - \ln\!\left(\frac{\bar{p}}{1 - \bar{p}}\right)$$
+$$\alpha_{\text{new}} = \alpha + \ln\left(\frac{\bar{y}}{1 - \bar{y}}\right) - \ln\left(\frac{\bar{p}}{1 - \bar{p}}\right)$$
 
-$$\text{PD}_{\text{recalibrated}} = \frac{1}{1 + e^{-\left(\alpha_{\text{new}} + \sum \beta_i \cdot \text{WoE}_i\right)}}$$
+$$PD_{\text{recalibrated}} = \frac{1}{1 + \exp\left(-\left(\alpha_{\text{new}} + \sum_{j=1}^p \beta_j \times \text{WoE}_j\right)\right)}$$
 
 **Key numbers** — Re-aligns mean predicted PD to observed default rate (3.44%), restoring probability alignment on OOT data while leaving Gini and KS unchanged.
 
@@ -260,6 +280,8 @@ $$\text{PD}_{\text{recalibrated}} = \frac{1}{1 + e^{-\left(\alpha_{\text{new}} +
 **Files** — calibration.py, run_calibration.py.
 
 ---
+
+### Stage 8 — Population & Stability Monitoring
 
 ```
    [Train vs OOT Score & Feature Distributions]
@@ -276,7 +298,9 @@ $$\text{PD}_{\text{recalibrated}} = \frac{1}{1 + e^{-\left(\alpha_{\text{new}} +
 
 **Formula**
 
-$$\text{PSI} = \sum_{b=1}^{10} \left( \%\,\text{Actual}_b - \%\,\text{Baseline}_b \right) \cdot \ln\!\left(\frac{\%\,\text{Actual}_b}{\%\,\text{Baseline}_b}\right)$$
+$$\text{PSI} = \sum_{b=1}^{10} \left( P_{\text{actual}, b} - P_{\text{baseline}, b} \right) \times \ln\left( \frac{P_{\text{actual}, b}}{P_{\text{baseline}, b}} \right)$$
+
+$$\text{CSI}_j = \sum_{k=1}^{B_j} \left( P_{\text{actual}, j, k} - P_{\text{baseline}, j, k} \right) \times \ln\left( \frac{P_{\text{actual}, j, k}}{P_{\text{baseline}, j, k}} \right)$$
 
 **Key numbers** — Model A Score PSI = 0.0046; Model B Score PSI = 0.0071 (both < 0.10, indicating stable distributions); Max CSI = `dti` (0.0416); Min CSI = `annual_inc` (0.0057).
 
@@ -287,6 +311,8 @@ $$\text{PSI} = \sum_{b=1}^{10} \left( \%\,\text{Actual}_b - \%\,\text{Baseline}_
 **Files** — stability.py, run_stability.py.
 
 ---
+
+### Stage 9 — Two-Stage Hurdle LGD Modeling
 
 ```
    [Defaulted Loan Subset (50,968 rows)]
@@ -299,11 +325,11 @@ $$\text{PSI} = \sum_{b=1}^{10} \left( \%\,\text{Actual}_b - \%\,\text{Baseline}_
 
 **What happens** — Models Loss Given Default ($LGD$) on defaulted loans using a two-stage hurdle architecture to handle zero-inflated recovery distributions.
 
-**How it's done** — Filters dataset to 50,968 defaulted loans (`ever_default == 1`). Stage 1 trains a Logistic Classifier to estimate recovery occurrence $P(\text{recovery} > 0)$. Stage 2 trains a Gradient Boosting Regressor strictly on positive recoveries ($\text{recovery} > 0$) to estimate recovery rate ($\hat{RR}_{\text{pos}}$). Combined expected $LGD = 1 - [P(\text{recovery} > 0) \cdot \hat{RR}_{\text{pos}}]$. Evaluated on 80/20 train/test split.
+**How it's done** — Filters dataset to 50,968 defaulted loans (`ever_default == 1`). Stage 1 trains a Logistic Classifier to estimate recovery occurrence $P(\text{Recovery} > 0)$. Stage 2 trains a Gradient Boosting Regressor strictly on positive recoveries ($\text{Recovery} > 0$) to estimate recovery rate ($\hat{RR}_{\text{pos}}$). Combined expected $LGD = 1 - [P(\text{Recovery} > 0) \times \hat{RR}_{\text{pos}}]$. Evaluated on 80/20 train/test split.
 
 **Formula**
 
-$$\text{LGD} = 1 - \left( P(\text{recovery} > 0) \times \hat{RR}_{\text{pos}} \right)$$
+$$\text{LGD} = 1 - \left( P(\text{Recovery} > 0) \times \hat{RR}_{\text{pos}} \right)$$
 
 **Key numbers** — 50,968 defaulted loans; Mean LGD = 93.01% (0.930055); Median LGD = 1.0; Mean Recovery Rate = 6.99%; **52.18% point-mass at 100% loss** ($LGD = 1.0$ / zero recovery); 0.35% at $LGD = 0.0$; Stage 1 AUC = 0.6416; overall decile MAE = 0.00245 - 0.00406.
 
@@ -314,6 +340,8 @@ $$\text{LGD} = 1 - \left( P(\text{recovery} > 0) \times \hat{RR}_{\text{pos}} \r
 **Files** — lgd_model.py, run_lgd_training.py, lgd_data.py.
 
 ---
+
+### Stage 10 — Exposure At Default (EAD) & CCF Analytics
 
 ```
    [Loan Balances & Synthetic Revolving Data]
@@ -326,13 +354,13 @@ $$\text{LGD} = 1 - \left( P(\text{recovery} > 0) \times \hat{RR}_{\text{pos}} \r
 
 **What happens** — Computes Exposure At Default ($EAD$) for fixed-term consumer loans and simulates Credit Conversion Factor ($CCF$) estimation for revolving credit lines.
 
-**How it's done** — For fixed-term amortizing loans, $EAD$ is computed directly as outstanding principal at default: $EAD = \max(\text{funded\_amnt} - \text{total\_rec\_prncp}, 0)$. For revolving credit lines, a synthetic 5,000-account revolving portfolio simulates undrawn commitment drawdowns: $CCF = (EAD - \text{Drawn}) / (\text{Limit} - \text{Drawn})$. Fits OLS regression predicting CCF from credit limit and utilization.
+**How it's done** — For fixed-term amortizing loans, $EAD$ is computed directly as outstanding principal at default: $EAD = \max(\text{Funded Amount} - \text{Total Principal Received}, 0)$. For revolving credit lines, a synthetic 5,000-account revolving portfolio simulates undrawn commitment drawdowns: $CCF = (\text{EAD} - \text{Drawn}) / (\text{Limit} - \text{Drawn})$. Fits OLS regression predicting CCF from credit limit and utilization.
 
 **Formula**
 
-$$\text{EAD}_{\text{term}} = \max\!\left( \text{funded\_amnt} - \text{total\_rec\_prncp}, 0 \right)$$
+$$\text{EAD}_{\text{term}} = \max\left( \text{Funded Amount} - \text{Total Principal Received}, 0 \right)$$
 
-$$\text{CCF}_{\text{revolving}} = \frac{\text{EAD} - \text{Drawn}}{\text{Limit} - \text{Drawn}}$$
+$$\text{CCF}_{\text{revolving}} = \frac{\text{EAD} - \text{Drawn Balance}}{\text{Credit Limit} - \text{Drawn Balance}}$$
 
 **Key numbers** — Mean EAD on defaulted loans = $10,781.56; Median EAD = $9,141.37; Mean EAD Ratio = 0.7193; Synthetic Revolving CCF mean = 0.4288 (OLS Intercept = 0.1977, Utilisation Coef = 0.4753).
 
@@ -343,6 +371,8 @@ $$\text{CCF}_{\text{revolving}} = \frac{\text{EAD} - \text{Drawn}}{\text{Limit} 
 **Files** — ead_model.py, ccf_demo.py.
 
 ---
+
+### Stage 11 — Lifetime PD Term Structure
 
 ```
    [Historical Performance Data (Months 1..60)]
@@ -355,13 +385,13 @@ $$\text{CCF}_{\text{revolving}} = \frac{\text{EAD} - \text{Drawn}}{\text{Limit} 
 
 **What happens** — Constructs discrete-time monthly hazard curves across loan tenures (months 1..60) and derives cumulative lifetime PD term structures.
 
-**How it's done** — Calculates monthly marginal hazard rates $h(t) = \text{Defaults}(t) / \text{Active}(t-1)$ across 60 months of loan age. Derives cumulative survival probabilities $S(t) = \prod_{k=1}^{t} (1 - h(k))$ and cumulative lifetime default probabilities $PD_{\text{lifetime}}(t) = 1 - S(t)$. Individual account 12-month PDs scale the portfolio hazard curve via multiplicative ratio $(PD_{12m, i} / PD_{12m, \text{portfolio}})$.
+**How it's done** — Calculates monthly marginal hazard rates $h(t) = d(t) / n(t-1)$ across 60 months of loan age. Derives cumulative survival probabilities $S(t) = \prod_{k=1}^{t} (1 - h(k))$ and cumulative lifetime default probabilities $PD_{\text{lifetime}}(t) = 1 - S(t)$. Individual account 12-month PDs scale the portfolio hazard curve via multiplicative ratio $(PD_{12m, i} / PD_{12m, \text{portfolio}})$.
 
 **Formula**
 
-$$h(t) = \frac{\text{Defaults}_t}{\text{Active}_{t-1}}$$
+$$h(t) = \frac{d(t)}{n(t-1)}$$
 
-$$S(t) = \prod_{k=1}^{t} \left(1 - h(k)\right)$$
+$$S(t) = \prod_{k=1}^{t} \big(1 - h(k)\big)$$
 
 $$PD_{\text{lifetime}}(t) = 1 - S(t)$$
 
@@ -377,6 +407,8 @@ $$h_i(t) = h_{\text{portfolio}}(t) \times \frac{PD_{12m, i}}{PD_{12m, \text{port
 
 ---
 
+### Stage 12 — IFRS 9 Staging & SICR Engine
+
 ```
    [data/processed/oot.parquet + PD Predictions]
                           │
@@ -388,11 +420,11 @@ $$h_i(t) = h_{\text{portfolio}}(t) \times \frac{PD_{12m, i}}{PD_{12m, \text{port
 
 **What happens** — Classifies loan exposures into IFRS 9 Stage 1, Stage 2, or Stage 3 based on quantitative PD deterioration, absolute PD ceilings, and qualitative backstops.
 
-**How it's done** — Compares current predicted 12-month PD against origination PD (approximated by credit grade average). Stage 3 is assigned if loan is defaulted or $\text{days\_past\_due} \ge 90$. Stage 2 is assigned if Significant Increase in Credit Risk (SICR) is triggered: $PD_{\text{ratio}} = PD_{\text{current}} / PD_{\text{origination}} \ge 2.0$, or $PD_{\text{current}} > 0.06$, or $\text{days\_past\_due} \ge 30$. Remaining exposures are assigned Stage 1.
+**How it's done** — Compares current predicted 12-month PD against origination PD (approximated by credit grade average). Stage 3 is assigned if loan is defaulted or Days Past Due (DPD) $\ge 90$. Stage 2 is assigned if Significant Increase in Credit Risk (SICR) is triggered: $PD_{\text{ratio}} = PD_{\text{current}} / PD_{\text{origination}} \ge 2.0$, or $PD_{\text{current}} > 0.06$, or DPD $\ge 30$. Remaining exposures are assigned Stage 1.
 
 **Formula**
 
-$$\text{SICR Trigger} = \left( \frac{PD_{\text{current}}}{PD_{\text{origination}}} \ge 2.0 \right) \;\lor\; \left( PD_{\text{current}} > 0.06 \right) \;\lor\; \left( \text{DPD} \ge 30 \right)$$
+$$\text{SICR Trigger} = \left( \frac{PD_{\text{current}}}{PD_{\text{origination}}} \ge 2.0 \right) \lor \left( PD_{\text{current}} > 0.06 \right) \lor \left( \text{DPD} \ge 30 \right)$$
 
 **Key numbers** — 2014 OOT Portfolio (235,628 loans, $1.827B EAD):
 - Stage 1: 189,633 loans (80.48%), $1,417,203,102.50 EAD, Mean 12m PD = 2.73%.
@@ -406,6 +438,8 @@ $$\text{SICR Trigger} = \left( \frac{PD_{\text{current}}}{PD_{\text{origination}
 **Files** — staging.py, run_staging.py, ifrs9.yaml.
 
 ---
+
+### Stage 13 — Staged Expected Credit Loss (ECL) & US CECL Provisioning
 
 ```
    [Staged Portfolio + LGD Model + Hazard Curves]
@@ -428,7 +462,7 @@ $$\text{ECL}_{\text{Stage 2}} = PD_{\text{lifetime}} \times LGD \times EAD$$
 
 $$\text{ECL}_{\text{Stage 3}} = 1.0 \times LGD \times EAD$$
 
-$$\text{ECL}_{\text{CECL}} = \sum_{i \in \text{All Loans}} PD_{\text{lifetime}, i} \times LGD_i \times EAD_i$$
+$$\text{ECL}_{\text{CECL}} = \sum_{i} PD_{\text{lifetime}, i} \times LGD_i \times EAD_i$$
 
 **Key numbers** —
 - Stage 1 ECL = $30,272,767.11 (2.14% coverage).
@@ -446,6 +480,8 @@ $$\text{ECL}_{\text{CECL}} = \sum_{i \in \text{All Loans}} PD_{\text{lifetime}, 
 **Files** — ecl.py, run_ecl.py, run_macro_scenarios.py, run_expected_loss.py, macro_scenarios.yaml.
 
 ---
+
+### Stage 14 — Basel III Capital & Downturn Stress
 
 ```
    [PD Predictions + LGD Model + Portfolio Balances]
@@ -466,11 +502,11 @@ $$R = 0.03 \times \frac{1 - e^{-50 \cdot PD}}{1 - e^{-50}} + 0.16 \times \left(1
 
 $$b = \left(0.11852 - 0.05478 \times \ln(PD)\right)^2$$
 
-$$K = \left[ LGD \times N\!\left( \frac{G(PD)}{\sqrt{1 - R}} + \sqrt{\frac{R}{1 - R}} \cdot G(0.999) \right) - PD \times LGD \right] \times \frac{1 + (M - 2.5)b}{1 - 1.5b}$$
+$$K = \left[ LGD \times N\left( \frac{G(PD)}{\sqrt{1 - R}} + \sqrt{\frac{R}{1 - R}} \times G(0.999) \right) - PD \times LGD \right] \times \frac{1 + (M - 2.5)b}{1 - 1.5b}$$
 
 $$RWA = K \times 12.5 \times EAD$$
 
-$$\text{Capital}_{\text{Total}} = 0.08 \times RWA$$
+$$\text{Capital} = 0.08 \times RWA$$
 
 **Key numbers** —
 - Total IRB RWA = **$2,294,667,104.99** ($2.295B).
@@ -490,6 +526,8 @@ $$\text{Capital}_{\text{Total}} = 0.08 \times RWA$$
 
 ---
 
+### Stage 15 — Vintage Analytics & Delinquency Roll-Rate Proxy
+
 ```
    [Full Historical Portfolio (466,285 loans)]
                         │
@@ -503,6 +541,10 @@ $$\text{Capital}_{\text{Total}} = 0.08 \times RWA$$
 
 **How it's done** — Groups historical loans by origination vintage year (2007–2014) and tracks cumulative default rates across elapsed MOB (months 1..60). Constructs a cross-sectional delinquency proxy grouping current status into DPD buckets (Current, 31-60 DPD, 61-90 DPD, 90+ DPD, Default). Builds an origination grade-to-resolution transition matrix tracking how loans rated A through G resolve into Fully Paid vs Defaulted outcomes.
 
+**Formula**
+
+$$\text{Transition Rate}_{i \to j} = \frac{N_{i \to j}}{N_i}$$
+
 **Key numbers** — Vintage MOB default curves show 2007–2008 vintages peaking at higher cumulative default rates (~16%) than 2011–2013 vintages (~8–10%). Grade transition matrix shows Grade A loans achieving ~92% Fully Paid vs Grade G loans achieving ~50% Fully Paid.
 
 **Why this choice** — Vintage curves and transition matrices monitor credit deterioration trends across origination cohorts over time.
@@ -512,6 +554,8 @@ $$\text{Capital}_{\text{Total}} = 0.08 \times RWA$$
 **Files** — vintage.py, roll_rates.py, transitions.py, run_monitoring.py, run_transitions.py.
 
 ---
+
+### Stage 16 — Interactive Dashboard & AI Analyst RAG Indexing
 
 ```
    [outputs/tables/*.csv + Documentation Markdown]
@@ -525,6 +569,10 @@ $$\text{Capital}_{\text{Total}} = 0.08 \times RWA$$
 **What happens** — Compiles all project metrics into a structured JSON file, renders a self-contained interactive HTML executive risk dashboard, and builds vector index embeddings for offline LLM querying.
 
 **How it's done** — `dashboard_data.py` aggregates outputs from `outputs/tables/` into `outputs/reports/dashboard_data.json`. `build_dashboard.py` reads JSON metrics and injects them into an HTML template with inline CSS and JavaScript, outputting `outputs/reports/risk_dashboard.html`. `rag_index.py` chunks documentation and tables, computes vector embeddings using `sentence-transformers` (`all-MiniLM-L6-v2`), and saves embeddings to `outputs/models/rag_index/`. `analyst.py` queries Gemini via Google Generative AI API using retrieved vector context.
+
+**Formula**
+
+$$\text{Similarity}(q, d) = \frac{q \cdot d}{\|q\| \|d\|}$$
 
 **Key numbers** — Generates a 25 KB `dashboard_data.json` and a single standalone HTML dashboard file (`risk_dashboard.html`) containing interactive tables and charts.
 
