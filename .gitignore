@@ -14,7 +14,7 @@ __pycache__/
 GEMINI_API_KEY
 
 # ── Raw & processed data (never commit source data) ───────────────
-data/
+/data/
 datasets/
 
 # ── Knowledge base PDFs (large; re-downloadable) ──────────────────
@@ -54,3 +54,4 @@ venv/
 .ipynb_checkpoints/
 *.egg-info/
 .env
+AGENT_BRIEF_*.md

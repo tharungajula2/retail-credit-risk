@@ -158,19 +158,19 @@ Col #  Column Name                    Sample Dtype    Missing Count   Missing % 
 --- Date Column: issue_d ---
   Min Date       : Jun-2007
   Max Date       : Dec-2014
-  First 5 Distinct: ['Sep-12', 'Aug-14', 'Aug-10', 'Jul-10', 'Oct-08']
+  First 5 Distinct: ['Sep-13', 'May-11', 'Jul-09', 'Jul-12', 'Jan-14']
 
 --- Date Column: last_pymnt_d ---
   Min Date       : Dec-2007
   Max Date       : Jan-2016
-  First 5 Distinct: ['Sep-12', 'Aug-14', 'Aug-10', 'Jul-10', 'May-15']
+  First 5 Distinct: ['Sep-13', 'May-11', 'Jul-09', 'Jul-12', 'Jan-14']
 
 --- Date Column: earliest_cr_line ---
   Min Date       : Jan-1969
   Max Date       : Dec-2068
-  First 5 Distinct: ['Jan-81', 'Sep-92', 'Sep-06', 'Mar-01', 'Aug-64']
+  First 5 Distinct: ['Nov-91', 'Sep-56', 'Oct-84', 'Sep-02', 'Jun-99']
 
 --- Date Column: last_credit_pull_d ---
   Min Date       : May-2007
   Max Date       : Jan-2016
-  First 5 Distinct: ['Sep-12', 'Aug-14', 'Aug-10', 'Jul-10', 'May-15']
+  First 5 Distinct: ['Sep-13', 'May-11', 'Jul-09', 'Jul-12', 'Jan-14']
