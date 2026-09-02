@@ -158,8 +158,8 @@ This repository contains a python-based retail credit risk modeling system desig
     └── Outputs: vintage_curves.csv, roll_rate_proxy.csv, transition_matrix.csv
                            │
                            ▼
-14. Dashboard & RAG Index (src/creditrisk/reporting/build_dashboard.py, src/creditrisk/ai/run_analyst.py)
-    └── Outputs: risk_dashboard.html, dashboard_data.json, rag_index/embeddings.npy
+14. Unified Master Application (src/creditrisk/reporting/build_panels.py)
+    └── Outputs: docs/index.html, index.html (Consolidated Executive Panels, Pipeline DAG, & Data Governance)
 ```
 
 ---
@@ -460,7 +460,7 @@ This repository contains a python-based retail credit risk modeling system desig
 | Vintage Analytics & MOB Curves | RUNS END TO END | `outputs/tables/vintage_curves.csv`, `outputs/tables/vintage_maturity_comparison.csv` |
 | Delinquency Roll-Rate Proxy | RUNS END TO END (Cross-Sectional Proxy) | `outputs/tables/roll_rate_proxy.csv`, [roll_rates.py](file:///d:/0000_after%20portfolio_25726/2_retail-credit-risk/retail-credit-risk/src/creditrisk/monitoring/roll_rates.py#L22) |
 | Outcome Transition Matrix | RUNS END TO END (Origination-to-Outcome) | `outputs/tables/transition_matrix.csv`, [transitions.py](file:///d:/0000_after%20portfolio_25726/2_retail-credit-risk/retail-credit-risk/src/creditrisk/monitoring/transitions.py#L28) |
-| Interactive HTML Risk Dashboard | RUNS END TO END | `outputs/reports/risk_dashboard.html`, `outputs/reports/dashboard_data.json` |
+| Interactive HTML Risk Dashboard | RUNS END TO END | `docs/index.html`, `index.html` (Unified Single-Page Master Suite) |
 | RAG Vector Search & Risk Analyst | RUNS WITH MANUAL STEPS | Requires `GEMINI_API_KEY` for live LLM inference; index present at `outputs/models/rag_index/` |
 
 ---

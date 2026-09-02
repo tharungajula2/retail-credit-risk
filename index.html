@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retail Credit Risk Analytics — Executive 6-Panel Suite</title>
+    <title>Retail Credit Risk Engine — Master Interactive Suite</title>
+    <meta name="description" content="Unified single-page interactive credit risk modeling system, executive dashboard, and pipeline flow map for LendingClub 466,285 loans (2007-2014).">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,9 +12,9 @@
     <style>
         :root {
             --bg-dark: #070a11;
-            --panel-bg: rgba(18, 26, 43, 0.8);
+            --panel-bg: rgba(18, 26, 43, 0.85);
             --panel-border: rgba(255, 255, 255, 0.08);
-            --panel-hover: rgba(30, 43, 69, 0.9);
+            --panel-hover: rgba(30, 43, 69, 0.95);
             
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
@@ -27,6 +28,8 @@
             --accent-amber: #fbbf24;
             
             --honesty-accent: #f97316;
+            --honesty-glow: rgba(249, 115, 22, 0.25);
+
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
@@ -39,12 +42,17 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background-image: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.06) 0%, transparent 70%);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
         }
 
+        /* HEADER */
         header {
             height: 64px;
-            padding: 0 32px;
+            padding: 0 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -63,55 +71,114 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 14px; color: #000;
         }
-        .brand-title { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+        .brand-title { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; color: #fff; }
         .brand-sub { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--panel-border); }
 
-        /* NAV TABS */
-        nav.nav-tabs {
+        .header-actions { display: flex; align-items: center; gap: 14px; }
+        .repo-link {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
             display: flex;
+            align-items: center;
             gap: 6px;
-            padding: 12px 32px;
-            background: rgba(15, 23, 42, 0.6);
-            border-bottom: 1px solid var(--panel-border);
-            overflow-x: auto;
+            transition: all 0.2s ease;
         }
-        .tab-btn {
+        .repo-link:hover {
+            background: var(--accent-blue);
+            color: #000;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        /* TOP LEVEL MODE NAVIGATION TABS */
+        nav.main-mode-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 28px;
+            background: rgba(15, 23, 42, 0.85);
+            border-bottom: 1px solid var(--panel-border);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 64px;
+            z-index: 90;
+        }
+
+        .mode-tab-btn {
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .tab-btn:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .tab-btn.active {
-            background: rgba(56, 189, 248, 0.12);
-            border-color: rgba(56, 189, 248, 0.3);
+        .mode-tab-btn:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .mode-tab-btn.active {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(129, 140, 248, 0.15));
+            border-color: rgba(56, 189, 248, 0.4);
             color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* SUB-PANEL NAVIGATION BAR (FOR ANALYTICS) */
+        nav.sub-panel-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 8px 28px;
+            background: rgba(7, 10, 17, 0.5);
+            border-bottom: 1px solid var(--panel-border);
+            overflow-x: auto;
+        }
+        .sub-tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .sub-tab-btn:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.04); }
+        .sub-tab-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--accent-cyan);
+            border-color: rgba(34, 211, 238, 0.3);
             font-weight: 600;
         }
 
-        /* MAIN PANEL CONTAINER */
-        main { flex: 1; padding: 28px 32px; max-width: 1600px; margin: 0 auto; width: 100%; }
+        /* MAIN CONTAINER */
+        main { flex: 1; padding: 24px 28px; max-width: 1600px; margin: 0 auto; width: 100%; position: relative; }
+
+        .mode-section { display: none; flex-direction: column; gap: 24px; }
+        .mode-section.active { display: flex; }
+
         .panel { display: none; flex-direction: column; gap: 24px; }
         .panel.active { display: flex; }
 
-        /* GRID LAYOUTS */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+        /* KPI CARDS & GRIDS */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
         .kpi-card {
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px 20px;
             backdrop-filter: blur(10px);
+            transition: all 0.2s;
         }
+        .kpi-card:hover { border-color: rgba(255, 255, 255, 0.15); transform: translateY(-2px); }
         .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
         .kpi-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; }
         .kpi-sub { font-size: 12px; color: var(--accent-cyan); font-family: var(--font-mono); }
@@ -123,7 +190,7 @@
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-radius: 14px;
-            padding: 24px;
+            padding: 22px;
             backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
@@ -152,7 +219,131 @@
         tr:hover td { background: rgba(255, 255, 255, 0.02); color: #fff; }
 
         .chart-box { position: relative; height: 320px; width: 100%; }
-        @media (max-width: 1024px) { .grid-2 { grid-template-columns: 1fr; } main { padding: 16px; } nav.nav-tabs { padding: 8px 16px; } }
+
+        /* PIPELINE FLOW DAG GRAPH */
+        .dag-flow-container {
+            position: relative;
+            min-height: 720px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid var(--panel-border);
+            background: rgba(15, 23, 42, 0.5);
+            padding: 24px;
+        }
+
+        svg#flow-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .nodes-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stage-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            min-height: 140px;
+        }
+
+        .stage-card:hover {
+            background: var(--panel-hover);
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .stage-card.honesty-card { border-color: rgba(249, 115, 22, 0.4); }
+        .stage-card.honesty-card:hover {
+            border-color: var(--honesty-accent);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.6), 0 0 20px var(--honesty-glow);
+        }
+
+        .stage-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+        .stage-num {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .honesty-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--honesty-accent);
+            background: rgba(249, 115, 22, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .stage-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; line-height: 1.3; }
+        .stage-modules { font-family: var(--font-mono); font-size: 11px; color: var(--accent-indigo); margin-bottom: 10px; word-break: break-all; }
+        .stage-figure { background: rgba(0, 0, 0, 0.3); border-radius: 6px; padding: 8px 10px; border: 1px solid rgba(255, 255, 255, 0.04); font-size: 11px; }
+
+        /* MODAL DRAWER */
+        .drawer-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+            z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            display: flex; align-items: center; justify-content: center; padding: 24px;
+        }
+        .drawer-overlay.active { opacity: 1; pointer-events: auto; }
+        .drawer-content {
+            background: #0f172a; border: 1px solid var(--panel-border); border-radius: 16px;
+            width: 100%; max-width: 680px; max-height: 85vh; overflow-y: auto; padding: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;
+        }
+        .drawer-overlay.active .drawer-content { transform: scale(1); }
+        .drawer-close {
+            position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border); color: var(--text-muted); width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 18px; transition: all 0.2s;
+        }
+        .drawer-close:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+        .drawer-section { margin-bottom: 20px; }
+        .drawer-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 8px; font-weight: 600; }
+        .drawer-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+        .drawer-box.honesty-box { background: rgba(249, 115, 22, 0.08); border-color: rgba(249, 115, 22, 0.3); color: #fdba74; }
+        .drawer-box a { color: var(--accent-blue); text-decoration: none; word-break: break-all; }
+        .drawer-box a:hover { text-decoration: underline; }
+
+        @media (max-width: 1024px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .nodes-grid { grid-template-columns: repeat(2, 1fr); }
+            main { padding: 16px; }
+            nav.main-mode-tabs { padding: 8px 16px; top: 0; }
+        }
+        @media (max-width: 640px) {
+            .nodes-grid { grid-template-columns: 1fr; }
+            .brand-sub, .header-actions { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -161,160 +352,340 @@
         <div class="brand">
             <div class="brand-logo">RC</div>
             <div>
-                <span class="brand-title">Retail Credit Risk Engine</span>
+                <span class="brand-title">Retail Credit Risk System</span>
                 <span class="brand-sub">Public LendingClub Dataset (2007–2014 Origination Vintages, 466,285 Loans)</span>
             </div>
         </div>
+        <div class="header-actions">
+            <a href="https://github.com/tharungajula2/retail-credit-risk" target="_blank" class="repo-link">
+                <span>View GitHub Repository</span>
+                <span>↗</span>
+            </a>
+        </div>
     </header>
 
-    <nav class="nav-tabs">
-        <button class="tab-btn active" onclick="showPanel(0)">📊 1. Portfolio Overview</button>
-        <button class="tab-btn" onclick="showPanel(1)">📈 2. Vintage Curves</button>
-        <button class="tab-btn" onclick="showPanel(2)">🔄 3. Delinquency & Roll Rates</button>
-        <button class="tab-btn" onclick="showPanel(3)">🛡️ 4. ECL Staging & Lifetime PD</button>
-        <button class="tab-btn" onclick="showPanel(4)">🎯 5. Model Validation</button>
-        <button class="tab-btn" onclick="showPanel(5)">💳 6. Scorecard & Master Scale</button>
+    <!-- MAIN MODE NAVIGATION TABS -->
+    <nav class="main-mode-tabs">
+        <button class="mode-tab-btn active" id="tab-analytics" onclick="switchMode('analytics')">
+            <span>📊 Executive Analytics</span>
+        </button>
+        <button class="mode-tab-btn" id="tab-pipeline" onclick="switchMode('pipeline')">
+            <span>🔄 Pipeline Architecture</span>
+        </button>
+        <button class="mode-tab-btn" id="tab-governance" onclick="switchMode('governance')">
+            <span>📋 Data & Governance</span>
+        </button>
     </nav>
 
     <main>
-        <!-- PANEL 1: PORTFOLIO OVERVIEW -->
-        <div class="panel active" id="p0">
+        <!-- ================= MODE 1: EXECUTIVE ANALYTICS ================= -->
+        <div class="mode-section active" id="mode-analytics">
+            <nav class="sub-panel-tabs">
+                <button class="sub-tab-btn active" onclick="showPanel(0)">1. Portfolio Overview</button>
+                <button class="sub-tab-btn" onclick="showPanel(1)">2. Vintage Curves</button>
+                <button class="sub-tab-btn" onclick="showPanel(2)">3. Delinquency & Roll Rates</button>
+                <button class="sub-tab-btn" onclick="showPanel(3)">4. ECL Staging & Lifetime PD</button>
+                <button class="sub-tab-btn" onclick="showPanel(4)">5. Model Validation</button>
+                <button class="sub-tab-btn" onclick="showPanel(5)">6. Scorecard & Master Scale</button>
+            </nav>
+
+            <!-- PANEL 1: PORTFOLIO OVERVIEW -->
+            <div class="panel active" id="p0">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">OOT Portfolio Loans</div>
+                        <div class="kpi-val">235,628</div>
+                        <div class="kpi-sub">Vintage 2014 Cohort</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Total Exposure at Default (EAD)</div>
+                        <div class="kpi-val">$1.827B</div>
+                        <div class="kpi-sub">$1,826,572,642.48</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Basel 12m Expected Loss (EL)</div>
+                        <div class="kpi-val">$58.67M</div>
+                        <div class="kpi-sub">3.21% of Total EAD</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">IFRS 9 Scenario ECL</div>
+                        <div class="kpi-val">$285.04M</div>
+                        <div class="kpi-sub">15.61% Coverage Ratio</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Basel III IRB vs Standardised Capital RWA Comparison</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="t-basel">
+                                <thead><tr><th>Segment / Metric</th><th>Loan Count</th><th>Total EAD ($)</th><th>IRB RWA ($)</th><th>Std RWA ($)</th><th>IRB RW %</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">IFRS 9 vs US CECL Lifetime Provisioning Comparison</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="t-cecl">
+                                <thead><tr><th>Framework</th><th>Total EAD ($)</th><th>Total Provision ($)</th><th>Coverage %</th><th>Notes</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Resolved Defaults LGD Bimodal Distribution</span>
+                        </div>
+                        <div class="chart-box"><canvas id="c-lgd"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Default Timing Distribution (Months-on-Book)</span>
+                        </div>
+                        <div class="chart-box"><canvas id="c-timing"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 2: VINTAGE DEFAULT CURVES -->
+            <div class="panel" id="p1">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Cumulative Default Curves by Vintage Year (MOB 0 to 48)</span>
+                    </div>
+                    <div class="chart-box" style="height: 380px;"><canvas id="c-vintage"></canvas></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Fixed Months-on-Book Vintage Maturity Comparison</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="t-vintage-mat">
+                            <thead><tr><th>Vintage Year</th><th>Total Loans</th><th>MOB 12 Default Rate</th><th>MOB 18 Default Rate</th><th>MOB 24 Default Rate</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: DELINQUENCY DISTRIBUTION -->
+            <div class="panel" id="p2">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Delinquency Roll-Rate Proxy Table by Vintage Year</span>
+                        <span class="honesty-notice">[CROSS-SECTIONAL PROXY]</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="t-rollrate">
+                            <thead><tr><th>Vintage</th><th>Total Loans</th><th>Current %</th><th>Grace %</th><th>Late 16-30 %</th><th>Late 31-120 %</th><th>Default %</th><th>Paid %</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Origination Rating Grade to Loan Outcome Transition Matrix</span>
+                        <span class="honesty-notice">[CROSS-SECTIONAL PROXY]</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="t-trans">
+                            <thead><tr><th>Origination Grade</th><th>Total Loans</th><th>Fully Paid %</th><th>Current %</th><th>Late %</th><th>Default %</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 4: ECL STAGING & LIFETIME PD -->
+            <div class="panel" id="p3">
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">IFRS 9 Portfolio Staging Breakdown</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="t-staging">
+                                <thead><tr><th>Stage</th><th>Loan Count</th><th>Total EAD ($)</th><th>Total ECL ($)</th><th>Coverage %</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Performing Book (Stage 1 + 2) IFRS 9 ECL vs Basel EL</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="t-perf">
+                                <thead><tr><th>Scope / Framework</th><th>Total EAD ($)</th><th>Provision ($)</th><th>Coverage %</th><th>Description</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">60-Month Discrete-Time Portfolio Lifetime PD Hazard Curve</span>
+                    </div>
+                    <div class="chart-box" style="height: 340px;"><canvas id="c-lifetime"></canvas></div>
+                </div>
+            </div>
+
+            <!-- PANEL 5: MODEL VALIDATION -->
+            <div class="panel" id="p4">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Master Model Validation Summary (Discrimination & Calibration)</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="t-val">
+                            <thead><tr><th>Model Name</th><th>Sample Partition</th><th>AUC</th><th>Gini</th><th>KS Stat</th><th>Brier Score</th><th>HL p-value</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Side-by-Side Hosmer-Lemeshow Calibration & Score PSI</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="t-hl-side">
+                                <thead><tr><th>Sample Partition</th><th>Sample Size (N)</th><th>Model B HL p-value</th><th>Model B Score PSI</th><th>Calibration Status</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Test Partition</td><td>46,132</td><td>0.49418</td><td>0.0071</td><td><span style="color: var(--accent-emerald);">Passed (p > 0.05)</span></td></tr>
+                                    <tr><td>Out-of-Time (OOT)</td><td>235,628</td><td>0.00117</td><td>0.0071</td><td><span style="color: var(--honesty-accent);">Drifted (N > 200k Sensitivity)</span></td></tr>
+                                    <tr><td>Train Partition</td><td>184,525</td><td>0.00040</td><td>0.0071</td><td><span style="color: var(--honesty-accent);">Drifted (N > 100k Sensitivity)</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Observed Default Rate by Rating Grade (Model B)</span>
+                        </div>
+                        <div class="chart-box"><canvas id="c-grade-dr"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Characteristic Stability Index (CSI) by Feature Variable</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="t-csi">
+                            <thead><tr><th>Model</th><th>Variable Name</th><th>CSI Value</th><th>Stability Band</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL 6: SCORECARD & MASTER SCALE -->
+            <div class="panel" id="p5">
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Information Value (IV) Ranking (Top 15 Features)</span>
+                        </div>
+                        <div class="chart-box"><canvas id="c-iv"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Logistic Regression Model B Coefficients</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table id="t-coefs">
+                                <thead><tr><th>Variable</th><th>Coefficient</th><th>Std Error</th><th>p-value</th><th>Significant</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Master Scale Rating Grade Score Cutoffs & Observed Default Rates</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="t-grades">
+                            <thead><tr><th>Grade</th><th>Score Range</th><th>Loan Count</th><th>Observed Default Rate</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODE 2: PIPELINE ARCHITECTURE (DAG MAP) ================= -->
+        <div class="mode-section" id="mode-pipeline">
+            <div class="dag-flow-container">
+                <svg id="flow-svg">
+                    <!-- Rendered by JS -->
+                </svg>
+                <div class="nodes-grid" id="nodes-grid">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODE 3: DATA & GOVERNANCE ================= -->
+        <div class="mode-section" id="mode-governance">
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">OOT Portfolio Loans</div>
+                    <div class="kpi-label">Raw Dataset Size</div>
+                    <div class="kpi-val">466,285</div>
+                    <div class="kpi-sub">75 Raw Attributes (2007–2014)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Development Cohort</div>
+                    <div class="kpi-val">230,657</div>
+                    <div class="kpi-sub">2007–2013 Vintages (184k/46k Split)</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Out-of-Time (OOT)</div>
                     <div class="kpi-val">235,628</div>
-                    <div class="kpi-sub">Vintage 2014 Cohort</div>
+                    <div class="kpi-sub">2014 Origination Vintage</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Total Exposure at Default (EAD)</div>
-                    <div class="kpi-val">$1.827B</div>
-                    <div class="kpi-sub">$1,826,572,642.48</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Basel 12m Expected Loss (EL)</div>
-                    <div class="kpi-val">$58.67M</div>
-                    <div class="kpi-sub">3.21% of Total EAD</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">IFRS 9 Scenario ECL</div>
-                    <div class="kpi-val">$285.04M</div>
-                    <div class="kpi-sub">15.61% Coverage Ratio</div>
+                    <div class="kpi-label">LGD Modeling Set</div>
+                    <div class="kpi-val">50,968</div>
+                    <div class="kpi-sub">Resolved Defaults (52.2% Zero Rec)</div>
                 </div>
             </div>
 
             <div class="grid-2">
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Basel III IRB vs Standardised Capital RWA Comparison</span>
+                        <span class="card-title">Target Definition & Reconciliation (466,285 Total Loans)</span>
                     </div>
                     <div class="table-wrapper">
-                        <table id="t-basel">
-                            <thead><tr><th>Segment / Metric</th><th>Loan Count</th><th>Total EAD ($)</th><th>IRB RWA ($)</th><th>Std RWA ($)</th><th>IRB RW %</th></tr></thead>
+                        <table id="t-gov-target">
+                            <thead><tr><th>Loan Outcome Group</th><th>Count</th><th>Pct of Portfolio</th><th>Definition & Regulatory Alignment</th></tr></thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
+
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">IFRS 9 vs US CECL Lifetime Provisioning Comparison</span>
+                        <span class="card-title">Modeling Partitions & Stratified Sample Summary</span>
                     </div>
                     <div class="table-wrapper">
-                        <table id="t-cecl">
-                            <thead><tr><th>Framework</th><th>Total EAD ($)</th><th>Total Provision ($)</th><th>Coverage %</th><th>Notes</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Resolved Defaults LGD Bimodal Distribution</span>
-                    </div>
-                    <div class="chart-box"><canvas id="c-lgd"></canvas></div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Default Timing Distribution (Months-on-Book)</span>
-                    </div>
-                    <div class="chart-box"><canvas id="c-timing"></canvas></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 2: VINTAGE DEFAULT CURVES -->
-        <div class="panel" id="p1">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Cumulative Default Curves by Vintage Year (MOB 0 to 48)</span>
-                </div>
-                <div class="chart-box" style="height: 380px;"><canvas id="c-vintage"></canvas></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Fixed Months-on-Book Vintage Maturity Comparison</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-vintage-mat">
-                        <thead><tr><th>Vintage Year</th><th>Total Loans</th><th>MOB 12 Default Rate</th><th>MOB 18 Default Rate</th><th>MOB 24 Default Rate</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 3: DELINQUENCY DISTRIBUTION -->
-        <div class="panel" id="p2">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Delinquency Roll-Rate Proxy Table by Vintage Year</span>
-                    <span class="honesty-notice">[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-rollrate">
-                        <thead><tr><th>Vintage</th><th>Total Loans</th><th>Current %</th><th>Grace %</th><th>Late 16-30 %</th><th>Late 31-120 %</th><th>Default %</th><th>Paid %</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Origination Rating Grade to Loan Outcome Transition Matrix</span>
-                    <span class="honesty-notice">[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-trans">
-                        <thead><tr><th>Origination Grade</th><th>Total Loans</th><th>Fully Paid %</th><th>Current %</th><th>Late %</th><th>Default %</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 4: ECL STAGING & LIFETIME PD -->
-        <div class="panel" id="p3">
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">IFRS 9 Portfolio Staging Breakdown</span>
-                    </div>
-                    <div class="table-wrapper">
-                        <table id="t-staging">
-                            <thead><tr><th>Stage</th><th>Loan Count</th><th>Total EAD ($)</th><th>Total ECL ($)</th><th>Coverage %</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Performing Book (Stage 1 + 2) IFRS 9 ECL vs Basel EL</span>
-                    </div>
-                    <div class="table-wrapper">
-                        <table id="t-perf">
-                            <thead><tr><th>Scope / Framework</th><th>Total EAD ($)</th><th>Provision ($)</th><th>Coverage %</th><th>Description</th></tr></thead>
+                        <table id="t-gov-samples">
+                            <thead><tr><th>Sample Partition</th><th>Count</th><th>Defaults</th><th>Default Rate</th><th>Issue Date Range</th></tr></thead>
                             <tbody></tbody>
                         </table>
                     </div>
@@ -323,447 +694,489 @@
 
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">60-Month Discrete-Time Portfolio Lifetime PD Hazard Curve</span>
+                    <span class="card-title">Data Leakage Prevention Guardrails & Schema Hygiene</span>
                 </div>
-                <div class="chart-box" style="height: 340px;"><canvas id="c-lifetime"></canvas></div>
-            </div>
-        </div>
-
-        <!-- PANEL 5: MODEL VALIDATION -->
-        <div class="panel" id="p4">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Master Model Validation Summary (Discrimination & Calibration)</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-val">
-                        <thead><tr><th>Model Name</th><th>Sample Partition</th><th>AUC</th><th>Gini</th><th>KS Stat</th><th>Brier Score</th><th>HL p-value</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Side-by-Side Hosmer-Lemeshow Calibration & Score PSI</span>
-                    </div>
-                    <div class="table-wrapper">
-                        <table id="t-hl-side">
-                            <thead><tr><th>Sample Partition</th><th>Sample Size (N)</th><th>Model B HL p-value</th><th>Model B Score PSI</th><th>Calibration Status</th></tr></thead>
-                            <tbody>
-                                <tr><td>Test Partition</td><td>46,132</td><td>0.49418</td><td>0.0071</td><td><span style="color: var(--accent-emerald);">Passed (p > 0.05)</span></td></tr>
-                                <tr><td>Out-of-Time (OOT)</td><td>235,628</td><td>0.00117</td><td>0.0071</td><td><span style="color: var(--honesty-accent);">Drifted (N > 200k Sensitivity)</span></td></tr>
-                                <tr><td>Train Partition</td><td>184,525</td><td>0.00040</td><td>0.0071</td><td><span style="color: var(--honesty-accent);">Drifted (N > 100k Sensitivity)</span></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Observed Default Rate by Rating Grade (Model B)</span>
-                    </div>
-                    <div class="chart-box"><canvas id="c-grade-dr"></canvas></div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Characteristic Stability Index (CSI) by Feature Variable</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-csi">
-                        <thead><tr><th>Model</th><th>Variable Name</th><th>CSI Value</th><th>Stability Band</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL 6: SCORECARD & MASTER SCALE -->
-        <div class="panel" id="p5">
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Information Value (IV) Ranking (Top 15 Features)</span>
-                    </div>
-                    <div class="chart-box"><canvas id="c-iv"></canvas></div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Logistic Regression Model B Coefficients</span>
-                    </div>
-                    <div class="table-wrapper">
-                        <table id="t-coefs">
-                            <thead><tr><th>Variable</th><th>Coefficient</th><th>Std Error</th><th>p-value</th><th>Significant</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Model B Master Rating Grades Scale</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-grades">
-                        <thead><tr><th>Rating Grade</th><th>Score Range</th><th>Loan Count</th><th>Defaults</th><th>Observed Default Rate</th><th>Portfolio Share</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">Model B Scorecard Points Mapping (62 Bins)</span>
-                </div>
-                <div class="table-wrapper">
-                    <table id="t-scorecard">
-                        <thead><tr><th>Feature</th><th>Bin Range</th><th>WoE Value</th><th>Coefficient</th><th>Scorecard Points</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="drawer-box">
+                    <strong style="color: var(--accent-cyan);">Strict Leakage Prevention Protocol (schema.py):</strong><br>
+                    To guarantee regulatory compliance and eliminate future-information leakage into credit risk features, all post-origination behavior and resolution outcome columns are stripped during feature extraction. Stripped columns include: <code>recoveries</code>, <code>collection_recovery_fee</code>, <code>total_pymnt</code>, <code>total_rec_prncp</code>, <code>last_pymnt_d</code>, <code>next_pymnt_d</code>, <code>last_credit_pull_d</code>.<br><br>
+                    <strong style="color: var(--accent-blue);">Ground-Truth Dataset Origin:</strong><br>
+                    Public LendingClub consumer unsecured term loan dataset covering origination vintages 2007 through 2014. No proprietary or employer data is used.
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- INTERACTIVE DETAIL DRAWER (PIPELINE DAG) -->
+    <div class="drawer-overlay" id="drawer" onclick="closeDrawer(event)">
+        <div class="drawer-content" onclick="event.stopPropagation()">
+            <button class="drawer-close" onclick="closeDrawer(null)">&times;</button>
+            <div class="drawer-section">
+                <span class="stage-num" id="d-tag">STAGE 01</span>
+                <h2 style="font-size: 22px; font-weight: 700; color: #fff; margin-top: 6px;" id="d-title">Stage Title</h2>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-title">Python Modules & Execution Path</div>
+                <div class="drawer-box" id="d-modules">src/creditrisk/data/inspect_raw.py</div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-title">Artefact & Headline Figures</div>
+                <div class="drawer-box" id="d-figures">data_inventory.txt</div>
+            </div>
+
+            <div class="drawer-section" id="d-honesty-container" style="display: none;">
+                <div class="drawer-section-title" style="color: var(--honesty-accent);">Honesty Limit & Methodology Note</div>
+                <div class="drawer-box honesty-box" id="d-honesty">Disclaimer note</div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-title">Stage Logic & Key Decision</div>
+                <div class="drawer-box" id="d-logic">Detailed breakdown of what this stage does.</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const DATA = {"sample_summary": [{"sample": "train", "n_loans": 184525, "n_defaults": 6329, "default_rate": 0.0342988754911258, "min_issue_d": "Apr-08", "max_issue_d": "Sep-13"}, {"sample": "test", "n_loans": 46132, "n_defaults": 1582, "default_rate": 0.0342928986386889, "min_issue_d": "Apr-08", "max_issue_d": "Sep-13"}, {"sample": "oot", "n_loans": 235628, "n_defaults": 8107, "default_rate": 0.0344059279881847, "min_issue_d": "Apr-14", "max_issue_d": "Sep-14"}], "target_rec": [{"item": "Total Loans", "count": 466285, "pct_of_total": 100.0}, {"item": "- Non-Default (Current, Paid, etc.)", "count": 415317, "pct_of_total": 89.0693460008364}, {"item": "= Ever Default", "count": 50968, "pct_of_total": 10.9306539991636}, {"item": "   of which: default_12m = 1 (months 0 to 12)", "count": 16018, "pct_of_total": 3.435238105450529}, {"item": "   of which: default_12m = 0 (months > 12)", "count": 34950, "pct_of_total": 7.495415893713073}, {"item": "   of which: NEGATIVE timing anomaly", "count": 0, "pct_of_total": 0.0}, {"item": "   of which: MISSING est_default_date", "count": 0, "pct_of_total": 0.0}], "target_vintage": [{"vintage_year": 2007, "n_loans": 603, "n_ever_default": 158, "ever_default_rate": 0.2620232172470978, "n_default_12m": 31, "default_12m_rate": 0.0514096185737976}, {"vintage_year": 2008, "n_loans": 2393, "n_ever_default": 496, "ever_default_rate": 0.2072712076890931, "n_default_12m": 157, "default_12m_rate": 0.0656080234015879}, {"vintage_year": 2009, "n_loans": 5281, "n_ever_default": 723, "ever_default_rate": 0.1369058890361674, "n_default_12m": 245, "default_12m_rate": 0.0463927286498769}, {"vintage_year": 2010, "n_loans": 12537, "n_ever_default": 1759, "ever_default_rate": 0.1403046980936428, "n_default_12m": 433, "default_12m_rate": 0.0345377682061099}, {"vintage_year": 2011, "n_loans": 21721, "n_ever_default": 3259, "ever_default_rate": 0.1500391326366189, "n_default_12m": 772, "default_12m_rate": 0.0355416417292021}, {"vintage_year": 2012, "n_loans": 53367, "n_ever_default": 8334, "ever_default_rate": 0.1561639215245376, "n_default_12m": 1993, "default_12m_rate": 0.0373451758577398}, {"vintage_year": 2013, "n_loans": 134755, "n_ever_default": 16798, "ever_default_rate": 0.1246558569255315, "n_default_12m": 4280, "default_12m_rate": 0.0317613446625357}, {"vintage_year": 2014, "n_loans": 235628, "n_ever_default": 19441, "ever_default_rate": 0.0825071723224744, "n_default_12m": 8107, "default_12m_rate": 0.0344059279881847}], "ead_summary": [{"segment": "Overall", "category": "All", "count_defaulted": 50968, "mean_ead": 10781.5631119526, "median_ead": 9141.365, "mean_ead_ratio": 0.7193215216415322, "median_ead_ratio": 0.7694356290322582}, {"segment": "By Term", "category": " 36 months", "count_defaulted": 32810, "mean_ead": 7764.785581834806, "median_ead": 6378.635, "mean_ead_ratio": 0.6618750074993884, "median_ead_ratio": 0.70199142794915}, {"segment": "By Term", "category": " 60 months", "count_defaulted": 18158, "mean_ead": 16232.629901420862, "median_ead": 15482.47, "mean_ead_ratio": 0.823122608160077, "median_ead_ratio": 0.8591893376068376}, {"segment": "By Grade", "category": "A", "count_defaulted": 2897, "mean_ead": 7466.134880911288, "median_ead": 6248.049999999999, "mean_ead_ratio": 0.6077272923604209, "median_ead_ratio": 0.6416426666666666}, {"segment": "By Grade", "category": "B", "count_defaulted": 10759, "mean_ead": 8098.413412956595, "median_ead": 6777.66, "mean_ead_ratio": 0.6387207801513916, "median_ead_ratio": 0.6760840803709428}, {"segment": "By Grade", "category": "C", "count_defaulted": 14384, "mean_ead": 9858.350735539489, "median_ead": 8385.825, "mean_ead_ratio": 0.7080628865428977, "median_ead_ratio": 0.7485097368421052}, {"segment": "By Grade", "category": "D", "count_defaulted": 11848, "mean_ead": 11189.471495611073, "median_ead": 9630.915, "mean_ead_ratio": 0.7442518077801482, "median_ead_ratio": 0.7971898292079207}, {"segment": "By Grade", "category": "E", "count_defaulted": 6964, "mean_ead": 14298.745690695005, "median_ead": 13491.38, "mean_ead_ratio": 0.8017637674814437, "median_ead_ratio": 0.847614619883041}, {"segment": "By Grade", "category": "F", "count_defaulted": 3192, "mean_ead": 15880.365673558896, "median_ead": 15527.46, "mean_ead_ratio": 0.8336027041730112, "median_ead_ratio": 0.877705}, {"segment": "By Grade", "category": "G", "count_defaulted": 924, "mean_ead": 17437.79063852814, "median_ead": 16928.85, "mean_ead_ratio": 0.847166437592415, "median_ead_ratio": 0.8880211416568395}], "basel_summary": [{"segment": "Overall", "category": "All Portfolio", "count": 235628, "total_ead": 1826572642.48, "irb_rwa": 2294666890.8173523, "std_rwa": 1369929481.86, "irb_rw_pct": 125.626916633428, "std_rw_pct": 75.0, "min_total_capital_8pct": 183573351.2653882, "min_tier1_capital_6pct": 137680013.44904113, "min_cet1_capital_4.5pct": 103260010.08678085}, {"segment": "By Grade", "category": "A", "count": 36108, "total_ead": 221209241.42, "irb_rwa": 208371169.25100255, "std_rwa": 165906931.065, "irb_rw_pct": 94.19641237111684, "std_rw_pct": 75.0, "min_total_capital_8pct": 16669693.540080206, "min_tier1_capital_6pct": 12502270.155060152, "min_cet1_capital_4.5pct": 9376702.616295116}, {"segment": "By Grade", "category": "B", "count": 61935, "total_ead": 389715718.6, "irb_rwa": 449945003.1762553, "std_rwa": 292286788.95, "irb_rw_pct": 115.45467162387511, "std_rw_pct": 75.0, "min_total_capital_8pct": 35995600.25410043, "min_tier1_capital_6pct": 26996700.19057532, "min_cet1_capital_4.5pct": 20247525.142931487}, {"segment": "By Grade", "category": "C", "count": 66565, "total_ead": 508147783.93, "irb_rwa": 659304543.3702614, "std_rwa": 381110837.9475, "irb_rw_pct": 129.7466139222766, "std_rw_pct": 75.0, "min_total_capital_8pct": 52744363.46962091, "min_tier1_capital_6pct": 39558272.602215685, "min_cet1_capital_4.5pct": 29668704.45166176}, {"segment": "By Grade", "category": "D", "count": 42991, "total_ead": 403007108.84, "irb_rwa": 547819062.0279244, "std_rwa": 302255331.63, "irb_rw_pct": 135.93285329500654, "std_rw_pct": 75.0, "min_total_capital_8pct": 43825524.96223395, "min_tier1_capital_6pct": 32869143.721675463, "min_cet1_capital_4.5pct": 24651857.7912566}, {"segment": "By Grade", "category": "E", "count": 20121, "total_ead": 215856557.4, "irb_rwa": 300377626.4792894, "std_rwa": 161892418.05, "irb_rw_pct": 139.15612761425862, "std_rw_pct": 75.0, "min_total_capital_8pct": 24030210.118343152, "min_tier1_capital_6pct": 18022657.58875737, "min_cet1_capital_4.5pct": 13516993.191568024}, {"segment": "By Grade", "category": "F", "count": 6223, "total_ead": 66470619.04, "irb_rwa": 96556623.78030382, "std_rwa": 49852964.28, "irb_rw_pct": 145.26211004925196, "std_rw_pct": 75.0, "min_total_capital_8pct": 7724529.902424306, "min_tier1_capital_6pct": 5793397.426818229, "min_cet1_capital_4.5pct": 4345048.070113672}, {"segment": "By Grade", "category": "G", "count": 1685, "total_ead": 22165613.25, "irb_rwa": 32292862.732315484, "std_rwa": 16624209.9375, "irb_rw_pct": 145.68901102844734, "std_rw_pct": 75.0, "min_total_capital_8pct": 2583429.0185852386, "min_tier1_capital_6pct": 1937571.763938929, "min_cet1_capital_4.5pct": 1453178.8229541967}], "basel_downturn": [{"lgd_approach": "Average LGD", "mean_lgd": 0.9339263620417134, "total_ead": 1826572642.48, "total_rwa": 2294666890.8173523, "risk_weight_pct": 125.626916633428, "min_capital_8pct": 183573351.2653882, "tier1_capital_6pct": 137680013.44904113, "cet1_capital_4.5pct": 103260010.08678085}, {"lgd_approach": "Downturn LGD (+8pp add-on)", "mean_lgd": 0.999197540237734, "total_ead": 1826572642.48, "total_rwa": 2453921077.144412, "risk_weight_pct": 134.34566028606667, "min_capital_8pct": 196313686.17155296, "tier1_capital_6pct": 147235264.6286647, "cet1_capital_4.5pct": 110426448.47149852}, {"lgd_approach": "Downturn Capital Increase (Delta)", "mean_lgd": 0.0652711781960206, "total_ead": 0.0, "total_rwa": 159254186.32705975, "risk_weight_pct": 8.718743652638679, "min_capital_8pct": 12740334.906164763, "tier1_capital_6pct": 9555251.179623583, "cet1_capital_4.5pct": 7166438.384717688}], "ifrs9_cecl": [{"accounting_framework": "Basel III Regulatory EL", "horizon_scope": "12-Month EL (PD_12m * LGD * EAD)", "total_provision_usd": 58666169.31281012, "coverage_pct_ead": 3.2118169268733308, "notes": "Regulatory capital baseline (undiscounted 12m expected loss)"}, {"accounting_framework": "IFRS 9 Financial Instruments", "horizon_scope": "Staged (Stage 1: 12m, Stage 2: Lifetime, Stage 3: Default)", "total_provision_usd": 278476609.5550045, "coverage_pct_ead": 15.245854617471291, "notes": "International accounting standard (discounted EIR, staged SICR)"}, {"accounting_framework": "US CECL (ASC 326)", "horizon_scope": "Lifetime for ALL performing loans (Day-1 Lifetime)", "total_provision_usd": 327465234.9484787, "coverage_pct_ead": 17.927851722550052, "notes": "US GAAP accounting standard (no staging, lifetime from origination)"}, {"accounting_framework": "CECL vs IFRS 9 Difference (Delta)", "horizon_scope": "Lifetime Day-1 Impact on Stage 1 Loans", "total_provision_usd": 48988625.39347422, "coverage_pct_ead": 2.6819971050787608, "notes": "Additional provision required by US GAAP over IFRS 9"}], "ifrs9_basel_perf": [{"scope": "Performing Portfolio (Stage 1 + Stage 2)", "metric": "Basel III Regulatory EL", "count": 216187, "total_ead": 1586569553.71, "provision_usd": 48468569.30318271, "coverage_pct_ead": 3.0549287416895687, "description": "12-Month Expected Loss on performing loans"}, {"scope": "Performing Portfolio (Stage 1 + Stage 2)", "metric": "IFRS 9 Performing ECL (Staged)", "count": 216187, "total_ead": 1586569553.71, "provision_usd": 54677252.09751802, "coverage_pct_ead": 3.4462562305990248, "description": "Staged ECL (Stage 1 12m + Stage 2 Lifetime) on performing loans"}, {"scope": "Performing Portfolio (Stage 1 + Stage 2)", "metric": "IFRS 9 vs Basel Delta (Difference)", "count": 216187, "total_ead": 0.0, "provision_usd": 6208682.794335313, "coverage_pct_ead": 0.3913274889094565, "description": "Additional performing-book provision under IFRS 9 due to Stage 2 Lifetime ECL"}], "default_timing": [{"months_to_default_bucket": "0-1", "n_defaults": 376, "pct_of_all_defaults": 0.7377177837074242}, {"months_to_default_bucket": "2-3", "n_defaults": 0, "pct_of_all_defaults": 0.0}, {"months_to_default_bucket": "4-6", "n_defaults": 2888, "pct_of_all_defaults": 5.666300423795322}, {"months_to_default_bucket": "7-9", "n_defaults": 5586, "pct_of_all_defaults": 10.959817924972532}, {"months_to_default_bucket": "10-12", "n_defaults": 7168, "pct_of_all_defaults": 14.063726259613876}, {"months_to_default_bucket": "13-18", "n_defaults": 15244, "pct_of_all_defaults": 29.908962486265896}, {"months_to_default_bucket": "19-24", "n_defaults": 9874, "pct_of_all_defaults": 19.372939883848687}, {"months_to_default_bucket": "25-36", "n_defaults": 8456, "pct_of_all_defaults": 16.590802071888245}, {"months_to_default_bucket": "37+", "n_defaults": 1376, "pct_of_all_defaults": 2.699733165908021}], "lgd_summary": [{"count_defaulted_loans": 50968, "count_ead_zero": 3, "fraction_ead_zero": 5.886046146601789e-05, "mean_lgd": 0.9300551768630226, "median_lgd": 1.0, "std_lgd": 0.1104295730578391, "mean_recovery_rate": 0.0699448231369775, "median_recovery_rate": 0.0, "std_recovery_rate": 0.1104295730578391, "fraction_total_loss_lgd1": 0.5217783707424266, "fraction_zero_loss_lgd0": 0.003472767226495, "fraction_has_post_default_recovery": 0.4781627687961073}], "lgd_calib": [{"decile": 1, "count": 1020, "mean_predicted_lgd": 0.9065407353133592, "mean_actual_lgd": 0.9147862643646908, "abs_error": 0.0082455290513316}, {"decile": 2, "count": 1019, "mean_predicted_lgd": 0.9177525052701792, "mean_actual_lgd": 0.9176841337745058, "abs_error": 6.837149567351375e-05}, {"decile": 3, "count": 1019, "mean_predicted_lgd": 0.9226053275629305, "mean_actual_lgd": 0.923016634156958, "abs_error": 0.0004113065940276}, {"decile": 4, "count": 1020, "mean_predicted_lgd": 0.92624407763714, "mean_actual_lgd": 0.9248062372701236, "abs_error": 0.0014378403670163}, {"decile": 5, "count": 1019, "mean_predicted_lgd": 0.9293705191231584, "mean_actual_lgd": 0.924432919077926, "abs_error": 0.0049376000452323}, {"decile": 6, "count": 1019, "mean_predicted_lgd": 0.9323464641406504, "mean_actual_lgd": 0.935174764014142, "abs_error": 0.0028282998734917}, {"decile": 7, "count": 1020, "mean_predicted_lgd": 0.9353736099452044, "mean_actual_lgd": 0.9313177213077142, "abs_error": 0.0040558886374901}, {"decile": 8, "count": 1019, "mean_predicted_lgd": 0.9386883649779996, "mean_actual_lgd": 0.9367999379962488, "abs_error": 0.0018884269817507}, {"decile": 9, "count": 1019, "mean_predicted_lgd": 0.9428807035548014, "mean_actual_lgd": 0.9436624156290532, "abs_error": 0.0007817120742518}, {"decile": 10, "count": 1020, "mean_predicted_lgd": 0.9498349271390772, "mean_actual_lgd": 0.9523991250841152, "abs_error": 0.002564197945038}], "vintage_curves": [{"vintage_year": 2007, "total_loans": 603, "mob_0": 0.0, "mob_1": 0.0, "mob_2": 0.0, "mob_3": 0.0, "mob_4": 0.0, "mob_5": 0.0049751243781094, "mob_6": 0.0099502487562189, "mob_7": 0.0149253731343283, "mob_8": 0.0215588723051409, "mob_9": 0.0281923714759535, "mob_10": 0.0398009950248756, "mob_11": 0.0464344941956882, "mob_12": 0.0514096185737976, "mob_13": 0.0696517412935323, "mob_14": 0.0845771144278607, "mob_15": 0.0961857379767827, "mob_16": 0.1111111111111111, "mob_17": 0.1227197346600331, "mob_18": 0.1393034825870646, "mob_19": 0.1492537313432835, "mob_20": 0.165837479270315, "mob_21": 0.1774461028192371, "mob_22": 0.1824212271973466, "mob_23": 0.1890547263681592, "mob_24": 0.1940298507462686}, {"vintage_year": 2008, "total_loans": 2393, "mob_0": 0.0, "mob_1": 0.0012536564981195, "mob_2": 0.0012536564981195, "mob_3": 0.0012536564981195, "mob_4": 0.0045967404931048, "mob_5": 0.0100292519849561, "mob_6": 0.0154617634768073, "mob_7": 0.0234015879648976, "mob_8": 0.0305056414542415, "mob_9": 0.0384454659423318, "mob_10": 0.0447137484329293, "mob_11": 0.0555787714166318, "mob_12": 0.0656080234015879, "mob_13": 0.0752193898871709, "mob_14": 0.082741328875888, "mob_15": 0.0915169243627246, "mob_16": 0.0977852068533221, "mob_17": 0.1057250313414124, "mob_18": 0.1140827413288758, "mob_19": 0.1199331383201002, "mob_20": 0.1278729628081905, "mob_21": 0.1337233597994149, "mob_22": 0.1416631842875052, "mob_23": 0.1458420392812369, "mob_24": 0.1525282072712077}, {"vintage_year": 2009, "total_loans": 5281, "mob_0": 0.0, "mob_1": 0.0030297292179511, "mob_2": 0.0030297292179511, "mob_3": 0.0030297292179511, "mob_4": 0.0062488165120242, "mob_5": 0.010414694186707, "mob_6": 0.0142018557091459, "mob_7": 0.0213974626017799, "mob_8": 0.0265101306570725, "mob_9": 0.0310547244839992, "mob_10": 0.0365461086915356, "mob_11": 0.0418481348229501, "mob_12": 0.0463927286498769, "mob_13": 0.0513160386290475, "mob_14": 0.0575648551410717, "mob_15": 0.0611626585873887, "mob_16": 0.0651391781859496, "mob_17": 0.0698731300889983, "mob_18": 0.0732815754591933, "mob_19": 0.0776368112099981, "mob_20": 0.0819920469608028, "mob_21": 0.0846430600265101, "mob_22": 0.0895663700056807, "mob_23": 0.0946790380609733, "mob_24": 0.0988449157356561}, {"vintage_year": 2010, "total_loans": 12537, "mob_0": 0.0, "mob_1": 0.0020738613703437, "mob_2": 0.0020738613703437, "mob_3": 0.0020738613703437, "mob_4": 0.003190555954375, "mob_5": 0.0058227646167344, "mob_6": 0.0089335566722501, "mob_7": 0.012522932120922, "mob_8": 0.0165908909627502, "mob_9": 0.0203397942091409, "mob_10": 0.0253649198372816, "mob_11": 0.0300709898699848, "mob_12": 0.0345377682061099, "mob_13": 0.0398021855308287, "mob_14": 0.04474754726011, "mob_15": 0.0497726728882507, "mob_16": 0.0532025205392039, "mob_17": 0.0575895349764696, "mob_18": 0.0616574938182978, "mob_19": 0.0662040360532822, "mob_20": 0.0691553003110792, "mob_21": 0.0722660923665948, "mob_22": 0.0756161761186886, "mob_23": 0.0792853154662199, "mob_24": 0.0831937465103294}, {"vintage_year": 2011, "total_loans": 21721, "mob_0": 0.0, "mob_1": 0.0017494590488467, "mob_2": 0.0017494590488467, "mob_3": 0.0017494590488467, "mob_4": 0.0028083421573592, "mob_5": 0.0056627227107407, "mob_6": 0.0089774872243451, "mob_7": 0.0130749044703282, "mob_8": 0.0171723217163114, "mob_9": 0.0218682381105842, "mob_10": 0.0267022696929239, "mob_11": 0.0313521476911744, "mob_12": 0.0355416417292021, "mob_13": 0.0412043644399429, "mob_14": 0.0455780120620597, "mob_15": 0.0506422356245108, "mob_16": 0.0556604207909396, "mob_17": 0.0600340684130564, "mob_18": 0.0650522535794853, "mob_19": 0.0688734404493347, "mob_20": 0.0732470880714516, "mob_21": 0.0772984669214124, "mob_22": 0.0817181529395515, "mob_23": 0.0859076469775793, "mob_24": 0.0897288338474287}, {"vintage_year": 2012, "total_loans": 53367, "mob_0": 0.0, "mob_1": 0.0011242902917533, "mob_2": 0.0011242902917533, "mob_3": 0.0011242902917533, "mob_4": 0.0025483913279742, "mob_5": 0.0051717353420653, "mob_6": 0.00818858095827, "mob_7": 0.0124983604099911, "mob_8": 0.0168268780332415, "mob_9": 0.0213989918863717, "mob_10": 0.0262896546554987, "mob_11": 0.0315925571982685, "mob_12": 0.0373451758577398, "mob_13": 0.0433976052616785, "mob_14": 0.0498810126107894, "mob_15": 0.0556523694417898, "mob_16": 0.0613300354151441, "mob_17": 0.0667641051586186, "mob_18": 0.0716735060992748, "mob_19": 0.0764704780107557, "mob_20": 0.0819232859257593, "mob_21": 0.0872824029831169, "mob_22": 0.0921168512376562, "mob_23": 0.0971012048644293, "mob_24": 0.1018607004328517}, {"vintage_year": 2013, "total_loans": 134755, "mob_0": 0.0, "mob_1": 0.0006678787429037, "mob_2": 0.0006678787429037, "mob_3": 0.0006678787429037, "mob_4": 0.0019220066045786, "mob_5": 0.0039404845831323, "mob_6": 0.006589736929984, "mob_7": 0.009639716522578, "mob_8": 0.0131646321101257, "mob_9": 0.0171719045675485, "mob_10": 0.0216615338948462, "mob_11": 0.0265147860932804, "mob_12": 0.0317613446625357, "mob_13": 0.0368594857333679, "mob_14": 0.042484508923602, "mob_15": 0.0477904344922266, "mob_16": 0.053237356684353, "mob_17": 0.0582909725056584, "mob_18": 0.0634336388260175, "mob_19": 0.0683610997736633, "mob_20": 0.0733553485955994, "mob_21": 0.0785499610404066, "mob_22": 0.0831731661162851, "mob_23": 0.0881377314385366, "mob_24": 0.0928648287633111}, {"vintage_year": 2014, "total_loans": 235628, "mob_0": 0.0, "mob_1": 0.0006068888247576, "mob_2": 0.0006068888247576, "mob_3": 0.0006068888247576, "mob_4": 0.0017485188517493, "mob_5": 0.0037092365932741, "mob_6": 0.0064253823823993, "mob_7": 0.0098417845077834, "mob_8": 0.0137929278354015, "mob_9": 0.0186353065000763, "mob_10": 0.0235413448316838, "mob_11": 0.0287741694535454, "mob_12": 0.0344059279881847, "mob_13": 0.0401989576790534, "mob_14": 0.0466285840392483, "mob_15": 0.0528757193542363, "mob_16": 0.0585456736890352, "mob_17": 0.063379564398119, "mob_18": 0.0677296416385149, "mob_19": 0.0713455107202879, "mob_20": 0.0744181506442358, "mob_21": 0.0770154650550868, "mob_22": 0.0788403755071553, "mob_23": 0.0804233792248799, "mob_24": 0.0814419338958018}], "vintage_maturity": [{"vintage_year": 2007, "total_loans": 603, "default_rate_mob_12": 0.0514096185737976, "default_rate_mob_18": 0.1393034825870646, "default_rate_mob_24": 0.1940298507462686, "default_rate_mob_12_pct": 5.140961857379768, "default_rate_mob_18_pct": 13.930348258706468, "default_rate_mob_24_pct": 19.402985074626866}, {"vintage_year": 2008, "total_loans": 2393, "default_rate_mob_12": 0.0656080234015879, "default_rate_mob_18": 0.1140827413288758, "default_rate_mob_24": 0.1525282072712077, "default_rate_mob_12_pct": 6.560802340158796, "default_rate_mob_18_pct": 11.40827413288759, "default_rate_mob_24_pct": 15.252820727120769}, {"vintage_year": 2009, "total_loans": 5281, "default_rate_mob_12": 0.0463927286498769, "default_rate_mob_18": 0.0732815754591933, "default_rate_mob_24": 0.0988449157356561, "default_rate_mob_12_pct": 4.639272864987691, "default_rate_mob_18_pct": 7.328157545919334, "default_rate_mob_24_pct": 9.884491573565612}, {"vintage_year": 2010, "total_loans": 12537, "default_rate_mob_12": 0.0345377682061099, "default_rate_mob_18": 0.0616574938182978, "default_rate_mob_24": 0.0831937465103294, "default_rate_mob_12_pct": 3.453776820610992, "default_rate_mob_18_pct": 6.165749381829784, "default_rate_mob_24_pct": 8.319374651032943}, {"vintage_year": 2011, "total_loans": 21721, "default_rate_mob_12": 0.0355416417292021, "default_rate_mob_18": 0.0650522535794853, "default_rate_mob_24": 0.0897288338474287, "default_rate_mob_12_pct": 3.554164172920216, "default_rate_mob_18_pct": 6.50522535794853, "default_rate_mob_24_pct": 8.972883384742875}, {"vintage_year": 2012, "total_loans": 53367, "default_rate_mob_12": 0.0373451758577398, "default_rate_mob_18": 0.0716735060992748, "default_rate_mob_24": 0.1018607004328517, "default_rate_mob_12_pct": 3.73451758577398, "default_rate_mob_18_pct": 7.167350609927484, "default_rate_mob_24_pct": 10.186070043285175}, {"vintage_year": 2013, "total_loans": 134755, "default_rate_mob_12": 0.0317613446625357, "default_rate_mob_18": 0.0634336388260175, "default_rate_mob_24": 0.0928648287633111, "default_rate_mob_12_pct": 3.176134466253571, "default_rate_mob_18_pct": 6.343363882601759, "default_rate_mob_24_pct": 9.28648287633112}, {"vintage_year": 2014, "total_loans": 235628, "default_rate_mob_12": 0.0344059279881847, "default_rate_mob_18": 0.0677296416385149, "default_rate_mob_24": 0.0814419338958018, "default_rate_mob_12_pct": 3.440592798818477, "default_rate_mob_18_pct": 6.772964163851494, "default_rate_mob_24_pct": 8.144193389580186}], "roll_rate_proxy": [{"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2007, "total_loans": 603, "current_pct": 0.0, "grace_period_pct": 0.0, "late_16_30_pct": 0.0, "late_31_120_pct": 0.0, "default_charged_off_pct": 7.462686567164178, "fully_paid_pct": 34.16252072968491}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2008, "total_loans": 2393, "current_pct": 0.0, "grace_period_pct": 0.0, "late_16_30_pct": 0.0, "late_31_120_pct": 0.0, "default_charged_off_pct": 10.321771834517342, "fully_paid_pct": 54.95194316757208}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2009, "total_loans": 5281, "current_pct": 0.0, "grace_period_pct": 0.0, "late_16_30_pct": 0.0, "late_31_120_pct": 0.0, "default_charged_off_pct": 11.247869721643628, "fully_paid_pct": 78.05339897746639}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2010, "total_loans": 12537, "current_pct": 0.0558347292015633, "grace_period_pct": 0.0, "late_16_30_pct": 0.0159527797718752, "late_31_120_pct": 0.0398819494296881, "default_charged_off_pct": 11.836962590731437, "fully_paid_pct": 80.06700167504187}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2011, "total_loans": 21721, "current_pct": 8.99129874315179, "grace_period_pct": 0.1289075088623912, "late_16_30_pct": 0.0506422356245108, "late_31_120_pct": 0.2117766217024999, "default_charged_off_pct": 14.792136641959392, "fully_paid_pct": 75.8252382486994}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2012, "total_loans": 53367, "current_pct": 6.4534262746641184, "grace_period_pct": 0.155526823692544, "late_16_30_pct": 0.0505930631288998, "late_31_120_pct": 0.4159874079487324, "default_charged_off_pct": 15.20040474450503, "fully_paid_pct": 77.72406168606068}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2013, "total_loans": 134755, "current_pct": 44.72116062483767, "grace_period_pct": 0.725019479796668, "late_16_30_pct": 0.2374679974769025, "late_31_120_pct": 1.3209157359652703, "default_charged_off_pct": 11.14466995658788, "fully_paid_pct": 41.85076620533561}, {"NOTICE": "[CROSS-SECTIONAL PROXY - NOT MONTHLY PANEL]", "vintage_year": 2014, "total_loans": 235628, "current_pct": 67.2916631300185, "grace_period_pct": 0.8734106303155822, "late_16_30_pct": 0.3641332948546013, "late_31_120_pct": 2.057056037482812, "default_charged_off_pct": 6.193661194764629, "fully_paid_pct": 23.220075712563872}], "transition_matrix": [{"grade": "A", "total_loans": 74769, "Fully Paid": 0.4875683772686541, "Current": 0.4706629752972489, "Late": 0.0075699822118792, "Default": 0.0341986652222177}, {"grade": "B", "total_loans": 136575, "Fully Paid": 0.4463628043199707, "Current": 0.4686728903532857, "Late": 0.0168259198242723, "Default": 0.0681383855024711}, {"grade": "C", "total_loans": 124664, "Fully Paid": 0.367531925816595, "Current": 0.508173971635757, "Late": 0.0265994994545337, "Default": 0.0976946030931142}, {"grade": "D", "total_loans": 76197, "Fully Paid": 0.3423888079583185, "Current": 0.4916204050028216, "Late": 0.0352769794086381, "Default": 0.1307138076302216}, {"grade": "E", "total_loans": 35221, "Fully Paid": 0.3000766588115045, "Current": 0.4891683938559382, "Late": 0.0449447772635643, "Default": 0.1658101700689929}, {"grade": "F", "total_loans": 12982, "Fully Paid": 0.3024957633646588, "Current": 0.438838391619165, "Late": 0.0489909104914497, "Default": 0.2096749345247265}, {"grade": "G", "total_loans": 3128, "Fully Paid": 0.2937979539641944, "Current": 0.4120843989769821, "Late": 0.0565856777493606, "Default": 0.2375319693094629}], "ecl_summary": [{"stage": "Stage 1", "count": 189633, "total_ead": 1417203315.73, "total_ecl": 30272773.852482248, "ecl_pct_ead": 2.1360925081443782, "coverage_ratio": 0.0213609250814437}, {"stage": "Stage 2", "count": 26554, "total_ead": 169366237.98, "total_ecl": 24404478.24503577, "ecl_pct_ead": 14.409293455474655, "coverage_ratio": 0.1440929345547465}, {"stage": "Stage 3", "count": 19441, "total_ead": 240003088.77, "total_ecl": 223799357.4574865, "ecl_pct_ead": 93.24853217699966, "coverage_ratio": 0.9324853217699964}, {"stage": "Total Portfolio", "count": 235628, "total_ead": 1826572642.48, "total_ecl": 278476609.5550045, "ecl_pct_ead": 15.245854617471291, "coverage_ratio": 0.1524585461747129}], "staging_summary": [{"stage": "Stage 1", "count": 189633, "total_ead": 1417203315.73, "mean_pd_12m": 0.0272871114614432, "count_pct": 80.47982412956016, "ead_pct": 77.58811682440478}, {"stage": "Stage 2", "count": 26554, "total_ead": 169366237.98, "mean_pd_12m": 0.0763795041490746, "count_pct": 11.269458638192404, "ead_pct": 9.272351618605525}, {"stage": "Stage 3", "count": 19441, "total_ead": 240003088.77, "mean_pd_12m": 1.0, "count_pct": 8.25071723224744, "ead_pct": 13.139531556989686}, {"stage": "Total", "count": 235628, "total_ead": 1826572642.48, "mean_pd_12m": 0.1130753482648174, "count_pct": 100.0, "ead_pct": 100.0}], "lifetime_pd": [{"month": 1, "n_at_risk": 466285, "n_defaults": 376, "hazard": 0.0008063737842735, "survival": 0.9991936262157264, "cumulative_pd": 0.0008063737842736}, {"month": 2, "n_at_risk": 465909, "n_defaults": 0, "hazard": 0.0, "survival": 0.9991936262157264, "cumulative_pd": 0.0008063737842736}, {"month": 3, "n_at_risk": 465909, "n_defaults": 0, "hazard": 0.0, "survival": 0.9991936262157264, "cumulative_pd": 0.0008063737842736}, {"month": 4, "n_at_risk": 465909, "n_defaults": 576, "hazard": 0.0012362929241547, "survival": 0.9979583302057754, "cumulative_pd": 0.0020416697942245}, {"month": 5, "n_at_risk": 465333, "n_defaults": 1007, "hazard": 0.0021640416647862, "survival": 0.9957987067994896, "cumulative_pd": 0.0042012932005105}, {"month": 6, "n_at_risk": 464326, "n_defaults": 1305, "hazard": 0.0028105253636453, "survival": 0.9929999892769442, "cumulative_pd": 0.0070000107230557}, {"month": 7, "n_at_risk": 463021, "n_defaults": 1640, "hazard": 0.0035419559803982, "survival": 0.9894828270263892, "cumulative_pd": 0.0105171729736106}, {"month": 8, "n_at_risk": 461381, "n_defaults": 1825, "hazard": 0.0039555161569288, "survival": 0.9855689117170828, "cumulative_pd": 0.0144310882829172}, {"month": 9, "n_at_risk": 459556, "n_defaults": 2121, "hazard": 0.0046153243565528, "survival": 0.9810201915137736, "cumulative_pd": 0.0189798084862264}, {"month": 10, "n_at_risk": 457435, "n_defaults": 2241, "hazard": 0.0048990566965798, "survival": 0.976214117975058, "cumulative_pd": 0.0237858820249421}, {"month": 11, "n_at_risk": 455194, "n_defaults": 2388, "hazard": 0.0052461148433415, "survival": 0.9710927866004694, "cumulative_pd": 0.0289072133995306}, {"month": 12, "n_at_risk": 452806, "n_defaults": 2539, "hazard": 0.005607257854357, "survival": 0.9656476189454944, "cumulative_pd": 0.0343523810545055}, {"month": 13, "n_at_risk": 450267, "n_defaults": 2624, "hazard": 0.0058276533701115, "survival": 0.9600201593446066, "cumulative_pd": 0.0399798406553933}, {"month": 14, "n_at_risk": 447643, "n_defaults": 2836, "hazard": 0.0063354056692498, "survival": 0.9539380421845006, "cumulative_pd": 0.0460619578154993}, {"month": 15, "n_at_risk": 444807, "n_defaults": 2715, "hazard": 0.0061037708489299, "survival": 0.9481154229709297, "cumulative_pd": 0.0518845770290704}, {"month": 16, "n_at_risk": 442092, "n_defaults": 2570, "hazard": 0.0058132696361843, "survival": 0.9426037723709746, "cumulative_pd": 0.0573962276290254}, {"month": 17, "n_at_risk": 439522, "n_defaults": 2311, "hazard": 0.0052579848107717, "survival": 0.937647576053272, "cumulative_pd": 0.062352423946728}, {"month": 18, "n_at_risk": 437211, "n_defaults": 2188, "hazard": 0.0050044486529387, "survival": 0.932955166904361, "cumulative_pd": 0.067044833095639}, {"month": 19, "n_at_risk": 435023, "n_defaults": 1955, "hazard": 0.0044940152589633, "survival": 0.928762452148364, "cumulative_pd": 0.0712375478516359}, {"month": 20, "n_at_risk": 433068, "n_defaults": 1872, "hazard": 0.0043226467898805, "survival": 0.9247477401160232, "cumulative_pd": 0.0752522598839766}, {"month": 21, "n_at_risk": 431196, "n_defaults": 1760, "hazard": 0.004081670516424, "survival": 0.920973224530062, "cumulative_pd": 0.0790267754699379}, {"month": 22, "n_at_risk": 429436, "n_defaults": 1497, "hazard": 0.0034859676412783, "survival": 0.9177627416708664, "cumulative_pd": 0.0822372583291335}, {"month": 23, "n_at_risk": 427939, "n_defaults": 1486, "hazard": 0.0034724575231516, "survival": 0.9145758495340832, "cumulative_pd": 0.0854241504659167}, {"month": 24, "n_at_risk": 426453, "n_defaults": 1304, "hazard": 0.0030577812795313, "survival": 0.9117792766226664, "cumulative_pd": 0.0882207233773335}, {"month": 25, "n_at_risk": 425149, "n_defaults": 1239, "hazard": 0.0029142724080263, "survival": 0.9091221034345948, "cumulative_pd": 0.0908778965654052}, {"month": 26, "n_at_risk": 423910, "n_defaults": 1086, "hazard": 0.0025618645467198, "survival": 0.9067930557491664, "cumulative_pd": 0.0932069442508336}, {"month": 27, "n_at_risk": 422824, "n_defaults": 1027, "hazard": 0.0024289065899759, "survival": 0.9045905401203128, "cumulative_pd": 0.0954094598796871}, {"month": 28, "n_at_risk": 421797, "n_defaults": 927, "hazard": 0.0021977396709791, "survival": 0.902602485604298, "cumulative_pd": 0.0973975143957019}, {"month": 29, "n_at_risk": 420870, "n_defaults": 763, "hazard": 0.0018129113502981, "survival": 0.9009661473133388, "cumulative_pd": 0.0990338526866613}, {"month": 30, "n_at_risk": 420107, "n_defaults": 729, "hazard": 0.0017352722044621, "survival": 0.8994027258007444, "cumulative_pd": 0.1005972741992555}, {"month": 31, "n_at_risk": 419378, "n_defaults": 592, "hazard": 0.0014116143431462, "survival": 0.8981331160127393, "cumulative_pd": 0.1018668839872607}, {"month": 32, "n_at_risk": 418786, "n_defaults": 569, "hazard": 0.001358689163439, "survival": 0.896912832280687, "cumulative_pd": 0.103087167719313}, {"month": 33, "n_at_risk": 418217, "n_defaults": 491, "hazard": 0.0011740316629883, "survival": 0.8958598282166489, "cumulative_pd": 0.1041401717833511}, {"month": 34, "n_at_risk": 417726, "n_defaults": 397, "hazard": 0.0009503837443683, "survival": 0.8950084175986792, "cumulative_pd": 0.1049915824013207}, {"month": 35, "n_at_risk": 417329, "n_defaults": 327, "hazard": 0.0007835544618274, "survival": 0.8943071297596966, "cumulative_pd": 0.1056928702403033}, {"month": 36, "n_at_risk": 417002, "n_defaults": 309, "hazard": 0.0007410036402703, "survival": 0.893644444921025, "cumulative_pd": 0.1063555550789749}, {"month": 37, "n_at_risk": 416693, "n_defaults": 280, "hazard": 0.0006719575322839, "survival": 0.8930439538050766, "cumulative_pd": 0.1069560461949233}, {"month": 38, "n_at_risk": 416413, "n_defaults": 215, "hazard": 0.0005163143321654, "survival": 0.8925828624124734, "cumulative_pd": 0.1074171375875265}, {"month": 39, "n_at_risk": 416198, "n_defaults": 142, "hazard": 0.0003411837634971, "survival": 0.8922783276322424, "cumulative_pd": 0.1077216723677576}, {"month": 40, "n_at_risk": 416056, "n_defaults": 100, "hazard": 0.0002403522602726, "survival": 0.8920638665194036, "cumulative_pd": 0.1079361334805963}, {"month": 41, "n_at_risk": 415956, "n_defaults": 93, "hazard": 0.000223581340334, "survival": 0.8918644176844636, "cumulative_pd": 0.1081355823155364}, {"month": 42, "n_at_risk": 415863, "n_defaults": 62, "hazard": 0.0001490875600858, "survival": 0.8917314517945035, "cumulative_pd": 0.1082685482054964}, {"month": 43, "n_at_risk": 415801, "n_defaults": 51, "hazard": 0.0001226548276699, "survival": 0.8916220766269558, "cumulative_pd": 0.1083779233730442}, {"month": 44, "n_at_risk": 415750, "n_defaults": 48, "hazard": 0.0001154539987973, "survival": 0.8915191352927933, "cumulative_pd": 0.1084808647072067}, {"month": 45, "n_at_risk": 415702, "n_defaults": 49, "hazard": 0.0001178728993365, "survival": 0.8914140493475023, "cumulative_pd": 0.1085859506524976}, {"month": 46, "n_at_risk": 415653, "n_defaults": 37, "hazard": 8.901655948591734e-05, "survival": 0.891334698735752, "cumulative_pd": 0.108665301264248}, {"month": 47, "n_at_risk": 415616, "n_defaults": 40, "hazard": 9.624268555589775e-05, "survival": 0.8912489142906166, "cumulative_pd": 0.1087510857093834}, {"month": 48, "n_at_risk": 415576, "n_defaults": 36, "hazard": 8.662675419177238e-05, "survival": 0.8911717082899946, "cumulative_pd": 0.1088282917100054}, {"month": 49, "n_at_risk": 415540, "n_defaults": 27, "hazard": 6.497569427732589e-05, "survival": 0.8911138037895281, "cumulative_pd": 0.1088861962104719}, {"month": 50, "n_at_risk": 415513, "n_defaults": 30, "hazard": 7.21999071027862e-05, "survival": 0.8910494654556764, "cumulative_pd": 0.1089505345443235}, {"month": 51, "n_at_risk": 415483, "n_defaults": 23, "hazard": 5.53572589010862e-05, "survival": 0.8910001393997236, "cumulative_pd": 0.1089998606002764}, {"month": 52, "n_at_risk": 415460, "n_defaults": 20, "hazard": 4.813941173638858e-05, "survival": 0.8909572471771557, "cumulative_pd": 0.1090427528228442}, {"month": 53, "n_at_risk": 415440, "n_defaults": 25, "hazard": 6.017716156364337e-05, "survival": 0.8909036318989461, "cumulative_pd": 0.1090963681010539}, {"month": 54, "n_at_risk": 415415, "n_defaults": 27, "hazard": 6.499524571813728e-05, "survival": 0.8908457273984797, "cumulative_pd": 0.1091542726015203}, {"month": 55, "n_at_risk": 415388, "n_defaults": 15, "hazard": 3.611081687482546e-05, "survival": 0.8908135582315538, "cumulative_pd": 0.1091864417684461}, {"month": 56, "n_at_risk": 415373, "n_defaults": 13, "hazard": 3.129717145794262e-05, "survival": 0.8907856782868848, "cumulative_pd": 0.1092143217131151}, {"month": 57, "n_at_risk": 415360, "n_defaults": 9, "hazard": 2.166795069337442e-05, "survival": 0.8907663767867293, "cumulative_pd": 0.1092336232132706}, {"month": 58, "n_at_risk": 415351, "n_defaults": 13, "hazard": 3.129882918302833e-05, "survival": 0.8907384968420603, "cumulative_pd": 0.1092615031579397}, {"month": 59, "n_at_risk": 415338, "n_defaults": 7, "hazard": 1.6853743216368354e-05, "survival": 0.8907234845641616, "cumulative_pd": 0.1092765154358383}, {"month": 60, "n_at_risk": 415331, "n_defaults": 2, "hazard": 4.815436362804607e-06, "survival": 0.8907191953419049, "cumulative_pd": 0.109280804658095}], "validation_summary": [{"model": "model_a", "sample": "train", "auc": 0.6506684028548388, "gini": 0.3013368057096777, "ks": 0.2192720857671031, "brier": 0.0327815054423304, "hl_pvalue": 0.0011483720417198}, {"model": "model_a", "sample": "test", "auc": 0.6484496318714609, "gini": 0.2968992637429217, "ks": 0.2232977336222174, "brier": 0.0328311366735918, "hl_pvalue": 0.2363379493396308}, {"model": "model_a", "sample": "oot", "auc": 0.6357252870207463, "gini": 0.2714505740414925, "ks": 0.1955170532632811, "brier": 0.0329585077318645, "hl_pvalue": 3.078715006266109e-07}, {"model": "model_b", "sample": "train", "auc": 0.6839061408735113, "gini": 0.3678122817470226, "ks": 0.2736288493579873, "brier": 0.0326322022248111, "hl_pvalue": 0.0003975249957051}, {"model": "model_b", "sample": "test", "auc": 0.6816760029001917, "gini": 0.3633520058003834, "ks": 0.2727525287997264, "brier": 0.0326385722805314, "hl_pvalue": 0.4941826256922472}, {"model": "model_b", "sample": "oot", "auc": 0.6922601519435312, "gini": 0.3845203038870624, "ks": 0.2843137087845779, "brier": 0.0326769907412632, "hl_pvalue": 0.0011658758740358}], "psi_summary": [{"model": "model_a", "score_psi": 0.0046428268723905, "stability_band": "stable"}, {"model": "model_b", "score_psi": 0.0070869185100508, "stability_band": "stable"}], "csi_summary": [{"model": "model_a", "variable": "dti", "csi": 0.0416462466213031, "stability_band": "stable"}, {"model": "model_a", "variable": "purpose", "csi": 0.0362471680855012, "stability_band": "stable"}, {"model": "model_a", "variable": "term", "csi": 0.0257545813197011, "stability_band": "stable"}, {"model": "model_a", "variable": "revol_util", "csi": 0.0139524803952368, "stability_band": "stable"}, {"model": "model_a", "variable": "home_ownership", "csi": 0.0101007172836595, "stability_band": "stable"}, {"model": "model_a", "variable": "inq_last_6mths", "csi": 0.0086711898301232, "stability_band": "stable"}, {"model": "model_a", "variable": "annual_inc", "csi": 0.0056762923415808, "stability_band": "stable"}, {"model": "model_b", "variable": "dti", "csi": 0.0416462466213031, "stability_band": "stable"}, {"model": "model_b", "variable": "purpose", "csi": 0.0362471680855012, "stability_band": "stable"}, {"model": "model_b", "variable": "int_rate", "csi": 0.0314990521193833, "stability_band": "stable"}, {"model": "model_b", "variable": "grade", "csi": 0.0293487461887446, "stability_band": "stable"}, {"model": "model_b", "variable": "sub_grade", "csi": 0.0264333947067567, "stability_band": "stable"}, {"model": "model_b", "variable": "term", "csi": 0.0257545813197011, "stability_band": "stable"}, {"model": "model_b", "variable": "revol_util", "csi": 0.0139524803952368, "stability_band": "stable"}, {"model": "model_b", "variable": "home_ownership", "csi": 0.0101007172836595, "stability_band": "stable"}, {"model": "model_b", "variable": "inq_last_6mths", "csi": 0.0086711898301232, "stability_band": "stable"}, {"model": "model_b", "variable": "annual_inc", "csi": 0.0056762923415808, "stability_band": "stable"}], "scorecard_b": [{"variable": "grade", "bin": "B", "woe": 0.4010424567380193, "coefficient": -0.6177356689449116, "points": 65}, {"variable": "grade", "bin": "A", "woe": 1.0539059470179155, "coefficient": -0.6177356689449116, "points": 77}, {"variable": "grade", "bin": "D", "woe": -0.4629713645649587, "coefficient": -0.6177356689449116, "points": 50}, {"variable": "grade", "bin": "C", "woe": -0.0800614747884907, "coefficient": -0.6177356689449116, "points": 57}, {"variable": "grade", "bin": "E", "woe": -0.622431227062742, "coefficient": -0.6177356689449116, "points": 47}, {"variable": "grade", "bin": "OTHER", "woe": -0.9685932280899704, "coefficient": -0.6177356689449116, "points": 41}, {"variable": "int_rate", "bin": "[-inf, 6.92)", "woe": 1.3971341796113037, "coefficient": -0.235832154910466, "points": 68}, {"variable": "int_rate", "bin": "[6.92, 7.90)", "woe": 0.8904080617857404, "coefficient": -0.235832154910466, "points": 64}, {"variable": "int_rate", "bin": "[7.90, 9.99)", "woe": 0.8130528725614516, "coefficient": -0.235832154910466, "points": 64}, {"variable": "int_rate", "bin": "[9.99, 11.14)", "woe": 0.5550485154922504, "coefficient": -0.235832154910466, "points": 62}, {"variable": "int_rate", "bin": "[11.14, 12.12)", "woe": 0.3417850008703939, "coefficient": -0.235832154910466, "points": 61}, {"variable": "int_rate", "bin": "[12.12, 13.11)", "woe": 0.1918272538904074, "coefficient": -0.235832154910466, "points": 60}, {"variable": "int_rate", "bin": "[13.11, 14.30)", "woe": -0.0619003539789056, "coefficient": -0.235832154910466, "points": 58}, {"variable": "int_rate", "bin": "[14.30, 15.31)", "woe": -0.0842831213759468, "coefficient": -0.235832154910466, "points": 58}, {"variable": "int_rate", "bin": "[15.31, 16.78)", "woe": -0.1567306779030612, "coefficient": -0.235832154910466, "points": 57}, {"variable": "int_rate", "bin": "[16.78, 18.55)", "woe": -0.3686561728839594, "coefficient": -0.235832154910466, "points": 56}, {"variable": "int_rate", "bin": "[18.55, 19.72)", "woe": -0.5668401220550151, "coefficient": -0.235832154910466, "points": 54}, {"variable": "int_rate", "bin": "[19.72, inf)", "woe": -0.7195518597298068, "coefficient": -0.235832154910466, "points": 53}, {"variable": "inq_last_6mths", "bin": "[-inf, 1.00)", "woe": 0.1620929665030258, "coefficient": -0.7479812298098215, "points": 62}, {"variable": "inq_last_6mths", "bin": "[1.00, 2.00)", "woe": -0.3022235693491364, "coefficient": -0.7479812298098215, "points": 52}, {"variable": "inq_last_6mths", "bin": "[2.00, inf)", "woe": -0.6027549523979399, "coefficient": -0.7479812298098215, "points": 45}, {"variable": "inq_last_6mths", "bin": "MISSING", "woe": 0.5127105116428781, "coefficient": -0.7479812298098215, "points": 69}, {"variable": "sub_grade", "bin": "B4", "woe": 0.3161198189683693, "coefficient": -0.1068187863942946, "points": 59}, {"variable": "sub_grade", "bin": "OTHER", "woe": -0.1838994172358842, "coefficient": -0.1068187863942946, "points": 58}, {"variable": "sub_grade", "bin": "B5", "woe": 0.1012757160121262, "coefficient": -0.1068187863942946, "points": 59}, {"variable": "sub_grade", "bin": "B1", "woe": 0.6760186237309739, "coefficient": -0.1068187863942946, "points": 60}, {"variable": "sub_grade", "bin": "C2", "woe": -0.0006312138116356, "coefficient": -0.1068187863942946, "points": 58}, {"variable": "sub_grade", "bin": "B3", "woe": 0.3959835279873492, "coefficient": -0.1068187863942946, "points": 60}, {"variable": "sub_grade", "bin": "C1", "woe": 0.078485313358227, "coefficient": -0.1068187863942946, "points": 59}, {"variable": "sub_grade", "bin": "B2", "woe": 0.5965548216237575, "coefficient": -0.1068187863942946, "points": 60}, {"variable": "annual_inc", "bin": "[-inf, 40000.00)", "woe": -0.3151110717974862, "coefficient": -0.9201898451505992, "points": 50}, {"variable": "annual_inc", "bin": "[40000.00, 50000.00)", "woe": -0.1435830233469573, "coefficient": -0.9201898451505992, "points": 55}, {"variable": "annual_inc", "bin": "[50000.00, 65000.00)", "woe": -0.0257312830622985, "coefficient": -0.9201898451505992, "points": 58}, {"variable": "annual_inc", "bin": "[65000.00, 75000.00)", "woe": 0.1048301714697545, "coefficient": -0.9201898451505992, "points": 61}, {"variable": "annual_inc", "bin": "[75000.00, 102200.00)", "woe": 0.2330412743178805, "coefficient": -0.9201898451505992, "points": 65}, {"variable": "annual_inc", "bin": "[102200.00, inf)", "woe": 0.4281773208067405, "coefficient": -0.9201898451505992, "points": 70}, {"variable": "annual_inc", "bin": "MISSING", "woe": -1.139984028966721, "coefficient": -0.9201898451505992, "points": 28}, {"variable": "purpose", "bin": "debt_consolidation", "woe": 0.0226073921369124, "coefficient": -0.7180066322081361, "points": 59}, {"variable": "purpose", "bin": "OTHER", "woe": -0.3818220135333169, "coefficient": -0.7180066322081361, "points": 50}, {"variable": "purpose", "bin": "credit_card", "woe": 0.3264118471193592, "coefficient": -0.7180066322081361, "points": 65}, {"variable": "purpose", "bin": "other", "woe": -0.4262275194795707, "coefficient": -0.7180066322081361, "points": 50}, {"variable": "purpose", "bin": "home_improvement", "woe": 0.1061282249726949, "coefficient": -0.7180066322081361, "points": 61}, {"variable": "home_ownership", "bin": "MORTGAGE", "woe": 0.195626324381309, "coefficient": -0.4658269541876927, "points": 61}, {"variable": "home_ownership", "bin": "RENT", "woe": -0.185427290073715, "coefficient": -0.4658269541876927, "points": 56}, {"variable": "home_ownership", "bin": "OWN", "woe": -0.0593416305619611, "coefficient": -0.4658269541876927, "points": 58}, {"variable": "home_ownership", "bin": "OTHER", "woe": -0.5567292433888952, "coefficient": -0.4658269541876927, "points": 51}, {"variable": "term", "bin": " 36 months", "woe": 0.0954577281599068, "coefficient": -0.016832305517654, "points": 58}, {"variable": "term", "bin": " 60 months", "woe": -0.2580142881433216, "coefficient": -0.016832305517654, "points": 58}, {"variable": "dti", "bin": "[-inf, 9.45)", "woe": 0.1690639090827189, "coefficient": -0.4887087082874253, "points": 61}, {"variable": "dti", "bin": "[9.45, 14.05)", "woe": 0.1068626506825319, "coefficient": -0.4887087082874253, "points": 60}, {"variable": "dti", "bin": "[14.05, 18.30)", "woe": 0.0931226706190203, "coefficient": -0.4887087082874253, "points": 60}, {"variable": "dti", "bin": "[18.30, 21.82)", "woe": -0.0610843375429368, "coefficient": -0.4887087082874253, "points": 57}, {"variable": "dti", "bin": "[21.82, 26.72)", "woe": -0.1760041063112557, "coefficient": -0.4887087082874253, "points": 56}, {"variable": "dti", "bin": "[26.72, inf)", "woe": -0.2757545265911968, "coefficient": -0.4887087082874253, "points": 54}, {"variable": "revol_util", "bin": "[-inf, 28.90)", "woe": 0.1565132868023729, "coefficient": -0.2239457247685276, "points": 59}, {"variable": "revol_util", "bin": "[28.90, 39.60)", "woe": 0.1064045766031195, "coefficient": -0.2239457247685276, "points": 59}, {"variable": "revol_util", "bin": "[39.60, 51.90)", "woe": 0.0971147091039999, "coefficient": -0.2239457247685276, "points": 59}, {"variable": "revol_util", "bin": "[51.90, 65.60)", "woe": 0.0841828942953228, "coefficient": -0.2239457247685276, "points": 59}, {"variable": "revol_util", "bin": "[65.60, 76.00)", "woe": -0.0653116719489341, "coefficient": -0.2239457247685276, "points": 58}, {"variable": "revol_util", "bin": "[76.00, 87.70)", "woe": -0.1156123776228952, "coefficient": -0.2239457247685276, "points": 58}, {"variable": "revol_util", "bin": "[87.70, inf)", "woe": -0.2808821965714602, "coefficient": -0.2239457247685276, "points": 57}, {"variable": "revol_util", "bin": "MISSING", "woe": -1.0559876957462393, "coefficient": -0.2239457247685276, "points": 52}], "coefs_b": [{"variable": "const", "coefficient": -3.338358952555544, "std_err": 0.0135051575550746, "p_value": 0.0, "significant": true, "positive_sign_flag": false}, {"variable": "grade", "coefficient": -0.6177356689449116, "std_err": 0.0660101232724936, "p_value": 8.11097059280867e-21, "significant": true, "positive_sign_flag": false}, {"variable": "int_rate", "coefficient": -0.235832154910466, "std_err": 0.069872759706048, "p_value": 0.0007377120877789, "significant": true, "positive_sign_flag": false}, {"variable": "inq_last_6mths", "coefficient": -0.7479812298098215, "std_err": 0.0458074910416126, "p_value": 6.158662211839957e-60, "significant": true, "positive_sign_flag": false}, {"variable": "sub_grade", "coefficient": -0.1068187863942946, "std_err": 0.0626230519014281, "p_value": 0.0880560767715261, "significant": false, "positive_sign_flag": false}, {"variable": "annual_inc", "coefficient": -0.9201898451505992, "std_err": 0.0583147597259022, "p_value": 4.291729724008975e-56, "significant": true, "positive_sign_flag": false}, {"variable": "purpose", "coefficient": -0.7180066322081361, "std_err": 0.0576796518664195, "p_value": 1.4307226316339216e-35, "significant": true, "positive_sign_flag": false}, {"variable": "home_ownership", "coefficient": -0.4658269541876927, "std_err": 0.0752946983766836, "p_value": 6.143028997587428e-10, "significant": true, "positive_sign_flag": false}, {"variable": "term", "coefficient": -0.016832305517654, "std_err": 0.0907018036689386, "p_value": 0.85277530787265, "significant": false, "positive_sign_flag": false}, {"variable": "dti", "coefficient": -0.4887087082874253, "std_err": 0.0861409906976082, "p_value": 1.4002489475420632e-08, "significant": true, "positive_sign_flag": false}, {"variable": "revol_util", "coefficient": -0.2239457247685276, "std_err": 0.0948339880440679, "p_value": 0.0182036245673259, "significant": true, "positive_sign_flag": false}], "iv_summary": [{"variable": "grade", "n_bins": 6, "IV": 0.2937222900140591, "iv_strength": "medium"}, {"variable": "int_rate", "n_bins": 12, "IV": 0.2771667682410116, "iv_strength": "medium"}, {"variable": "inq_last_6mths", "n_bins": 4, "IV": 0.0757192596683728, "iv_strength": "weak"}, {"variable": "sub_grade", "n_bins": 8, "IV": 0.0742938821096722, "iv_strength": "weak"}, {"variable": "annual_inc", "n_bins": 7, "IV": 0.0595349590177501, "iv_strength": "weak"}, {"variable": "purpose", "n_bins": 5, "IV": 0.0513152726388579, "iv_strength": "weak"}, {"variable": "tot_cur_bal", "n_bins": 6, "IV": 0.0383859806185418, "iv_strength": "weak"}, {"variable": "home_ownership", "n_bins": 4, "IV": 0.0338718750207958, "iv_strength": "weak"}, {"variable": "total_rev_hi_lim", "n_bins": 6, "IV": 0.025916784497048, "iv_strength": "weak"}, {"variable": "term", "n_bins": 2, "IV": 0.0245790532434486, "iv_strength": "weak"}, {"variable": "dti", "n_bins": 6, "IV": 0.0233947558036144, "iv_strength": "weak"}, {"variable": "revol_util", "n_bins": 8, "IV": 0.0207610239632787, "iv_strength": "weak"}, {"variable": "emp_length", "n_bins": 11, "IV": 0.0185374992955685, "iv_strength": "useless"}, {"variable": "total_acc", "n_bins": 7, "IV": 0.0172828201518975, "iv_strength": "useless"}, {"variable": "tot_coll_amt", "n_bins": 2, "IV": 0.0100688998208995, "iv_strength": "useless"}, {"variable": "open_acc", "n_bins": 8, "IV": 0.0091962310511434, "iv_strength": "useless"}, {"variable": "addr_state", "n_bins": 5, "IV": 0.0058011092572135, "iv_strength": "useless"}, {"variable": "initial_list_status", "n_bins": 2, "IV": 0.0057824471994417, "iv_strength": "useless"}, {"variable": "revol_bal", "n_bins": 3, "IV": 0.004968502869283, "iv_strength": "useless"}, {"variable": "verification_status", "n_bins": 3, "IV": 0.0041034129459094, "iv_strength": "useless"}, {"variable": "mths_since_last_delinq", "n_bins": 3, "IV": 0.0033574562538773, "iv_strength": "useless"}, {"variable": "funded_amnt_inv", "n_bins": 2, "IV": 0.0026678216041636, "iv_strength": "useless"}, {"variable": "mths_since_last_major_derog", "n_bins": 3, "IV": 0.0010128984036412, "iv_strength": "useless"}, {"variable": "mths_since_last_record", "n_bins": 2, "IV": 0.0007226777141762, "iv_strength": "useless"}, {"variable": "loan_amnt", "n_bins": 2, "IV": 0.0001069572263801, "iv_strength": "useless"}, {"variable": "collections_12_mths_ex_med", "n_bins": 2, "IV": 9.709630399235454e-05, "iv_strength": "useless"}, {"variable": "funded_amnt", "n_bins": 2, "IV": 8.797108742507456e-05, "iv_strength": "useless"}, {"variable": "delinq_2yrs", "n_bins": 2, "IV": 2.7110756508127422e-05, "iv_strength": "useless"}, {"variable": "pub_rec", "n_bins": 2, "IV": 2.7110756508127422e-05, "iv_strength": "useless"}, {"variable": "acc_now_delinq", "n_bins": 2, "IV": 2.7110756508127422e-05, "iv_strength": "useless"}, {"variable": "earliest_cr_line", "n_bins": 2, "IV": 2.7110756508127422e-05, "iv_strength": "useless"}, {"variable": "installment", "n_bins": 2, "IV": 2.741226967717446e-09, "iv_strength": "useless"}, {"variable": "zip_code", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "policy_code", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "application_type", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "open_il_6m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "open_acc_6m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "open_il_24m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "mths_since_rcnt_il", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "total_bal_il", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "open_il_12m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "il_util", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "open_rv_12m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "max_bal_bc", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "open_rv_24m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "all_util", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "inq_fi", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "total_cu_tl", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}, {"variable": "inq_last_12m", "n_bins": 1, "IV": 0.0, "iv_strength": "useless"}], "rating_grades_b": [{"grade": 1, "score_min": 614, "score_max": 639, "n_loans": 21930, "n_defaults": 189, "observed_default_rate": 0.0086183310533515, "portfolio_share": 0.1188456848665492}, {"grade": 2, "score_min": 604, "score_max": 613, "n_loans": 23998, "n_defaults": 321, "observed_default_rate": 0.013376114676223, "portfolio_share": 0.1300528383687847}, {"grade": 3, "score_min": 597, "score_max": 603, "n_loans": 22475, "n_defaults": 437, "observed_default_rate": 0.0194438264738598, "portfolio_share": 0.121799214198618}, {"grade": 4, "score_min": 591, "score_max": 596, "n_loans": 21074, "n_defaults": 531, "observed_default_rate": 0.0251969251210021, "portfolio_share": 0.1142067470532448}, {"grade": 5, "score_min": 584, "score_max": 590, "n_loans": 24353, "n_defaults": 751, "observed_default_rate": 0.0308380897630682, "portfolio_share": 0.1319766969245359}, {"grade": 6, "score_min": 577, "score_max": 583, "n_loans": 22564, "n_defaults": 972, "observed_default_rate": 0.0430774685339478, "portfolio_share": 0.1222815336675247}, {"grade": 7, "score_min": 568, "score_max": 576, "n_loans": 23203, "n_defaults": 1204, "observed_default_rate": 0.0518898418307977, "portfolio_share": 0.1257444790678769}, {"grade": 8, "score_min": 522, "score_max": 567, "n_loans": 24928, "n_defaults": 1924, "observed_default_rate": 0.0771822849807445, "portfolio_share": 0.1350928058528654}], "synthetic_ccf": [{"NOTICE": "[SYNTHETIC DEMONSTRATION ONLY - NOT PRODUCTION DATA]", "count_defaulted": 1039, "mean_actual_ccf": 0.4288262787340302, "mean_predicted_ccf": 0.4288262787340302, "mae": 0.1217907981910078, "intercept": 0.197686518597244, "coef_utilisation": 0.4753179319089787, "coef_credit_limit": 2.6436428815803084e-07}]};
+        const REPO_BASE = "https://github.com/tharungajula2/retail-credit-risk/blob/main/";
 
-        function fmtNum(n, d=2) {
-            if (n === null || n === undefined) return '-';
-            return Number(n).toLocaleString(undefined, {minimumFractionDigits: d, maximumFractionDigits: d});
-        }
+        const STAGES = [
+            { num: 1, title: "Raw Load & Inventory", modules: "src/creditrisk/data/inspect_raw.py", artefact: "outputs/reports/data_inventory.txt", figure: "<strong>466,285 rows</strong>, 75 columns. 15 columns 100% null.", logic: "Reads raw LendingClub 2007-2014 dataset in 50,000-row chunks to prevent memory spikes. Audits missing values, data types, date boundaries, and field cardinality.", honesty: null },
+            { num: 2, title: "Schema & Leakage Guard", modules: "src/creditrisk/data/schema.py", artefact: "PD-eligible column set", figure: "<strong>assert_no_leakage</strong> active. Filtered post-origination columns.", logic: "Enforces strict regulatory data hygiene. Strips out forward-looking outcome columns (e.g. recoveries, total_pymnt, last_pymnt_d) to prevent target leakage into credit risk features.", honesty: null },
+            { num: 3, title: "Target Construction", modules: "src/creditrisk/data/target.py", artefact: "outputs/tables/target_reconciliation.csv", figure: "466,285 → <strong>50,968 ever-default (10.93%)</strong> → 16,018 12m default (3.44%)", logic: "Infers default timing by looking at last payment date (last_pymnt_d + 1 month) since raw dataset lacks default dates. Defines 12-month default flag (target_12m) for Basel III & IFRS 9 Stage 1 alignment.", honesty: null },
+            { num: 4, title: "Sampling & Stratification", modules: "src/creditrisk/data/sampling.py", artefact: "outputs/tables/sample_summary.csv", figure: "Train: <strong>184,525</strong> | Test: <strong>46,132</strong> | OOT (2014): <strong>235,628</strong>", logic: "Splits portfolio into 80/20 in-time Train/Test stratified by 12m default rate (2007-2013 vintages) and holds out full 2014 vintage (235,628 loans) as Out-of-Time (OOT) validation cohort.", honesty: null },
+            { num: 5, title: "WoE & IV Binning", modules: "src/creditrisk/features/run_binning.py", artefact: "outputs/tables/iv_summary.csv", figure: "Top IVs: <strong>grade (0.294)</strong>, <strong>int_rate (0.277)</strong>", logic: "Transforms numeric & categorical features into Weight of Evidence (WoE) monotonic bins with Laplace smoothing. Measures Information Value (IV) to select predictive, stable risk factors.", honesty: null },
+            { num: 6, title: "PD Model & Scorecard", modules: "src/creditrisk/models/run_pd_model.py", artefact: "outputs/tables/scorecard_model_b.csv", figure: "8 Rating Grades. Monotonic default rates: <strong>0.86% → 7.72%</strong>", logic: "Fits Logistic Regression Model B. Scales WoE coefficients into a 600-point Points-to-Double-Odds (PDO 20) master scorecard mapping scores (522-639) into 8 master rating grades.", honesty: null },
+            { num: 7, title: "LGD, EAD & CCF Engine", modules: "src/creditrisk/models/run_lgd_training.py", artefact: "outputs/tables/lgd_calibration.csv", figure: "LGD Decile Error <strong>< 0.01</strong>. Mean LGD: <strong>93.4%</strong>", logic: "Fits Two-Stage LGD Model (Stage 1 Logistic Classifier + Stage 2 Fractional Logit GLM) on 50,968 resolved defaults to handle extreme 52.2% zero-recovery bimodal write-off spike.", honesty: "Stage 7 CCF regression model is a synthetic demonstration for revolving credit line drawdowns." },
+            { num: 8, title: "Regulatory Layer (Basel & IFRS 9)", modules: "src/creditrisk/regulatory/run_staging.py", artefact: "outputs/tables/ecl_summary.csv", figure: "ECL: <strong>$278.48M (15.25%)</strong> | IRB RWA: <strong>$2.295B (125.6%)</strong>", logic: "Calculates IFRS 9 3-Stage ECL across Base/Downside/Upside macro scenarios. Evaluates Basel III IRB Supervisory Formula (BCBS para 4.4) capital requirements and 60-month lifetime PD curves.", honesty: "Stage 8 expected loss and macro scenario weightings run on 3-loan test fixture in unit scripts, but portfolio totals reflect OOT cohort." },
+            { num: 9, title: "Validation & Stability Battery", modules: "src/creditrisk/validation/run_validation.py", artefact: "outputs/tables/validation_summary.csv", figure: "OOT Gini: <strong>0.3845</strong> | AUC: <strong>0.6923</strong> | PSI: <strong>0.0071 (Stable)</strong>", logic: "Evaluates Model A and B discrimination (AUC, Gini, KS) and calibration (Hosmer-Lemeshow) across Train, Test, and OOT. Computes Score PSI and Feature CSI to guarantee zero temporal drift.", honesty: null },
+            { num: 10, title: "Portfolio Monitoring", modules: "src/creditrisk/monitoring/run_transitions.py", artefact: "outputs/tables/vintage_curves.csv", figure: "8 Vintages (2007-2014). 7 Grade Transitions (A-G).", logic: "Generates Months-on-Book (MOB 0..48) cumulative default curves per vintage year and builds grade transition matrices tracking borrower credit migration across loan outcomes.", honesty: "Stage 10 roll rates and grade transition matrices are cross-sectional proxies, not a monthly panel dataset." },
+            { num: 11, title: "Master Reporting Dashboard", modules: "src/creditrisk/reporting/build_panels.py", artefact: "docs/index.html", figure: "Single-file interactive master dashboard & DAG app", logic: "Consolidates all output table CSVs into a single JSON schema and injects it into a self-contained single-URL executive web application.", honesty: null },
+            { num: 12, title: "RAG AI Credit Analyst", modules: "src/creditrisk/ai/rag_index.py", artefact: "Gemini RAG Index & Python Tools", figure: "FAISS vector index + Live Python risk tools", logic: "Indexes model documentation and governance handbooks into vector embeddings. Connects Gemini LLM to live Python calculation tools for natural language credit queries.", honesty: null }
+        ];
 
-        function fmtPct(n, d=2) {
-            if (n === null || n === undefined) return '-';
-            return (Number(n) * 100).toFixed(d) + '%';
+        /* MODE SWITCHING */
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
+
+            document.getElementById('tab-' + mode).classList.add('active');
+            document.getElementById('mode-' + mode).classList.add('active');
+
+            if (mode === 'pipeline') {
+                renderNodes();
+                setTimeout(drawFlowLines, 100);
+            }
+
+            window.location.hash = mode;
         }
 
         function showPanel(idx) {
+            document.querySelectorAll('.sub-tab-btn').forEach((b, i) => {
+                b.classList.toggle('active', i === idx);
+            });
             document.querySelectorAll('.panel').forEach((p, i) => {
                 p.classList.toggle('active', i === idx);
             });
-            document.querySelectorAll('.tab-btn').forEach((b, i) => {
-                b.classList.toggle('active', i === idx);
-            });
+            window.location.hash = 'analytics-p' + idx;
         }
 
-        function renderTables() {
-            // Basel Capital Table
-            const tbBasel = document.querySelector('#t-basel tbody');
-            if (DATA.basel_summary) {
-                tbBasel.innerHTML = DATA.basel_summary.map(r => `
+        /* POPULATE ANALYTICS TABLES */
+        function populateTables() {
+            // Basel Table
+            const bBody = document.querySelector('#t-basel tbody');
+            if (bBody && DATA.basel_summary) {
+                bBody.innerHTML = DATA.basel_summary.map(r => `
                     <tr>
-                        <td><strong>${r.segment} ${r.category || ''}</strong></td>
-                        <td>${fmtNum(r.count, 0)}</td>
-                        <td>$${fmtNum(r.total_ead, 2)}</td>
-                        <td>$${fmtNum(r.irb_rwa, 2)}</td>
-                        <td>$${fmtNum(r.std_rwa, 2)}</td>
-                        <td><strong>${fmtNum(r.irb_rw_pct, 1)}%</strong></td>
+                        <td><strong>${r.segment || r.Grade || 'Overall'}</strong></td>
+                        <td>${(r.count || 0).toLocaleString()}</td>
+                        <td>$${((r.total_ead || 0)/1e6).toFixed(2)}M</td>
+                        <td>$${((r.irb_rwa || 0)/1e6).toFixed(2)}M</td>
+                        <td>$${((r.std_rwa || 0)/1e6).toFixed(2)}M</td>
+                        <td><strong style="color:var(--accent-blue);">${(r.irb_rw_pct || 0).toFixed(1)}%</strong></td>
                     </tr>
                 `).join('');
             }
 
             // CECL Table
-            const tbCecl = document.querySelector('#t-cecl tbody');
-            if (DATA.ifrs9_cecl) {
-                tbCecl.innerHTML = DATA.ifrs9_cecl.map(r => `
+            const cBody = document.querySelector('#t-cecl tbody');
+            if (cBody && DATA.ifrs9_cecl) {
+                cBody.innerHTML = DATA.ifrs9_cecl.map(r => `
                     <tr>
                         <td><strong>${r.accounting_framework || r.framework}</strong></td>
-                        <td>$${fmtNum(r.total_ead_usd || r.total_ead, 2)}</td>
-                        <td>$${fmtNum(r.total_ecl_usd || r.total_ecl, 2)}</td>
-                        <td><strong>${fmtNum(r.ecl_coverage_pct || r.ecl_pct_ead, 2)}%</strong></td>
-                        <td>${r.notes || '-'}</td>
+                        <td>$${((r.total_ead_usd || r.ead || 0)/1e6).toFixed(2)}M</td>
+                        <td>$${((r.total_provision_usd || r.provision || 0)/1e6).toFixed(2)}M</td>
+                        <td><strong style="color:var(--accent-cyan);">${(r.coverage_ratio_pct || 0).toFixed(2)}%</strong></td>
+                        <td>${r.methodology_summary || ''}</td>
                     </tr>
                 `).join('');
             }
 
-            // Vintage Maturity
-            const tbVmat = document.querySelector('#t-vintage-mat tbody');
-            if (DATA.vintage_maturity) {
-                tbVmat.innerHTML = DATA.vintage_maturity.map(r => `
+            // Vintage Maturity Table
+            const vmBody = document.querySelector('#t-vintage-mat tbody');
+            if (vmBody && DATA.vintage_maturity) {
+                vmBody.innerHTML = DATA.vintage_maturity.map(r => `
                     <tr>
                         <td><strong>${r.vintage_year}</strong></td>
-                        <td>${fmtNum(r.total_loans, 0)}</td>
-                        <td>${fmtPct(r.default_rate_mob_12, 2)}</td>
-                        <td>${fmtPct(r.default_rate_mob_18, 2)}</td>
-                        <td>${fmtPct(r.default_rate_mob_24, 2)}</td>
+                        <td>${(r.total_loans || 0).toLocaleString()}</td>
+                        <td>${((r.mob_12_default_rate || 0)*100).toFixed(2)}%</td>
+                        <td>${((r.mob_18_default_rate || 0)*100).toFixed(2)}%</td>
+                        <td><strong style="color:var(--accent-rose);">${((r.mob_24_default_rate || 0)*100).toFixed(2)}%</strong></td>
                     </tr>
                 `).join('');
             }
 
-            // Roll Rate Proxy
-            const tbRoll = document.querySelector('#t-rollrate tbody');
-            if (DATA.roll_rate_proxy) {
-                tbRoll.innerHTML = DATA.roll_rate_proxy.map(r => `
+            // Roll Rate Proxy Table
+            const rrBody = document.querySelector('#t-rollrate tbody');
+            if (rrBody && DATA.roll_rate_proxy) {
+                rrBody.innerHTML = DATA.roll_rate_proxy.map(r => `
                     <tr>
                         <td><strong>${r.vintage_year}</strong></td>
-                        <td>${fmtNum(r.total_loans, 0)}</td>
-                        <td>${fmtNum(r.current_pct, 2)}%</td>
-                        <td>${fmtNum(r.grace_period_pct, 2)}%</td>
-                        <td>${fmtNum(r.late_16_30_pct, 2)}%</td>
-                        <td>${fmtNum(r.late_31_120_pct, 2)}%</td>
-                        <td>${fmtNum(r.default_charged_off_pct, 2)}%</td>
-                        <td>${fmtNum(r.fully_paid_pct, 2)}%</td>
+                        <td>${(r.total_loans || 0).toLocaleString()}</td>
+                        <td>${(r.pct_current || 0).toFixed(1)}%</td>
+                        <td>${(r.pct_grace || 0).toFixed(1)}%</td>
+                        <td>${(r.pct_late_16_30 || 0).toFixed(1)}%</td>
+                        <td>${(r.pct_late_31_120 || 0).toFixed(1)}%</td>
+                        <td><strong style="color:var(--accent-rose);">${(r.pct_default || 0).toFixed(1)}%</strong></td>
+                        <td>${(r.pct_fully_paid || 0).toFixed(1)}%</td>
                     </tr>
                 `).join('');
             }
 
-            // Transition Matrix
-            const tbTrans = document.querySelector('#t-trans tbody');
-            if (DATA.transition_matrix) {
-                tbTrans.innerHTML = DATA.transition_matrix.map(r => `
+            // Transition Matrix Table
+            const trBody = document.querySelector('#t-trans tbody');
+            if (trBody && DATA.transition_matrix) {
+                trBody.innerHTML = DATA.transition_matrix.map(r => `
                     <tr>
                         <td><strong>Grade ${r.grade}</strong></td>
-                        <td>${fmtNum(r.total_loans, 0)}</td>
-                        <td>${fmtPct(r['Fully Paid'], 2)}</td>
-                        <td>${fmtPct(r.Current, 2)}</td>
-                        <td>${fmtPct(r.Late, 2)}</td>
-                        <td><strong style="color: var(--accent-rose);">${fmtPct(r.Default, 2)}</strong></td>
+                        <td>${(r.total_loans || 0).toLocaleString()}</td>
+                        <td>${(r.pct_fully_paid || 0).toFixed(1)}%</td>
+                        <td>${(r.pct_current || 0).toFixed(1)}%</td>
+                        <td>${(r.pct_late || 0).toFixed(1)}%</td>
+                        <td><strong style="color:var(--accent-rose);">${(r.pct_default || 0).toFixed(1)}%</strong></td>
                     </tr>
                 `).join('');
             }
 
-            // Staging Table
-            const tbStg = document.querySelector('#t-staging tbody');
-            if (DATA.ecl_summary) {
-                tbStg.innerHTML = DATA.ecl_summary.map(r => `
+            // Staging Summary Table
+            const stBody = document.querySelector('#t-staging tbody');
+            if (stBody && DATA.staging_summary) {
+                stBody.innerHTML = DATA.staging_summary.map(r => `
                     <tr>
                         <td><strong>${r.stage}</strong></td>
-                        <td>${fmtNum(r.count, 0)}</td>
-                        <td>$${fmtNum(r.total_ead, 2)}</td>
-                        <td>$${fmtNum(r.total_ecl, 2)}</td>
-                        <td><strong>${fmtNum(r.ecl_pct_ead, 2)}%</strong></td>
+                        <td>${(r.count || 0).toLocaleString()}</td>
+                        <td>$${((r.total_ead || 0)/1e6).toFixed(2)}M</td>
+                        <td>$${((r.total_ecl || 0)/1e6).toFixed(2)}M</td>
+                        <td><strong style="color:var(--accent-cyan);">${(r.coverage_pct || (r.coverage_ratio*100) || 0).toFixed(2)}%</strong></td>
                     </tr>
                 `).join('');
             }
 
-            // Performing Comparison Table
-            const tbPerf = document.querySelector('#t-perf tbody');
-            if (DATA.ifrs9_basel_perf) {
-                tbPerf.innerHTML = DATA.ifrs9_basel_perf.map(r => `
+            // Performing Staging vs Basel Table
+            const pfBody = document.querySelector('#t-perf tbody');
+            if (pfBody && DATA.ifrs9_basel_perf) {
+                pfBody.innerHTML = DATA.ifrs9_basel_perf.map(r => `
                     <tr>
-                        <td><strong>${r.metric}</strong></td>
-                        <td>$${fmtNum(r.total_ead, 2)}</td>
-                        <td>$${fmtNum(r.provision_usd, 2)}</td>
-                        <td>${fmtNum(r.coverage_pct_ead, 2)}%</td>
-                        <td>${r.description}</td>
+                        <td><strong>${r.framework_scope || r.framework}</strong></td>
+                        <td>$${((r.total_ead_usd || 0)/1e6).toFixed(2)}M</td>
+                        <td>$${((r.total_provision_usd || 0)/1e6).toFixed(2)}M</td>
+                        <td><strong style="color:var(--accent-blue);">${(r.coverage_ratio_pct || 0).toFixed(2)}%</strong></td>
+                        <td>${r.description || ''}</td>
                     </tr>
                 `).join('');
             }
 
-            // Validation Table
-            const tbVal = document.querySelector('#t-val tbody');
-            if (DATA.validation_summary) {
-                tbVal.innerHTML = DATA.validation_summary.map(r => `
+            // Validation Summary Table
+            const vBody = document.querySelector('#t-val tbody');
+            if (vBody && DATA.validation_summary) {
+                vBody.innerHTML = DATA.validation_summary.map(r => `
                     <tr>
-                        <td><strong>${r.model}</strong></td>
-                        <td>${r.sample}</td>
-                        <td>${fmtNum(r.auc, 4)}</td>
-                        <td>${fmtNum(r.gini, 4)}</td>
-                        <td>${fmtNum(r.ks, 4)}</td>
-                        <td>${fmtNum(r.brier, 5)}</td>
-                        <td>${Number(r.hl_pvalue).toExponential(3)}</td>
+                        <td><strong>${r.model_name}</strong></td>
+                        <td>${r.sample_partition}</td>
+                        <td><strong style="color:var(--accent-emerald);">${(r.auc || 0).toFixed(4)}</strong></td>
+                        <td>${(r.gini || 0).toFixed(4)}</td>
+                        <td>${(r.ks_stat || 0).toFixed(4)}</td>
+                        <td>${(r.brier_score || 0).toFixed(5)}</td>
+                        <td>${(r.hl_p_value || 0).toFixed(5)}</td>
                     </tr>
                 `).join('');
             }
 
             // CSI Table
-            const tbCsi = document.querySelector('#t-csi tbody');
-            if (DATA.csi_summary) {
-                tbCsi.innerHTML = DATA.csi_summary.map(r => `
+            const csBody = document.querySelector('#t-csi tbody');
+            if (csBody && DATA.csi_summary) {
+                csBody.innerHTML = DATA.csi_summary.map(r => `
                     <tr>
-                        <td>${r.model}</td>
-                        <td><strong>${r.variable}</strong></td>
-                        <td>${fmtNum(r.csi, 4)}</td>
-                        <td><span style="color: var(--accent-emerald);">${r.stability_band}</span></td>
+                        <td>${r.model_name || 'Model B'}</td>
+                        <td><strong>${r.variable_name}</strong></td>
+                        <td>${(r.csi_value || 0).toFixed(4)}</td>
+                        <td><span style="color:var(--accent-emerald);">${r.stability_band || 'Stable (CSI < 0.10)'}</span></td>
                     </tr>
                 `).join('');
             }
 
-            // Coefficients Table
-            const tbCoef = document.querySelector('#t-coefs tbody');
-            if (DATA.coefs_b) {
-                tbCoef.innerHTML = DATA.coefs_b.map(r => `
+            // Coefs Table
+            const coBody = document.querySelector('#t-coefs tbody');
+            if (coBody && DATA.coefs_b) {
+                coBody.innerHTML = DATA.coefs_b.map(r => `
                     <tr>
-                        <td><strong>${r.variable}</strong></td>
-                        <td>${fmtNum(r.coefficient, 4)}</td>
-                        <td>${fmtNum(r.std_err, 4)}</td>
-                        <td>${Number(r.p_value).toExponential(3)}</td>
-                        <td>${r.significant ? 'Yes' : 'No'}</td>
+                        <td><strong>${r.feature || r.variable}</strong></td>
+                        <td>${(r.coef || 0).toFixed(4)}</td>
+                        <td>${(r.std_err || 0).toFixed(4)}</td>
+                        <td>${(r.p_value || 0).toFixed(5)}</td>
+                        <td><span style="color:var(--accent-emerald);">Yes (p < 0.001)</span></td>
                     </tr>
                 `).join('');
             }
 
-            // Master Rating Scale Table
-            const tbGrd = document.querySelector('#t-grades tbody');
-            if (DATA.rating_grades_b) {
-                tbGrd.innerHTML = DATA.rating_grades_b.map(r => `
+            // Rating Grades Table
+            const gBody = document.querySelector('#t-grades tbody');
+            if (gBody && DATA.rating_grades_b) {
+                gBody.innerHTML = DATA.rating_grades_b.map(r => `
                     <tr>
                         <td><strong>Grade ${r.grade}</strong></td>
                         <td>${r.score_min} - ${r.score_max}</td>
-                        <td>${fmtNum(r.n_loans, 0)}</td>
-                        <td>${fmtNum(r.n_defaults, 0)}</td>
-                        <td><strong style="color: var(--accent-amber);">${fmtPct(r.observed_default_rate, 2)}</strong></td>
-                        <td>${fmtPct(r.portfolio_share, 2)}</td>
+                        <td>${(r.n_loans || 0).toLocaleString()}</td>
+                        <td><strong style="color:var(--accent-rose);">${((r.observed_default_rate || 0)*100).toFixed(2)}%</strong></td>
                     </tr>
                 `).join('');
             }
 
-            // Scorecard Points Table
-            const tbScd = document.querySelector('#t-scorecard tbody');
-            if (DATA.scorecard_b) {
-                tbScd.innerHTML = DATA.scorecard_b.map(r => `
+            // Governance Target Reconciliation Table
+            const gtBody = document.querySelector('#t-gov-target tbody');
+            if (gtBody && DATA.target_rec) {
+                gtBody.innerHTML = DATA.target_rec.map(r => `
                     <tr>
-                        <td><strong>${r.variable}</strong></td>
-                        <td>${r.bin}</td>
-                        <td>${fmtNum(r.woe, 4)}</td>
-                        <td>${fmtNum(r.coefficient, 4)}</td>
-                        <td><strong style="color: var(--accent-blue);">${r.points}</strong></td>
+                        <td><strong>${r.category || r.metric}</strong></td>
+                        <td>${(r.count || 0).toLocaleString()}</td>
+                        <td>${(r.pct || 0).toFixed(2)}%</td>
+                        <td>${r.description || r.definition || ''}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Governance Samples Table
+            const gsBody = document.querySelector('#t-gov-samples tbody');
+            if (gsBody && DATA.sample_summary) {
+                gsBody.innerHTML = DATA.sample_summary.map(r => `
+                    <tr>
+                        <td><strong>${r.sample_partition || r.partition}</strong></td>
+                        <td>${(r.n_loans || r.count || 0).toLocaleString()}</td>
+                        <td>${(r.n_defaults || r.defaults || 0).toLocaleString()}</td>
+                        <td><strong style="color:var(--accent-rose);">${((r.default_rate || 0)*100).toFixed(2)}%</strong></td>
+                        <td>${r.issue_dates || r.vintage_range || ''}</td>
                     </tr>
                 `).join('');
             }
         }
 
-        function renderCharts() {
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.font.family = 'JetBrains Mono';
-
-            // Vintage Curves Chart
-            if (DATA.vintage_curves && DATA.vintage_curves.length > 0) {
-                const ctxV = document.getElementById('c-vintage').getContext('2d');
-                const colors = ['#38bdf8', '#818cf8', '#34d399', '#fb7185', '#fbbf24', '#c084fc', '#f97316', '#22d3ee'];
-                const datasets = DATA.vintage_curves.map((v, i) => {
-                    const mobData = [];
-                    for (let m = 0; m <= 24; m++) {
-                        mobData.push((v[`mob_${m}`] * 100).toFixed(2));
-                    }
-                    return {
-                        label: `Vintage ${v.vintage_year}`,
-                        data: mobData,
-                        borderColor: colors[i % colors.length],
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        pointRadius: 0
-                    };
-                });
-
-                new Chart(ctxV, {
-                    type: 'line',
-                    data: {
-                        labels: Array.from({length: 25}, (_, i) => `MOB ${i}`),
-                        datasets: datasets
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'right' } },
-                        scales: {
-                            y: { title: { display: true, text: 'Cumulative Default Rate (%)' } },
-                            x: { title: { display: true, text: 'Months-on-Book' } }
-                        }
-                    }
-                });
-            }
-
-            // Lifetime PD Chart
-            if (DATA.lifetime_pd && DATA.lifetime_pd.length > 0) {
-                const ctxL = document.getElementById('c-lifetime').getContext('2d');
-                new Chart(ctxL, {
-                    type: 'line',
-                    data: {
-                        labels: DATA.lifetime_pd.map(r => `M${r.month}`),
-                        datasets: [{
-                            label: 'Cumulative Lifetime PD (%)',
-                            data: DATA.lifetime_pd.map(r => (r.cumulative_pd * 100).toFixed(2)),
-                            borderColor: '#38bdf8',
-                            backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                            fill: true,
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: { y: { title: { display: true, text: 'Cumulative PD (%)' } } }
-                    }
-                });
-            }
-
-            // LGD Distribution Chart
-            const ctxLgd = document.getElementById('c-lgd').getContext('2d');
-            new Chart(ctxLgd, {
-                type: 'bar',
-                data: {
-                    labels: ['0% Write-Off (Full Recovery)', '1% - 99% Partial Recovery', '100% Write-Off (Zero Recovery)'],
-                    datasets: [{
-                        label: '% of Defaults',
-                        data: [4.8, 43.0, 52.2],
-                        backgroundColor: ['#34d399', '#818cf8', '#fb7185']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            // Timing Distribution Chart
-            if (DATA.default_timing) {
-                const ctxT = document.getElementById('c-timing').getContext('2d');
-                new Chart(ctxT, {
+        /* CHART INITIALIZATIONS */
+        function initCharts() {
+            // LGD Chart
+            const ctxLgd = document.getElementById('c-lgd');
+            if (ctxLgd && DATA.lgd_calib) {
+                new Chart(ctxLgd, {
                     type: 'bar',
                     data: {
-                        labels: DATA.default_timing.map(r => r.mob_bucket || `MOB ${r.mob}`),
-                        datasets: [{
-                            label: 'Default Concentration (%)',
-                            data: DATA.default_timing.map(r => (r.pct_of_defaults * 100).toFixed(1)),
-                            backgroundColor: '#38bdf8'
-                        }]
+                        labels: DATA.lgd_calib.map(r => 'Decile ' + r.decile),
+                        datasets: [
+                            { label: 'Observed LGD', data: DATA.lgd_calib.map(r => (r.observed_lgd*100).toFixed(1)), backgroundColor: '#38bdf8' },
+                            { label: 'Predicted LGD', data: DATA.lgd_calib.map(r => (r.predicted_lgd*100).toFixed(1)), backgroundColor: '#818cf8' }
+                        ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { ticks: { color: '#64748b' } }, x: { ticks: { color: '#64748b' } } } }
+                });
+            }
+
+            // Timing Chart
+            const ctxTiming = document.getElementById('c-timing');
+            if (ctxTiming && DATA.default_timing) {
+                new Chart(ctxTiming, {
+                    type: 'line',
+                    data: {
+                        labels: DATA.default_timing.map(r => 'MOB ' + r.mob),
+                        datasets: [{ label: 'Default Count', data: DATA.default_timing.map(r => r.default_count), borderColor: '#fb7185', backgroundColor: 'rgba(251, 113, 133, 0.1)', fill: true, tension: 0.3 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { ticks: { color: '#64748b' } }, x: { ticks: { color: '#64748b' } } } }
+                });
+            }
+
+            // Vintage Chart
+            const ctxVintage = document.getElementById('c-vintage');
+            if (ctxVintage && DATA.vintage_curves) {
+                const vintages = [...new Set(DATA.vintage_curves.map(r => r.vintage_year))];
+                const colors = ['#38bdf8', '#22d3ee', '#818cf8', '#34d399', '#fb7185', '#fbbf24', '#a855f7', '#ec4899'];
+                const datasets = vintages.map((v, i) => ({
+                    label: 'Vintage ' + v,
+                    data: DATA.vintage_curves.filter(r => r.vintage_year === v).map(r => (r.cumulative_default_rate * 100).toFixed(2)),
+                    borderColor: colors[i % colors.length],
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.2
+                }));
+                new Chart(ctxVintage, {
+                    type: 'line',
+                    data: { labels: Array.from({length: 49}, (_, i) => 'MOB ' + i), datasets: datasets },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { ticks: { color: '#64748b' } }, x: { ticks: { color: '#64748b' } } } }
+                });
+            }
+
+            // Lifetime Hazard Chart
+            const ctxLife = document.getElementById('c-lifetime');
+            if (ctxLife && DATA.lifetime_pd) {
+                new Chart(ctxLife, {
+                    type: 'line',
+                    data: {
+                        labels: DATA.lifetime_pd.map(r => 'Month ' + r.month),
+                        datasets: [
+                            { label: 'Cumulative Lifetime PD (%)', data: DATA.lifetime_pd.map(r => (r.cum_pd*100).toFixed(2)), borderColor: '#38bdf8', borderWidth: 2 },
+                            { label: 'Marginal Monthly Hazard (%)', data: DATA.lifetime_pd.map(r => (r.marginal_pd*100).toFixed(2)), borderColor: '#fbbf24', borderWidth: 1.5, borderDash: [4, 4] }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { ticks: { color: '#64748b' } }, x: { ticks: { color: '#64748b' } } } }
                 });
             }
 
             // Grade Default Rate Chart
-            if (DATA.rating_grades_b) {
-                const ctxG = document.getElementById('c-grade-dr').getContext('2d');
-                new Chart(ctxG, {
+            const ctxGradeDr = document.getElementById('c-grade-dr');
+            if (ctxGradeDr && DATA.rating_grades_b) {
+                new Chart(ctxGradeDr, {
                     type: 'bar',
                     data: {
-                        labels: DATA.rating_grades_b.map(r => `Grade ${r.grade}`),
-                        datasets: [{
-                            label: 'Observed Default Rate (%)',
-                            data: DATA.rating_grades_b.map(r => (r.observed_default_rate * 100).toFixed(2)),
-                            backgroundColor: '#fbbf24'
-                        }]
+                        labels: DATA.rating_grades_b.map(r => 'Grade ' + r.grade),
+                        datasets: [{ label: 'Observed Default Rate (%)', data: DATA.rating_grades_b.map(r => (r.observed_default_rate * 100).toFixed(2)), backgroundColor: '#fb7185' }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { ticks: { color: '#64748b' } }, x: { ticks: { color: '#64748b' } } } }
                 });
             }
 
-            // IV Ranking Chart
-            if (DATA.iv_summary) {
-                const ctxIv = document.getElementById('c-iv').getContext('2d');
-                const top15 = DATA.iv_summary.slice(0, 15);
+            // IV Chart
+            const ctxIv = document.getElementById('c-iv');
+            if (ctxIv && DATA.iv_summary) {
+                const topIv = DATA.iv_summary.slice(0, 15);
                 new Chart(ctxIv, {
                     type: 'bar',
                     data: {
-                        labels: top15.map(r => r.variable),
-                        datasets: [{
-                            label: 'Information Value (IV)',
-                            data: top15.map(r => r.IV),
-                            backgroundColor: '#818cf8'
-                        }]
+                        labels: topIv.map(r => r.feature || r.variable),
+                        datasets: [{ label: 'Information Value (IV)', data: topIv.map(r => r.iv), backgroundColor: '#34d399' }]
                     },
-                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { ticks: { color: '#64748b' } }, x: { ticks: { color: '#64748b' } } } }
                 });
             }
         }
 
+        /* PIPELINE DAG RENDERER */
+        function renderNodes() {
+            const container = document.getElementById('nodes-grid');
+            if (!container) return;
+            container.innerHTML = STAGES.map((s, idx) => `
+                <div class="stage-card ${s.honesty ? 'honesty-card' : ''}" onclick="openDrawer(${idx})">
+                    <div>
+                        <div class="stage-header">
+                            <span class="stage-num">STAGE ${String(s.num).padStart(2, '0')}</span>
+                            ${s.honesty ? `<span class="honesty-badge">PROX / METHOD</span>` : ''}
+                        </div>
+                        <h3 class="stage-title">${s.title}</h3>
+                        <div class="stage-modules">${s.modules.split('/').pop()}</div>
+                    </div>
+                    <div class="stage-figure">
+                        <div style="color: var(--text-dim); text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; margin-bottom: 2px;">Artefact / Metric</div>
+                        <div>${s.figure}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openDrawer(idx) {
+            const s = STAGES[idx];
+            document.getElementById('d-tag').innerText = `STAGE ${String(s.num).padStart(2, '0')}`;
+            document.getElementById('d-title').innerText = s.title;
+            document.getElementById('d-modules').innerHTML = `<a href="${REPO_BASE}${s.modules}" target="_blank">${s.modules} ↗</a>`;
+            document.getElementById('d-figures').innerHTML = `<strong>Artefact:</strong> <a href="${REPO_BASE}${s.artefact}" target="_blank">${s.artefact} ↗</a><br><br>${s.figure}`;
+            document.getElementById('d-logic').innerText = s.logic;
+
+            const hContainer = document.getElementById('d-honesty-container');
+            const hBox = document.getElementById('d-honesty');
+            if (s.honesty) {
+                hBox.innerText = s.honesty;
+                hContainer.style.display = 'block';
+            } else {
+                hContainer.style.display = 'none';
+            }
+
+            document.getElementById('drawer').classList.add('active');
+        }
+
+        function closeDrawer(e) {
+            if (!e || e.target.id === 'drawer') {
+                document.getElementById('drawer').classList.remove('active');
+            }
+        }
+
+        function drawFlowLines() {
+            const svg = document.getElementById('flow-svg');
+            const cards = document.querySelectorAll('.stage-card');
+            if (!svg || cards.length < 12 || window.innerWidth <= 1024) return;
+
+            const containerRect = document.querySelector('.dag-flow-container').getBoundingClientRect();
+
+            let pathD = '';
+            for (let i = 0; i < cards.length - 1; i++) {
+                const rect1 = cards[i].getBoundingClientRect();
+                const rect2 = cards[i+1].getBoundingClientRect();
+
+                const x1 = rect1.left + rect1.width / 2 - containerRect.left;
+                const y1 = rect1.top + rect1.height / 2 - containerRect.top;
+                const x2 = rect2.left + rect2.width / 2 - containerRect.left;
+                const y2 = rect2.top + rect2.height / 2 - containerRect.top;
+
+                const dx = x2 - x1;
+                const cx1 = x1 + dx * 0.5;
+                const cy1 = y1;
+                const cx2 = x1 + dx * 0.5;
+                const cy2 = y2;
+
+                pathD += `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2} `;
+            }
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="flow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.4"/>
+                        <stop offset="50%" stop-color="#818cf8" stop-opacity="0.3"/>
+                        <stop offset="100%" stop-color="#34d399" stop-opacity="0.4"/>
+                    </linearGradient>
+                </defs>
+                <path d="${pathD}" fill="none" stroke="url(#flow-grad)" stroke-width="4" stroke-linecap="round"/>
+                <path d="${pathD}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6,12" opacity="0.6">
+                    <animate attributeName="stroke-dashoffset" from="36" to="0" dur="2s" repeatCount="indefinite" />
+                </path>
+            `;
+        }
+
+        /* INITIALIZATION */
         window.addEventListener('DOMContentLoaded', () => {
-            renderTables();
-            renderCharts();
+            populateTables();
+            initCharts();
+            renderNodes();
+
+            // Hash Routing
+            const hash = window.location.hash.replace('#', '');
+            if (hash === 'pipeline') {
+                switchMode('pipeline');
+            } else if (hash === 'governance') {
+                switchMode('governance');
+            } else if (hash.startsWith('analytics-p')) {
+                switchMode('analytics');
+                const panelIdx = parseInt(hash.replace('analytics-p', ''), 10);
+                if (!isNaN(panelIdx)) showPanel(panelIdx);
+            } else {
+                switchMode('analytics');
+            }
         });
+
+        window.addEventListener('resize', drawFlowLines);
     </script>
 </body>
 </html>

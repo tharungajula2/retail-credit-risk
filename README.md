@@ -58,8 +58,10 @@
 ========================================================================================================
 [ outputs/tables/ ] ------------------> 35 CSV tables (Ground truth metrics & scorecard parameters)
 [ outputs/models/ ] ------------------> Serialised .pkl models & FAISS/sentence-transformer RAG index
-[ outputs/reports/dashboard_data.json ] Consolidated metrics feed for single-page Web UI
-[ outputs/reports/risk_dashboard.html ] Self-contained interactive dashboard (Chart.js visualization)
+[ outputs/tables/ ] ------------------> 34 CSV tables (Ground truth metrics & scorecard parameters)
+[ outputs/models/ ] ------------------> Serialised .pkl models & FAISS/sentence-transformer RAG index
+[ docs/index.html ] ------------------> Unified standalone master interactive application (Executive Dashboard & DAG Pipeline Flow Map)
+[ index.html ] -----------------------> Root entrypoint mirror for single URL link sharing
 
 ========================================================================================================
                              ANALYTICS & GOVERNANCE INTERFACES
@@ -77,7 +79,7 @@
 
 ```powershell
 # Clone repository and navigate to workspace
-cd "d:\0000_after portfolio_24726\0_vizier\vizier\retail-credit-risk"
+cd "d:\0000_after portfolio_25726\2_retail-credit-risk\retail-credit-risk"
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -93,30 +95,25 @@ To execute the entire credit risk analytics pipeline from raw datasets to report
 
 ```powershell
 # 1. Probability of Default (PD) Pipeline — Train Model A & B, score master scale
-python src/creditrisk/pd/train.py
+python src/creditrisk/data/run_sampling.py
+python src/creditrisk/models/run_pd_model.py
 
 # 2. Loss Given Default (LGD) Pipeline — Fit Fractional Response Model on resolved defaults
-python src/creditrisk/lgd/train.py
+python src/creditrisk/models/run_lgd_training.py
 
-# 3. Exposure at Default (EAD) Pipeline — Calculate observed Credit Conversion Factors (CCF)
-python src/creditrisk/ead/calculate.py
+# 3. Regulatory Engine (Basel III & IFRS 9) — Calculate capital requirements & ECL staging
+python src/creditrisk/regulatory/run_staging.py
+python src/creditrisk/regulatory/run_ecl.py
 
-# 4. Basel III Capital Engine — Calculate IRB RWA, Standardised RWA, and regulatory capital
-python src/creditrisk/capital/calculate.py
-
-# 5. IFRS 9 & CECL ECL Engine — Calculate 3-stage ECL under Base, Downside, and Upside scenarios
-python src/creditrisk/ifrs9/calculate.py
-
-# 6. Reporting & Dashboard Assembly — Generate consolidated JSON and static HTML dashboard
-python src/creditrisk/reporting/dashboard_data.py
-python src/creditrisk/reporting/build_dashboard.py
+# 4. Master Reporting Dashboard — Generate unified single-page interactive application
+python src/creditrisk/reporting/build_panels.py
 ```
 
-### Launch Interactive CLI & Dashboards
+### Launch Interactive Application & Dashboards
 
 ```powershell
-# Open the self-contained portfolio risk dashboard (No web server required)
-Start-Process outputs/reports/risk_dashboard.html
+# Open the self-contained unified master application in default browser
+Start-Process docs/index.html
 
 # Set API Key and run the AI Credit Analyst CLI
 $env:GEMINI_API_KEY = "your-api-key-here"
@@ -151,8 +148,8 @@ pytest tests/ -v
 | `outputs/tables/ecl_scenario_weighted.csv` | IFRS 9 ECL comparison under Base (40%), Downside (30%), Upside (30%), and weighted totals |
 | `outputs/tables/ifrs9_vs_cecl.csv` | Comparative evaluation between IFRS 9 staged ECL ($285.0M) and CECL full lifetime provision ($327.5M) |
 | `outputs/tables/expected_loss_summary.csv` | Combined PD * LGD * EAD expected loss metrics aggregated by rating grade |
-| `outputs/reports/dashboard_data.json` | Fully consolidated JSON file containing all 35 model execution tables for front-end consumption |
-| `outputs/reports/risk_dashboard.html` | Standalone single-file HTML report with interactive Chart.js widgets |
+| `docs/index.html` | Standalone single-URL master interactive web application (Executive Panels + DAG Flow) |
+| `index.html` | Root entrypoint mirror for GitHub Pages and single-URL link sharing |
 | `outputs/models/pd_model_b.pkl` | Serialised scikit-learn Logistic Regression model pipeline for Model B |
 | `outputs/models/lgd_model.pkl` | Serialised statsmodels Fractional Response GLM object for LGD forecasting |
 
