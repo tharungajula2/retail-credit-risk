@@ -39,10 +39,10 @@
 [ data/raw/LoanStats3a_b.csv ] (466,285 records: 2007-2014 LendingClub Loans)
        |
        v
-[ datasets/ ] ---------> ( temporal train / test / out-of-time splits: 138k train, 92k test, 235k OOT )
+[ datasets/ ] ---------> ( temporal train / test / out-of-time splits: 184.5k train, 46.1k test, 235.6k OOT )
 
 ========================================================================================================
-                               PROCESSING PIPELINES (src/creditrisk/)
+                                PROCESSING PIPELINES (src/creditrisk/)
 ========================================================================================================
   pd/               lgd/               ead/              capital/            ifrs9/
   WoE Binning       Fractional         Observed CCF      Basel III IRB       3-Stage ECL
@@ -57,8 +57,6 @@
                              OUTPUT LOCATIONS & DATA ARTIFACTS
 ========================================================================================================
 [ outputs/tables/ ] ------------------> 35 CSV tables (Ground truth metrics & scorecard parameters)
-[ outputs/models/ ] ------------------> Serialised .pkl models & FAISS/sentence-transformer RAG index
-[ outputs/tables/ ] ------------------> 34 CSV tables (Ground truth metrics & scorecard parameters)
 [ outputs/models/ ] ------------------> Serialised .pkl models & FAISS/sentence-transformer RAG index
 [ docs/index.html ] ------------------> Unified standalone master interactive application (Executive Dashboard & DAG Pipeline Flow Map)
 [ index.html ] -----------------------> Root entrypoint mirror for single URL link sharing
@@ -228,7 +226,7 @@ Points-to-Double-Odds (PDO) scaling: Base Score = 600 at 50:1 odds, PDO = 20. OO
 
 - **Python Environment:** Python 3.10+
 - **Data & Analytics:** `pandas >= 2.0.0`, `numpy >= 1.24.0`, `scipy >= 1.10.0`
-- **Machine Learning & Econometrics:** `scikit-learn >= 1.2.0`, `statsmodels >= 0.14.0`, `lifelines >= 0.27.0`
+- **Machine Learning & Econometrics:** `scikit-learn >= 1.2.0`, `statsmodels >= 0.14.0`
 - **AI & RAG Engine:** `sentence-transformers >= 2.2.0`, `google-generativeai >= 0.3.0`, `pypdf >= 3.0.0`
 - **Testing & Quality Assurance:** `pytest >= 7.0.0`
 - **UI & Dashboard:** Chart.js v4.4 (loaded via CDN inside self-contained HTML artifact)
