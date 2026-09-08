@@ -32,9 +32,11 @@ At the center of the project are three quantities:
 
 Those three quantities combine into the classic expected-loss relationship:
 
-\[
-EL = PD 	imes LGD 	imes EAD
-\]
+
+```text
+EL = PD × LGD × EAD
+```
+
 
 But a real credit-risk system cannot stop at that formula. We also need to answer:
 
@@ -259,15 +261,13 @@ The project transforms variables using **Weight of Evidence**, or WoE.
 
 At a high level, WoE compares the concentration of good accounts and bad accounts inside a bin.
 
-For bin \(i\):
+For bin `i`:
 
-\[
-WoE_i =
-\ln\left(
-rac{\% 	ext{ non-defaults in bin }i}
-{\% 	ext{ defaults in bin }i}
-ight)
-\]
+
+```text
+WoE_i = ln[(% non-defaults in bin i) / (% defaults in bin i)]
+```
+
 
 The project uses the convention shown in its own source documentation, so the sign should be interpreted consistently with that implementation.
 
@@ -310,12 +310,11 @@ The same binning engine calculates **Information Value**, or IV.
 
 The project uses the standard relationship:
 
-\[
-IV =
-\sum_i
-(\%Good_i - \%Bad_i)
-	imes WoE_i
-\]
+
+```text
+IV = Σ_i [(%Good_i - %Bad_i) × WoE_i]
+```
+
 
 The purpose of IV here is feature screening.
 
@@ -409,13 +408,13 @@ The project uses logistic regression for PD.
 
 The model works with log-odds:
 
-\[
-\ln\left(rac{p}{1-p}ight)
-=
-eta_0 + \sum_j eta_j x_j
-\]
 
-where \(p\) is the estimated probability of default.
+```text
+ln[p / (1 - p)] = β0 + Σ_j (β_j × x_j)
+```
+
+
+where `p` is the estimated probability of default.
 
 If the linear combination is large in the direction associated with default, the predicted PD rises.
 
@@ -467,29 +466,35 @@ PDO means **points to double the odds**.
 
 The factor is:
 
-\[
-Factor = rac{PDO}{\ln(2)}
-\]
+
+```text
+Factor = PDO / ln(2)
+```
+
 
 With PDO = 20:
 
-\[
-Factor pprox 28.8539
-\]
+
+```text
+Factor ≈ 28.8539
+```
+
 
 The offset is:
 
-\[
-Offset =
-BaseScore -
-Factor 	imes \ln(BaseOdds)
-\]
+
+```text
+Offset = BaseScore - Factor × ln(BaseOdds)
+```
+
 
 For this project:
 
-\[
-Offset pprox 487.123
-\]
+
+```text
+Offset ≈ 487.123
+```
+
 
 Then the score is derived from log-odds.
 
@@ -608,9 +613,11 @@ The conclusion is:
 
 Credit-risk teams often express AUC as Gini:
 
-\[
-Gini = 2 	imes AUC - 1
-\]
+
+```text
+Gini = 2 × AUC - 1
+```
+
 
 For Model B:
 
@@ -718,12 +725,11 @@ The project implements Population Stability Index in `src/creditrisk/validation/
 
 Conceptually:
 
-\[
-PSI =
-\sum_b
-(Actual_b - Expected_b)
-\ln\left(rac{Actual_b}{Expected_b}ight)
-\]
+
+```text
+PSI = Σ_b [(Actual_b - Expected_b) × ln(Actual_b / Expected_b)]
+```
+
 
 The project compares train score distributions against the OOT 2014 population.
 
@@ -780,9 +786,11 @@ Those exposures are not economically equivalent.
 
 That is why we need LGD.
 
-\[
+
+```text
 LGD = 1 - RecoveryRate
-\]
+```
+
 
 The project builds LGD from the defaulted-loan population of **50,968 accounts**.
 
@@ -817,9 +825,11 @@ So the project uses a two-stage hurdle model.
 
 A logistic classifier estimates:
 
-\[
-P(	ext{has recovery} = 1)
-\]
+
+```text
+P(has recovery = 1)
+```
+
 
 This is a classification problem.
 
@@ -827,9 +837,11 @@ This is a classification problem.
 
 For accounts with positive recovery, a Gradient Boosting Regressor estimates the conditional recovery rate:
 
-\[
-\hat{RR}_{positive}
-\]
+
+```text
+Predicted positive recovery rate = RR_hat_positive
+```
+
 
 This is a regression problem.
 
@@ -837,22 +849,19 @@ This is a regression problem.
 
 Expected recovery becomes:
 
-\[
-E[RR]
-=
-P(	ext{recovery})
-	imes
-E[RR \mid 	ext{recovery}]
-\]
+
+```text
+E[RR] = P(recovery) × E[RR | recovery]
+```
+
 
 Then:
 
-\[
-LGD
-=
-1 -
-E[RR]
-\]
+
+```text
+LGD = 1 - E[RR]
+```
+
 
 This architecture is a strong example of how model design should follow the shape of the target distribution.
 
@@ -867,13 +876,11 @@ It chose one because zero-inflated recoveries create a natural hurdle.
 
 For fixed-term LendingClub loans, the project calculates realized EAD from outstanding principal:
 
-\[
-EAD =
-\max(
-funded\_amnt - total\_rec\_prncp,
-0
-)
-\]
+
+```text
+EAD = max(funded_amnt - total_rec_prncp, 0)
+```
+
 
 The main implementation is in `src/creditrisk/models/ead_model.py`.
 
@@ -898,11 +905,11 @@ Before default, the borrower may draw additional funds.
 
 So for revolving products, EAD often includes a Credit Conversion Factor:
 
-\[
-EAD =
-Drawn +
-CCF 	imes Undrawn
-\]
+
+```text
+EAD = Drawn + (CCF × Undrawn)
+```
+
 
 LendingClub loans in this dataset are fixed-term loans, not revolving credit lines.
 
@@ -924,9 +931,11 @@ A strong walkthrough should say that before an interviewer asks.
 
 At the most basic level:
 
-\[
-EL = PD 	imes LGD 	imes EAD
-\]
+
+```text
+EL = PD × LGD × EAD
+```
+
 
 If:
 
@@ -936,9 +945,11 @@ If:
 
 then:
 
-\[
-EL = 0.04 	imes 0.70 	imes 10,000 = 280
-\]
+
+```text
+EL = 0.04 × 0.70 × 10,000 = 280
+```
+
 
 So the expected loss is $280.
 
@@ -2703,15 +2714,19 @@ The model does not need one arbitrary approval cutoff for us to assess whether i
 
 Gini is a linear transformation of AUC:
 
-\[
-Gini = 2AUC - 1
-\]
+
+```text
+Gini = 2 × AUC - 1
+```
+
 
 So if AUC is 0.69226:
 
-\[
-Gini \approx 0.38452
-\]
+
+```text
+Gini ≈ 0.38452
+```
+
 
 This is exactly the relationship seen for Model B OOT.
 
@@ -2723,11 +2738,13 @@ Where AUC summarizes ranking across the full curve, KS highlights the strongest 
 
 ## Brier score
 
-For binary outcome \(y_i\) and predicted probability \(p_i\):
+For binary outcome `y_i` and predicted probability `p_i`:
 
-\[
-Brier = \frac{1}{N}\sum_i(p_i-y_i)^2
-\]
+
+```text
+Brier = (1 / N) × Σ_i (p_i - y_i)^2
+```
+
 
 It is a proper probability-scoring rule.
 
@@ -2788,9 +2805,11 @@ The project’s OOT validation and macro-scenario modules touch adjacent problem
 
 Expected loss belongs to the provisioning/economic-loss side:
 
-\[
-EL = PD \times LGD \times EAD
-\]
+
+```text
+EL = PD × LGD × EAD
+```
+
 
 Unexpected loss is the tail uncertainty around that expectation.
 
