@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retail Credit Risk Engine — Master Interactive Suite</title>
-    <meta name="description" content="Unified single-page interactive credit risk modeling system, executive dashboard, and pipeline flow map for LendingClub 466,285 loans (2007-2014).">
+    <title>Retail Credit Risk Engine — Executive Suite</title>
+    <meta name="description" content="Static single-page interactive credit risk modeling system for LendingClub 466,285 loans (2007-2014). No backend or database required.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -83,23 +83,19 @@
             background: var(--bg-card); border: 1px solid var(--border-color);
             border-radius: 10px; padding: 20px; margin-bottom: 20px; min-width: 0; width: 100%;
         }
-        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .card-title { font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .card-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; }
 
-        /* EXPLAINER BLOCK (PART 3) */
-        .explainer-box {
-            background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25);
-            border-left: 4px solid var(--accent-cyan); border-radius: 8px;
-            padding: 14px 16px; margin-bottom: 16px; font-size: 12.5px; line-height: 1.5;
+        /* TRUTH BADGES */
+        .truth-badge {
+            display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+            padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 8px;
         }
-        .explainer-title {
-            font-weight: 700; color: var(--accent-cyan); font-size: 11px;
-            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .explainer-list { display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
-        .explainer-item strong { color: #f3f4f6; }
-        .explainer-item span.tag { font-family: var(--font-mono); color: var(--accent-cyan); background: rgba(56, 189, 248, 0.1); padding: 1px 4px; border-radius: 3px; }
+        .proxy-badge { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+        .synthetic-badge { background: rgba(192, 132, 252, 0.15); color: var(--accent-purple); border: 1px solid rgba(192, 132, 252, 0.3); }
+        .fixture-badge { background: rgba(251, 113, 133, 0.15); color: var(--accent-rose); border: 1px solid rgba(251, 113, 133, 0.3); }
+        .illustrative-badge { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
 
         /* KPI CARDS */
         .kpi-card {
@@ -110,23 +106,39 @@
         .kpi-val { font-size: 24px; font-weight: 700; color: #fff; font-family: var(--font-mono); }
         .kpi-sub { font-size: 11px; color: var(--text-muted); }
 
+        /* ONE LINE SUMMARY STRIP */
+        .summary-strip {
+            background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 12px 18px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 12px;
+            color: var(--accent-cyan); text-align: center; font-weight: 500;
+        }
+
+        /* SCORECARD STEPPER */
+        .scorecard-stepper {
+            display: flex; align-items: center; justify-content: space-between; background: #0f172a;
+            border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 20px;
+            margin-bottom: 20px; font-family: var(--font-mono); font-size: 12px; overflow-x: auto; gap: 12px;
+        }
+        .scorecard-stepper span.step-item { color: var(--text-main); font-weight: 600; white-space: nowrap; }
+        .scorecard-stepper span.step-arrow { color: var(--accent-cyan); font-weight: 700; }
+
         /* TABLES */
         .table-wrapper { overflow-x: auto; max-height: 440px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); width: 100%; }
         table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; text-align: left; }
         th { background: #0f172a; color: var(--text-muted); padding: 10px 14px; font-weight: 600; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10; white-space: nowrap; }
         td { padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: var(--text-main); white-space: nowrap; }
-        td:last-child { white-space: normal; min-width: 160px; }
+        td.wrap-cell, td:last-child { white-space: normal; min-width: 160px; }
         tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
         /* CHART CONTAINER */
         .chart-container { position: relative; height: 320px; width: 100%; min-width: 0; }
 
-        /* PIPELINE WORKFLOW (PART 4) */
+        /* PIPELINE WORKFLOW */
         .workflow-header { margin-bottom: 24px; text-align: center; }
         .workflow-header h2 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
         .workflow-header p { color: var(--text-muted); max-width: 800px; margin: 0 auto; font-size: 14px; }
 
-        .workflow-container { display: flex; flex-direction: column; gap: 16px; position: relative; max-width: 1200px; margin: 0 auto; }
+        .workflow-container { display: flex; flex-direction: column; gap: 14px; position: relative; max-width: 1200px; margin: 0 auto; }
         
         .stage-step-card {
             background: var(--bg-card); border: 1px solid var(--border-color);
@@ -147,7 +159,7 @@
             padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.3);
             white-space: nowrap;
         }
-        .step-title-text { font-size: 16px; font-weight: 600; color: #fff; }
+        .step-title-text { font-size: 15px; font-weight: 600; color: #fff; }
         .step-module { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 2px; }
         
         .step-right { display: flex; align-items: center; gap: 16px; }
@@ -168,11 +180,19 @@
         .detail-label.happens-lbl { color: var(--accent-cyan); }
         .detail-label.why-lbl { color: var(--accent-amber); }
         .detail-label.output-lbl { color: var(--accent-emerald); }
-        .detail-label.wrong-lbl { color: var(--accent-rose); }
 
         .detail-val { font-size: 12px; line-height: 1.5; color: var(--text-main); }
 
-        .flow-connector { text-align: center; color: var(--accent-cyan); opacity: 0.5; font-size: 18px; margin: -8px 0; }
+        .flow-connector { text-align: center; color: var(--accent-cyan); opacity: 0.5; font-size: 16px; margin: -6px 0; }
+
+        /* IMPLEMENTATION BOUNDARY STRIP AT BOTTOM */
+        .boundary-strip {
+            background: #0b1120; border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 16px 20px; margin-top: 30px; font-size: 12px; color: var(--text-muted);
+            display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center;
+        }
+        .boundary-item { display: flex; align-items: center; gap: 8px; }
+        .boundary-item strong { color: #fff; }
     </style>
 </head>
 <body>
@@ -185,7 +205,7 @@
         </div>
         <div class="mode-nav-btns">
             <button class="mode-tab-btn active" id="tab-analytics" onclick="switchMode('analytics')">Executive Analytics</button>
-            <button class="mode-tab-btn" id="tab-pipeline" onclick="switchMode('pipeline')">Pipeline Architecture Workflow</button>
+            <button class="mode-tab-btn" id="tab-pipeline" onclick="switchMode('pipeline')">Pipeline Architecture</button>
         </div>
         <a href="https://github.com/tharungajula2/retail-credit-risk" target="_blank" class="repo-link">GitHub Repository ↗</a>
     </nav>
@@ -193,38 +213,42 @@
     <!-- MODE 1: EXECUTIVE ANALYTICS -->
     <div id="mode-analytics" class="mode-section active">
         <nav class="sub-panel-tabs">
-            <button class="sub-tab-btn active" onclick="showPanel(0)">1. Portfolio Overview & Capital</button>
-            <button class="sub-tab-btn" onclick="showPanel(1)">2. Vintage Curves & Seasoning</button>
-            <button class="sub-tab-btn" onclick="showPanel(2)">3. Delinquency & Roll Rates</button>
-            <button class="sub-tab-btn" onclick="showPanel(3)">4. ECL Staging & Lifetime PD</button>
-            <button class="sub-tab-btn" onclick="showPanel(4)">5. Model Validation & Stability</button>
-            <button class="sub-tab-btn" onclick="showPanel(5)">6. Scorecard & Master Scale</button>
+            <button class="sub-tab-btn active" onclick="showPanel(0)">1. Portfolio & Capital</button>
+            <button class="sub-tab-btn" onclick="showPanel(1)">2. Vintage Analysis</button>
+            <button class="sub-tab-btn" onclick="showPanel(2)">3. Delinquency</button>
+            <button class="sub-tab-btn" onclick="showPanel(3)">4. ECL & Lifetime PD</button>
+            <button class="sub-tab-btn" onclick="showPanel(4)">5. Validation</button>
+            <button class="sub-tab-btn" onclick="showPanel(5)">6. Scorecard</button>
         </nav>
 
         <main>
-            <!-- PANEL 0: PORTFOLIO OVERVIEW -->
+            <!-- PANEL 0: PORTFOLIO & CAPITAL -->
             <div class="panel active" id="panel-0">
                 <div class="grid-4">
                     <div class="kpi-card">
-                        <div class="kpi-label">Total Out-of-Time Exposure (EAD)</div>
+                        <div class="kpi-label">2014 OOT Exposure (EAD)</div>
                         <div class="kpi-val">$1.827B</div>
-                        <div class="kpi-sub">Exposure at Default across 235,628 OOT loans</div>
+                        <div class="kpi-sub">235,628 loans in 2014 Out-of-Time cohort</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Basel III IRB Risk-Weighted Assets</div>
-                        <div class="kpi-val">$2.295B</div>
-                        <div class="kpi-sub">125.6% avg Risk Weight ($183.6M capital @ 8%)</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label">IFRS 9 Staged Provision (ECL)</div>
+                        <div class="kpi-label">IFRS 9 Staged ECL</div>
                         <div class="kpi-val">$278.48M</div>
                         <div class="kpi-sub">15.25% overall portfolio coverage ratio</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">US CECL Provision Impact</div>
+                        <div class="kpi-label">US CECL Provision</div>
                         <div class="kpi-val">$327.47M</div>
-                        <div class="kpi-sub">+$48.99M (+17.6%) over IFRS 9 (Day-1 Lifetime)</div>
+                        <div class="kpi-sub">+$48.99M (+17.6%) vs IFRS 9 (Day-1 Lifetime)</div>
                     </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Basel IRB Risk-Weighted Assets</div>
+                        <div class="kpi-val">$2.295B</div>
+                        <div class="kpi-sub">125.63% avg Risk Weight ($183.6M capital @ 8%)</div>
+                    </div>
+                </div>
+
+                <div class="summary-strip">
+                    466,285 LendingClub loans → PD / LGD / EAD → validation → IFRS 9 / CECL / Basel III → monitoring and reporting
                 </div>
 
                 <div class="grid-2">
@@ -232,13 +256,8 @@
                         <div class="card-header">
                             <span class="card-title">Basel III IRB vs Standardised Capital RWA Comparison</span>
                         </div>
-                        <div class="explainer-box">
-                            <div class="explainer-title">Dashboard Explainer Guide</div>
-                            <div class="explainer-list">
-                                <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Compares bank regulatory capital required under the Basel III Standardised approach against the Advanced Internal Ratings-Based (<span class="tag">IRB</span>) supervisory formula across rating grades.</div>
-                                <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Basel III requires banks to hold minimum 8% capital against Risk-Weighted Assets (<span class="tag">RWA</span>). Exposure at Default (<span class="tag">EAD</span>) represents the total money owed by borrowers at the moment of default ($1.827B total portfolio). Because actual Loss Given Default (<span class="tag">LGD</span>) is severe (mean 93.4%), Advanced IRB assigns a 125.6% risk weight ($183.6M capital) vs flat 75.0% Standardised risk weight ($109.6M capital), penalizing uncollateralized risk.</div>
-                                <div class="explainer-item"><strong>HOW TO READ IT:</strong> Look at Risk Weight % across grades A to G. Lower risk grades (Grade A = 94.2% RW) require less capital than higher risk grades (Grade G = 145.7% RW). High risk weights above 100% indicate high default severity requiring capital surcharges.</div>
-                            </div>
+                        <div class="card-subtitle">
+                            Quantifies regulatory capital surcharges under Advanced IRB (BCBS para 4.4) driven by 93.01% mean LGD penalty vs flat 75% Standardised risk weight across rating grades.
                         </div>
                         <div class="table-wrapper">
                             <table id="t-basel">
@@ -250,15 +269,10 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <span class="card-title">IFRS 9 vs US CECL Lifetime Provisioning Comparison</span>
+                            <span class="card-title">IFRS 9 vs US CECL Lifetime Provisioning Comparison <span class="truth-badge illustrative-badge">ILLUSTRATIVE SCENARIO ASSUMPTIONS</span></span>
                         </div>
-                        <div class="explainer-box">
-                            <div class="explainer-title">Dashboard Explainer Guide</div>
-                            <div class="explainer-list">
-                                <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Compares total accounting credit loss provisions under international IFRS 9 Financial Instruments, US GAAP Current Expected Credit Losses (<span class="tag">CECL</span> / FASB ASC 326), and regulatory 12-month Expected Loss (<span class="tag">EL</span>).</div>
-                                <div class="explainer-item"><strong>WHY IT MATTERS:</strong> IFRS 9 uses a 3-Stage model reserving 12-month Expected Credit Loss (<span class="tag">ECL</span>) for Stage 1 loans and Lifetime ECL only after a Significant Increase in Credit Risk (<span class="tag">SICR</span>). US CECL mandates Day-1 Lifetime ECL across ALL performing loans from origination, driving a +$48.99M (+17.6%) higher provision burden.</div>
-                                <div class="explainer-item"><strong>HOW TO READ IT:</strong> Compare Coverage % (Total Provision / EAD). Regulatory 12m EL requires 3.21% coverage ($58.67M), IFRS 9 requires 15.25% coverage ($278.48M), and US CECL requires 17.93% coverage ($327.47M). Higher coverage indicates stricter lifetime loss accounting.</div>
-                            </div>
+                        <div class="card-subtitle">
+                            Compares 12-month regulatory EL ($58.67M), staged IFRS 9 ECL ($278.48M), and Day-1 lifetime US CECL ($327.47M). Illustrative scenario weights: 50% Baseline / 20% Upside / 30% Downside (demonstrated on 3-loan fixture).
                         </div>
                         <div class="table-wrapper">
                             <table id="t-cecl">
@@ -270,19 +284,14 @@
                 </div>
             </div>
 
-            <!-- PANEL 1: VINTAGE CURVES -->
+            <!-- PANEL 1: VINTAGE ANALYSIS -->
             <div class="panel" id="panel-1">
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Cumulative Default Curves by Vintage Year (MOB 0 to 24)</span>
+                        <span class="card-title">Cumulative Default Curves by Origination Vintage (MOB 0 to 24)</span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Tracks cumulative default rates by loan age in Months-On-Book (<span class="tag">MOB</span> 0 to 24) for each origination vintage year from 2007 through 2014.</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Vintage seasoning analysis identifies whether underwriting quality is improving or deteriorating across macroeconomic cycles. Unsecured personal loans exhibit peak default hazard between MOB 12 and MOB 24.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Steeper lines indicate faster default accumulation and weaker credit underwriting. Notice the 2007 vintage curve climbs steepest (19.40% default rate at MOB 24) during the Great Financial Crisis, whereas 2013–2014 curves flatten out (8.14%–9.29% at MOB 24) due to tightened credit policy.</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Months-On-Book (MOB) measures loan age so origination cohorts (2007–2014) can be evaluated at equivalent maturity milestones across macroeconomic cycles.
                     </div>
                     <div class="chart-container">
                         <canvas id="c-vintage"></canvas>
@@ -293,13 +302,8 @@
                     <div class="card-header">
                         <span class="card-title">Fixed Months-on-Book Vintage Maturity Comparison</span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Compares cumulative Probability of Default (<span class="tag">PD</span>) rates at fixed maturity milestones (MOB 12, MOB 18, MOB 24) across origination vintage years.</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Evaluating fixed age checkpoints eliminates seasoning bias when comparing newer, younger loan cohorts against fully matured historical cohorts.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Compare columns across vintage years. 2007 MOB 24 default rate reached 19.40% on 603 loans, while 2014 MOB 24 default rate stabilized at 8.14% across 235,628 loans.</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Compares cumulative Probability of Default (PD) rates at fixed maturity milestones (MOB 12, 18, 24) across vintages to eliminate seasoning bias.
                     </div>
                     <div class="table-wrapper">
                         <table id="t-vintage-mat">
@@ -310,19 +314,14 @@
                 </div>
             </div>
 
-            <!-- PANEL 2: DELINQUENCY & ROLL RATES -->
+            <!-- PANEL 2: DELINQUENCY -->
             <div class="panel" id="panel-2">
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Delinquency Roll-Rate Proxy Table by Vintage Year</span>
+                        <span class="card-title">Delinquency Status Distribution by Vintage Year <span class="truth-badge proxy-badge">CROSS-SECTIONAL PROXY — NOT MONTHLY PANEL DATA</span></span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Cross-sectional breakdown of portfolio loan status (Current, Grace Period, 16-30 Days Past Due [<span class="tag">DPD</span>], 31-120 DPD, Default/Charged-Off, Fully Paid) across vintage cohorts.</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Roll rate analysis tracks how delinquent accounts migrate into loss states. Early stage DPD increases forecast future charge-offs and provision requirements.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Older vintages (2007–2009) have 0% current loans because they have fully resolved into Fully Paid (34%–78%) or Charged-Off (7.5%–11.2%). Younger vintages (2014) remain mostly Current (67.3%).</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Cross-sectional breakdown of portfolio loan status across origination cohorts. Displays current status proportions and cumulative resolution outcomes.
                     </div>
                     <div class="table-wrapper">
                         <table id="t-rollrate">
@@ -334,15 +333,10 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Origination Rating Grade to Outcome Transition Matrix</span>
+                        <span class="card-title">Origination Rating Grade Outcome Distribution <span class="truth-badge fixture-badge">2-LOAN FIXTURE DEMONSTRATION</span></span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Migration matrix tracking how borrowers in each internal rating grade (Grade A through G) transition into final resolved states (Fully Paid vs Charged-Off Default).</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Verifies that internal risk rating grades rank-order credit risk correctly from origination to final outcome.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Default rates should increase monotonically as rating grade declines. Grade A displays 100% resolution to Fully Paid in initial sample proxies, whereas lower grades show progressive default migration.</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Demonstration outcome matrix illustrating grade migration tracking logic on sample data fixture.
                     </div>
                     <div class="table-wrapper">
                         <table id="t-trans">
@@ -353,19 +347,32 @@
                 </div>
             </div>
 
-            <!-- PANEL 3: ECL STAGING & LIFETIME PD -->
+            <!-- PANEL 3: ECL & LIFETIME PD -->
             <div class="panel" id="panel-3">
+                <div class="grid-3" style="margin-bottom: 20px;">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Stage 1 (Performing)</div>
+                        <div class="kpi-val">189,633</div>
+                        <div class="kpi-sub">80.48% count ($1.417B EAD, $30.27M 12m ECL)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Stage 2 (SICR)</div>
+                        <div class="kpi-val">26,554</div>
+                        <div class="kpi-sub">11.27% count ($169.37M EAD, $24.40M Lifetime ECL)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Stage 3 (Credit-Impaired)</div>
+                        <div class="kpi-val">19,441</div>
+                        <div class="kpi-sub">8.25% count ($240.00M EAD, $223.80M Lifetime ECL)</div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">IFRS 9 Portfolio Staging Breakdown</span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Classifies total portfolio Exposure at Default (<span class="tag">EAD</span>) and loan counts into IFRS 9 Stage 1 (Performing), Stage 2 (Significant Increase in Credit Risk [<span class="tag">SICR</span>]), and Stage 3 (Impaired / Defaulted).</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Stage 1 loans require 12-month Expected Credit Loss (<span class="tag">ECL</span>) provisions, while Stage 2 and Stage 3 require Lifetime ECL reserves. SICR is triggered when current PD increases by $\ge 2.0	imes$ over origination PD or when payments are 30+ Days Past Due (<span class="tag">DPD</span>).</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Stage 1 accounts for 80.48% of loans ($1.417B EAD, $30.27M ECL, 2.14% coverage). Stage 2 represents 11.27% of loans ($169.37M EAD, $24.40M ECL, 14.41% coverage). Stage 3 contains 8.25% defaulted loans ($240.00M EAD, $223.80M ECL, 93.25% coverage).</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Classifies portfolio into Stage 1 (12m ECL), Stage 2 (Lifetime ECL after SICR: relative PD ratio ≥ 2.0x, current 12m PD > 6.0%, or 30+ DPD), and Stage 3 (Credit-Impaired / Default).
                     </div>
                     <div class="table-wrapper">
                         <table id="t-staging">
@@ -380,13 +387,8 @@
                         <div class="card-header">
                             <span class="card-title">Performing Book (Stage 1 + 2) IFRS 9 ECL vs Basel EL</span>
                         </div>
-                        <div class="explainer-box">
-                            <div class="explainer-title">Dashboard Explainer Guide</div>
-                            <div class="explainer-list">
-                                <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Compares performing-book provisions (Stage 1 + Stage 2, 216,187 loans, $1.587B EAD) under regulatory 12m Expected Loss (<span class="tag">EL</span>) vs IFRS 9 Staged ECL.</div>
-                                <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Measures the provision delta caused by Stage 2 lifetime accounting on performing exposures before default occurs.</div>
-                                <div class="explainer-item"><strong>HOW TO READ IT:</strong> Basel 12m EL requires $48.47M (3.05% coverage). IFRS 9 staged performing ECL requires $54.68M (3.45% coverage), creating a +$6.21M (+0.39% coverage) accounting provision buffer.</div>
-                            </div>
+                        <div class="card-subtitle">
+                            Compares 12m regulatory EL ($48.47M, 3.05% coverage) vs staged performing ECL ($54.68M, 3.45% coverage) on 216,187 performing loans ($1.587B EAD).
                         </div>
                         <div class="table-wrapper">
                             <table id="t-perf">
@@ -400,13 +402,8 @@
                         <div class="card-header">
                             <span class="card-title">60-Month Discrete-Time Portfolio Lifetime PD Hazard Curve</span>
                         </div>
-                        <div class="explainer-box">
-                            <div class="explainer-title">Dashboard Explainer Guide</div>
-                            <div class="explainer-list">
-                                <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Plots marginal monthly hazard rates (conditional monthly probability of default) alongside cumulative lifetime Probability of Default (<span class="tag">PD</span>) curves over a 60-month loan tenor.</div>
-                                <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Lifetime PD term structures are required to calculate discounted Lifetime ECL under IFRS 9 Stage 2 and US CECL.</div>
-                                <div class="explainer-item"><strong>HOW TO READ IT:</strong> Marginal monthly hazard peaks at Month 14 (0.63% monthly default risk) before tapering down to &lt;0.01% by Month 60. Cumulative lifetime PD reaches 10.93% at Month 60.</div>
-                            </div>
+                        <div class="card-subtitle">
+                            Plots marginal monthly hazard rates (peaking at Month 14 @ 0.63%) and cumulative lifetime PD (10.93% at Month 60).
                         </div>
                         <div class="chart-container">
                             <canvas id="c-lifetime"></canvas>
@@ -415,19 +412,37 @@
                 </div>
             </div>
 
-            <!-- PANEL 4: MODEL VALIDATION -->
+            <!-- PANEL 4: VALIDATION -->
             <div class="panel" id="panel-4">
+                <div class="grid-4" style="margin-bottom: 20px;">
+                    <div class="kpi-card">
+                        <div class="kpi-label">2014 OOT AUROC</div>
+                        <div class="kpi-val">0.692</div>
+                        <div class="kpi-sub">Model B Out-of-Time discrimination</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">2014 OOT Gini</div>
+                        <div class="kpi-val">0.385</div>
+                        <div class="kpi-sub">+11.3 Gini points lift over Model A (0.271)</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">2014 OOT KS Stat</div>
+                        <div class="kpi-val">28.43%</div>
+                        <div class="kpi-sub">Maximum cumulative default separation</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Score PSI</div>
+                        <div class="kpi-val">0.0071</div>
+                        <div class="kpi-sub">Population Stability Index (Project target &lt; 0.10)</div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-header">
                         <span class="card-title">Master Model Validation Summary</span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Discriminatory power (Area Under ROC [<span class="tag">AUROC</span>], Gini coefficient, Kolmogorov-Smirnov [<span class="tag">KS</span>] statistic) and calibration accuracy (Brier score, Hosmer-Lemeshow [<span class="tag">HL</span>] p-value) across Train, Test, and Out-of-Time (<span class="tag">OOT</span>) cohorts.</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Regulatory validation guidelines mandate strict performance thresholds (Gini &gt; 0.30, KS &gt; 0.20) to ensure scorecards rank-order default risk effectively in production.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Model B (incorporating credit pricing grade and interest rate Weight of Evidence [<span class="tag">WoE</span>]) achieves an OOT Gini of 0.3845 (AUC 0.6923) and KS of 28.43%, outperforming baseline Model A (OOT Gini 0.2715). Higher Gini and KS indicate superior default discrimination.</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Evaluates discrimination (AUROC, Gini, KS) and decile calibration (Brier score, Hosmer-Lemeshow p-value) for Model A (7 WoE baseline) and Model B across Train (2007–2013), Test, and 2014 OOT.
                     </div>
                     <div class="table-wrapper">
                         <table id="t-val">
@@ -439,15 +454,10 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Population Drift (PSI) & Feature Characteristic Stability (CSI)</span>
+                        <span class="card-title">Feature Characteristic Stability Index (CSI)</span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Monitors Population Stability Index (<span class="tag">PSI</span>) for overall credit scores and Characteristic Stability Index (<span class="tag">CSI</span>) across individual scorecard variables between training and OOT production cohorts.</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Shift in borrower populations over time degrades model accuracy. Regulatory rules (SR 11-7) mandate that PSI &gt; 0.25 triggers mandatory model refitting.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Score PSI &lt; 0.10 indicates high stability (Model B PSI = 0.0071). Variable CSIs range from 0.0057 to 0.0416, confirming zero significant population drift across economic cycles.</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Monitors characteristic stability across individual scorecard variables between training and 2014 OOT production cohorts (Project target CSI &lt; 0.10).
                     </div>
                     <div class="table-wrapper">
                         <table id="t-csi">
@@ -458,20 +468,37 @@
                 </div>
             </div>
 
-            <!-- PANEL 5: SCORECARD & MASTER SCALE -->
+            <!-- PANEL 5: SCORECARD -->
             <div class="panel" id="panel-5">
+                <div class="scorecard-stepper">
+                    <span class="step-item">1. Raw Borrower Attributes</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step-item">2. WoE Monotonic Binning</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step-item">3. Logistic Regression</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step-item">4. Integer Scaling (PDO=20, Base 600 @ 50:1)</span>
+                    <span class="step-arrow">→</span>
+                    <span class="step-item">5. 8 Master Rating Grades</span>
+                </div>
+
+                <div class="card" style="background: #0f172a;">
+                    <div class="card-header">
+                        <span class="card-title">Model Architecture Comparison: Model A vs Model B</span>
+                    </div>
+                    <div class="card-subtitle" style="margin-bottom: 0;">
+                        <strong>Model A:</strong> Fits 7 borrower-fundamental features (dti, purpose, term, revol_util, home_ownership, inq_last_6mths, annual_inc) achieving 0.271 OOT Gini.<br>
+                        <strong>Model B:</strong> Adds LendingClub risk pricing variables (grade, sub_grade, int_rate) raising OOT Gini to 0.385 (+11.3 Gini points lift).
+                    </div>
+                </div>
+
                 <div class="grid-2">
                     <div class="card">
                         <div class="card-header">
                             <span class="card-title">Information Value (IV) Ranking (Top 15 Features)</span>
                         </div>
-                        <div class="explainer-box">
-                            <div class="explainer-title">Dashboard Explainer Guide</div>
-                            <div class="explainer-list">
-                                <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Information Value (<span class="tag">IV</span>) ranking of top candidate risk features screened during feature selection from outputs/tables/iv_summary.csv.</div>
-                                <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Quantifies predictive power before model fitting. Model governance standards require features to fall within the predictive screening band (IV between 0.02 and 0.50).</div>
-                                <div class="explainer-item"><strong>HOW TO READ IT:</strong> grade (IV = 0.2937) and int_rate (IV = 0.2772) are top predictors (medium predictive power), followed by inq_last_6mths (IV = 0.0757) and annual_inc (IV = 0.0595).</div>
-                            </div>
+                        <div class="card-subtitle">
+                            Quantifies predictive strength per candidate variable from outputs/tables/iv_summary.csv. Top predictors: grade (IV 0.2937) and int_rate (IV 0.2772).
                         </div>
                         <div class="chart-container">
                             <canvas id="c-iv"></canvas>
@@ -482,13 +509,8 @@
                         <div class="card-header">
                             <span class="card-title">Logistic Regression Model B Coefficients</span>
                         </div>
-                        <div class="explainer-box">
-                            <div class="explainer-title">Dashboard Explainer Guide</div>
-                            <div class="explainer-list">
-                                <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Estimated logistic regression log-odds coefficients, standard errors, p-values, and statistical significance flags for Model B variables.</div>
-                                <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Confirms that every scorecard attribute carries statistically significant log-odds impact without sign conflicts.</div>
-                                <div class="explainer-item"><strong>HOW TO READ IT:</strong> Check p-value column. Values &lt; 0.05 indicate statistical significance. inq_last_6mths (&beta; = -0.7480, p &lt; 0.001) and annual_inc (&beta; = -0.9202, p &lt; 0.001) show strong log-odds contribution.</div>
-                            </div>
+                        <div class="card-subtitle">
+                            Estimated log-odds coefficients, standard errors, and p-values. Note: sub_grade (p=0.088) and term (p=0.853) are not statistically significant at α = 0.05.
                         </div>
                         <div class="table-wrapper">
                             <table id="t-coefs">
@@ -503,13 +525,8 @@
                     <div class="card-header">
                         <span class="card-title">Rating Master Scale Calibration (Grades 1 to 8)</span>
                     </div>
-                    <div class="explainer-box">
-                        <div class="explainer-title">Dashboard Explainer Guide</div>
-                        <div class="explainer-list">
-                            <div class="explainer-item"><strong>WHAT THIS SHOWS:</strong> Master rating scale mapping score ranges (522 to 639) into 8 discrete rating grades, showing loan counts and observed default rates under Points-to-Double-Odds (<span class="tag">PDO</span> = 20, Base Score 600 at 50:1 odds).</div>
-                            <div class="explainer-item"><strong>WHY IT MATTERS:</strong> Groups continuous credit scores into standardized risk bands to align credit underwriting policy, loan pricing, and Basel capital allocation.</div>
-                            <div class="explainer-item"><strong>HOW TO READ IT:</strong> Observed default rates increase monotonically from Grade 1 (0.86% default rate, score 614–639) down to Grade 8 (7.72% default rate, score 522–567), validating master scale calibration.</div>
-                        </div>
+                    <div class="card-subtitle">
+                        Maps integer score ranges (522 to 639) into 8 master rating grades under Points-to-Double-Odds (PDO = 20, Base Score 600 at 50:1 odds). Default rates increase monotonically from 0.86% to 7.72%.
                     </div>
                     <div class="table-wrapper">
                         <table id="t-grades">
@@ -519,10 +536,19 @@
                     </div>
                 </div>
             </div>
+
+            <!-- IMPLEMENTATION BOUNDARY STRIP -->
+            <div class="boundary-strip">
+                <div class="boundary-item"><strong>FULL DATA:</strong> PD / LGD / EAD / validation / staging / capital / monitoring (2007–2014 LendingClub)</div>
+                <div class="boundary-item"><span class="truth-badge proxy-badge">PROXY:</span> Delinquency vintage status</div>
+                <div class="boundary-item"><span class="truth-badge synthetic-badge">SYNTHETIC:</span> Revolving CCF (5k accounts)</div>
+                <div class="boundary-item"><span class="truth-badge fixture-badge">FIXTURE:</span> Macro ECL (3-loan test fixture)</div>
+                <div class="boundary-item"><span class="truth-badge illustrative-badge">INTEGRATED:</span> Gemini LLM API (when configured)</div>
+            </div>
         </main>
     </div>
 
-    <!-- MODE 2: PIPELINE ARCHITECTURE WORKFLOW (PART 4) -->
+    <!-- MODE 2: PIPELINE ARCHITECTURE WORKFLOW -->
     <div id="mode-pipeline" class="mode-section">
         <main>
             <div class="workflow-header">
@@ -549,8 +575,7 @@
                 input: "466,285 raw LendingClub loan origination records (2007–2014) in datasets/loan_data_2007_2014.csv with 75 initial attributes.",
                 happens: "Reads raw CSV data in 50,000-row memory-safe chunks to prevent system RAM spikes. Audits missing data rates, validates schema data types, checks issue date boundaries (2007–2014), and logs field cardinality.",
                 why: "Raw borrower datasets contain missing values, inconsistent formats, and unformatted dates. Rigorous initial inventory auditing prevents data corruption from propagating downstream into credit scorecards.",
-                output: "outputs/reports/data_inventory.txt (466,285 valid loan rows logged, 15 attributes identified with 100% missing values).",
-                if_wrong: "Unflagged corrupt data types or unhandled null values would cause downstream feature binning and logistic regression fitting to crash silently or produce corrupted scores."
+                output: "outputs/reports/data_inventory.txt (466,285 valid loan rows logged, 15 attributes identified with 100% missing values)."
             },
             {
                 step: 2,
@@ -560,8 +585,7 @@
                 input: "466,285 loan records containing 75 raw candidate fields.",
                 happens: "Strips out post-origination outcome attributes (such as recoveries, total_rec_prncp, last_pymnt_d, collection_recovery_fee). Enforces programmatic assertions (assert_no_leakage) ensuring only application-time features enter models.",
                 why: "SR 11-7 model governance rules strictly prohibit using future post-origination performance data to predict origination credit risk, which would cause severe forward-looking target leakage.",
-                output: "Clean PD-eligible feature set of 50 pre-origination candidate attributes.",
-                if_wrong: "The model would achieve artificially perfect accuracy (AUC ~1.0) during development by 'cheating' with future recovery data, then fail catastrophically when deployed on new applicants."
+                output: "Clean PD-eligible feature set of 50 pre-origination candidate attributes."
             },
             {
                 step: 3,
@@ -569,10 +593,9 @@
                 module: "src/creditrisk/data/target.py",
                 preview: "50,968 ever-default (10.93%) → 16,018 12m default (3.44%)",
                 input: "466,285 clean loan records.",
-                happens: "Constructs the binary default flag ever_default (10.93%, 50,968 loans) based on charge-off status. Infers default timing using last_pymnt_d + 1 month and creates a 12-month performance window target default_12m (3.44%, 16,018 loans).",
+                happens: "Constructs the binary default flag ever_default (10.93%, 50,968 loans) based on charge-off status. Infers default timing using last_pymnt_d + 3 months DPD lag and creates a 12-month performance window target default_12m (3.44%, 16,018 loans).",
                 why: "Basel III (BCBS para 447) and IFRS 9 Stage 1 require a standardized 12-month observation horizon for point-in-time Probability of Default (PD) estimation.",
-                output: "outputs/tables/target_reconciliation.csv (466,285 total loans → 50,968 ever-defaults → 16,018 12-month defaults).",
-                if_wrong: "Mismatching default observation horizons would violate Basel regulatory capital standards and misestimate 12-month expected credit loss reserves."
+                output: "outputs/tables/target_reconciliation.csv (466,285 total loans → 50,968 ever-defaults → 16,018 12-month defaults)."
             },
             {
                 step: 4,
@@ -582,8 +605,7 @@
                 input: "466,285 labeled loan records spanning origination vintages 2007 through 2014.",
                 happens: "Partitions the historical development cohort (2007–2013, 230,657 loans) into an 80/20 stratified Train (184,525 loans) and Test (46,132 loans) split. Holds out the entire 2014 origination vintage (235,628 loans) as a true Out-of-Time (OOT) validation cohort.",
                 why: "Validates model stability across macroeconomic cycles and prevents overfitting by testing on future vintages not seen during model estimation.",
-                output: "outputs/tables/sample_summary.csv (Train: 184,525 | Test: 46,132 | OOT: 235,628 loans).",
-                if_wrong: "Random splitting across time would cause temporal data leakage, making an unstable model appear accurate until exposed to new economic conditions."
+                output: "outputs/tables/sample_summary.csv (Train: 184,525 | Test: 46,132 | OOT: 235,628 loans)."
             },
             {
                 step: 5,
@@ -593,8 +615,7 @@
                 input: "184,525 training records with continuous and categorical candidate features.",
                 happens: "Bins continuous attributes into monotonic WoE categories with Laplace smoothing, isolating missing values into distinct risk categories. Calculates Information Value (IV) to rank predictive strength and screens out weak variables.",
                 why: "Credit risk features (like debt-to-income or interest rate) have non-linear risk profiles; WoE transformation forces linear log-odds scaling for logistic regression while enforcing IV governance screening (IV between 0.02 and 0.50).",
-                output: "outputs/tables/iv_summary.csv (Top features: grade IV=0.294, int_rate IV=0.277, inq_last_6mths IV=0.076).",
-                if_wrong: "Non-monotonic binning would cause irrational scorecard points (e.g., higher income getting lower credit points) or overfitted noise variables entering scorecards."
+                output: "outputs/tables/iv_summary.csv (Top features: grade IV=0.294, int_rate IV=0.277, inq_last_6mths IV=0.076)."
             },
             {
                 step: 6,
@@ -604,41 +625,37 @@
                 input: "WoE-transformed training dataset with screened risk features.",
                 happens: "Fits Logistic Regression Model A (baseline) and Model B (incorporating grade/rate pricing). Scales WoE coefficients into a 600-point Points-to-Double-Odds (PDO=20) integer scorecard and maps scores (522–639) into 8 master rating grades.",
                 why: "Bank underwriting engines require integer points for automated credit decisioning, while risk management requires discrete rating grades (1–8) to standardize pricing, provisioning, and capital allocation.",
-                output: "outputs/tables/scorecard_model_b.csv & outputs/tables/rating_grades_model_b.csv (8 rating grades with monotonic default rates from 0.86% to 7.72%).",
-                if_wrong: "Non-monotonic default rates across rating grades would invalidate internal credit policy and fail regulatory validation."
+                output: "outputs/tables/scorecard_model_b.csv & outputs/tables/rating_grades_model_b.csv (8 rating grades with monotonic default rates from 0.86% to 7.72%)."
             },
             {
                 step: 7,
                 title: "Two-Stage Hurdle LGD & Realized EAD Drawdown Analytics",
                 module: "src/creditrisk/models/run_lgd_training.py",
-                preview: "Mean LGD: 93.4% | Median LGD: 100.0%",
+                preview: "Mean LGD: 93.01% | Median LGD: 100.0%",
                 input: "50,968 resolved defaulted loan records.",
-                happens: "Fits a Two-Stage Hurdle LGD Model (Stage 1 Logistic Classifier for recovery incidence + Stage 2 Fractional Logit GLM for conditional recovery rate) to handle the 52.2% zero-recovery spike. Computes Exposure at Default (EAD) drawdowns.",
-                why: "Unsecured personal loans carry zero collateral, resulting in severe bimodality (52.2% zero recovery, mean LGD 93.4%). Standard linear regression fails on zero-inflated recovery distributions.",
-                output: "outputs/tables/lgd_calibration.csv & outputs/tables/ead_summary.csv (Mean LGD 93.4%, median LGD 100.0%, LGD decile calibration error < 0.01).",
-                if_wrong: "Overestimating recovery rates on unsecured loans would underestimate bank loss reserves and severely undercapitalize the bank against credit losses."
+                happens: "Fits a Two-Stage Hurdle LGD Model (Stage 1 Logistic Classifier for recovery incidence P(recovery > 0) + Stage 2 GradientBoostingRegressor for recovery magnitude given recovery > 0) to handle the 52.18% zero-recovery write-off spike. Computes EAD drawdowns.",
+                why: "Unsecured personal loans carry zero collateral, resulting in severe bimodality (52.18% zero recovery, mean LGD 93.01%). Two-stage hurdle architecture models recovery incidence separately from conditional magnitude.",
+                output: "outputs/tables/lgd_calibration.csv & outputs/tables/ead_summary.csv (Mean LGD 93.01%, median LGD 100.0%, 52.18% total loss)."
             },
             {
                 step: 8,
                 title: "Regulatory Layer (Basel III IRB Capital & IFRS 9 / US CECL Provisions)",
                 module: "src/creditrisk/regulatory/run_staging.py",
-                preview: "ECL: $278.48M (15.25%) | IRB RWA: $2.295B (125.6%)",
-                input: "Model predictions (PD, LGD, EAD) for the OOT portfolio cohort (235,628 loans).",
-                happens: "Computes IFRS 9 3-Stage Expected Credit Loss (ECL) across weighted macroeconomic scenarios (40% Base, 30% Downside, 30% Upside) and compares against US CECL lifetime provisions. Calculates Basel III IRB Risk-Weighted Assets (RWA) via the supervisory formula (BCBS para 4.4).",
-                why: "Basel III regulatory capital ensures bank solvency during 1-in-1,000 year economic crises, while IFRS 9 and US CECL accounting standards mandate balance sheet credit loss provisioning.",
-                output: "outputs/tables/ecl_summary.csv ($278.48M IFRS 9 ECL) & outputs/tables/basel_capital_summary.csv ($2.295B IRB RWA, $183.6M regulatory capital @ 8%).",
-                if_wrong: "Inadequate provisions or capital calculation errors would lead to regulatory enforcement actions, capital add-on penalties, or insolvency during downturns."
+                preview: "ECL: $278.48M (15.25%) | IRB RWA: $2.295B (125.63%)",
+                input: "Model predictions (PD, LGD, EAD) for the 2014 OOT portfolio cohort (235,628 loans).",
+                happens: "Computes IFRS 9 3-Stage Expected Credit Loss (ECL) across illustrative weighted macroeconomic scenarios (50% Base, 20% Upside, 30% Downside, demonstrated on 3-loan fixture) and compares against US CECL lifetime provisions. Calculates Basel III IRB Risk-Weighted Assets (RWA) via BCBS para 4.4 formula.",
+                why: "Basel III regulatory capital ensures bank solvency during extreme economic crises, while IFRS 9 and US CECL accounting standards mandate balance sheet credit loss provisioning.",
+                output: "outputs/tables/ecl_summary.csv ($278.48M IFRS 9 ECL) & outputs/tables/basel_capital_summary.csv ($2.295B IRB RWA, $183.6M regulatory capital @ 8%)."
             },
             {
                 step: 9,
                 title: "Comprehensive Model Validation Battery (Discrimination & Calibration)",
                 module: "src/creditrisk/validation/run_validation.py",
-                preview: "OOT Gini: 0.3845 | AUC: 0.6923 | KS: 28.43%",
-                input: "Fitted PD Model predictions across Train, Test, and OOT cohorts.",
-                happens: "Evaluates rank-ordering discrimination power (AUROC, Gini coefficient, KS statistic) and calibration accuracy (Brier score, Hosmer-Lemeshow chi-square test across deciles).",
-                why: "Regulatory model validation rules (SR 11-7 / EBA guidelines) mandate minimum performance standards (Gini > 0.30, KS > 0.20) before scorecards can be used in live credit decisioning.",
-                output: "outputs/tables/validation_summary.csv (Model B OOT Gini: 0.3845, AUC: 0.6923, KS: 0.2843, Brier: 0.03268).",
-                if_wrong: "Deploying an unvalidated or poorly calibrated model would misprice credit risk and approve high-risk borrowers."
+                preview: "2014 OOT Gini: 0.385 | AUC: 0.692 | KS: 28.43%",
+                input: "Fitted PD Model predictions across Train, Test, and 2014 OOT cohorts.",
+                happens: "Evaluates rank-ordering discrimination power (AUROC, Gini coefficient, KS statistic) and decile calibration accuracy (Brier score, Hosmer-Lemeshow chi-square test across deciles).",
+                why: "Model validation rules mandate performance tracking (Model B OOT Gini 0.385 vs Model A 0.271) before scorecards can be used in live credit decisioning.",
+                output: "outputs/tables/validation_summary.csv (Model B OOT Gini: 0.3845, AUC: 0.6923, KS: 0.2843, Brier: 0.03268)."
             },
             {
                 step: 10,
@@ -646,10 +663,9 @@
                 module: "src/creditrisk/monitoring/run_transitions.py",
                 preview: "Score PSI: 0.0071 (Stable) | 8 Vintages",
                 input: "OOT prediction distributions, feature values, and historical vintage cohorts (2007–2014).",
-                happens: "Calculates Population Stability Index (PSI) and Characteristic Stability Index (CSI) to detect population drift between development and production cohorts. Constructs Months-On-Book (MOB 0–48) cumulative default curves across origination vintages.",
-                why: "Monitors whether underwriting quality degrades or population demographics shift over time (PSI > 0.25 triggers mandatory scorecard refitting under governance rules).",
-                output: "outputs/tables/psi_summary.csv (Score PSI = 0.0071, stable) & outputs/tables/vintage_curves.csv (8 vintage curves, 2007–2014).",
-                if_wrong: "Unnoticed population drift would cause silent credit scorecard decay, leading to unexpected credit losses without management awareness."
+                happens: "Calculates Population Stability Index (PSI = 0.0071) and Characteristic Stability Index (CSI) to detect population drift between development and production cohorts. Constructs Months-On-Book (MOB 0–24) cumulative default curves across origination vintages.",
+                why: "Monitors whether underwriting quality degrades or population demographics shift over time (Project target PSI < 0.10 indicates high stability).",
+                output: "outputs/tables/psi_summary.csv (Score PSI = 0.0071, stable) & outputs/tables/vintage_curves.csv (8 vintage curves, 2007–2014)."
             },
             {
                 step: 11,
@@ -657,21 +673,19 @@
                 module: "src/creditrisk/reporting/build_panels.py",
                 preview: "docs/index.html & index.html generated",
                 input: "35 ground-truth summary CSV tables in outputs/tables/.",
-                happens: "Consolidates model outputs into a unified JSON data store and injects it into a single-file, interactive HTML application (index.html & docs/index.html) with Chart.js visualizations.",
-                why: "Provides executive management, regulators, and model validation teams an instant, interactive portal to inspect portfolio risk, capital adequacy, and model metrics without needing Python or database infrastructure.",
-                output: "docs/index.html & index.html (100% self-contained interactive web application).",
-                if_wrong: "Executive stakeholders would be forced to review raw CSV files or static slide decks, losing interactive auditability."
+                happens: "Consolidates model outputs into a unified JSON data store and injects it into a single-file, interactive static HTML application (index.html & docs/index.html) with Chart.js visualizations.",
+                why: "Provides executive management, regulators, and model validation teams an instant, interactive portal to inspect portfolio risk, capital adequacy, and model metrics without needing backend servers.",
+                output: "docs/index.html & index.html (100% static single-page web application)."
             },
             {
                 step: 12,
-                title: "RAG AI Credit Analyst & Natural Language Query Engine",
+                title: "RAG AI Credit Analyst & Local Embedding Retrieval Engine",
                 module: "src/creditrisk/ai/rag_index.py",
-                preview: "FAISS Vector Index + Live Gemini Python Tools",
-                input: "Serialized model artifacts, FAISS vector embeddings of technical documentation, and Python execution tools.",
-                happens: "Embeds credit risk documentation into vector indices and connects a Gemini LLM agent to live Python calculation tools for real-time natural language portfolio querying and scenario analysis.",
-                why: "Allows non-technical credit executives and auditors to query complex IRB capital, IFRS 9 staging, and scorecard mechanics using natural language.",
-                output: "src/creditrisk/ai/rag_index.py & FAISS vector index (Live interactive AI risk analyst).",
-                if_wrong: "Stakeholders would have to write custom SQL/Python queries to extract simple portfolio risk answers."
+                preview: "sentence-transformers/all-MiniLM-L6-v2 (384-d)",
+                input: "Regulatory PDFs, documentation chunks, local MiniLM-L6-v2 embeddings, and Python execution tools.",
+                happens: "Embeds credit risk documentation into 384-dimensional local vectors using sentence-transformers and performs cosine similarity retrieval. Connects Gemini LLM agent for natural language querying when configured (with local retrieval and offline fallback).",
+                why: "Allows credit executives and auditors to query complex IRB capital, IFRS 9 staging, and scorecard mechanics using natural language.",
+                output: "src/creditrisk/ai/rag_index.py (384-d local MiniLM vector search + Gemini tool integration)."
             }
         ];
 
@@ -700,7 +714,7 @@
             window.location.hash = 'analytics-p' + idx;
         }
 
-        /* POPULATE ANALYTICS TABLES WITH CORRECT DATA BINDINGS (PART 1 FIXES) */
+        /* POPULATE ANALYTICS TABLES WITH CORRECT DATA BINDINGS */
         function populateTables() {
             // 1. Basel Capital Table (#t-basel)
             const bBody = document.querySelector('#t-basel tbody');
@@ -827,7 +841,7 @@
                     let samplePart = r.sample;
                     if (r.sample === 'train') samplePart = 'Train (2007-2013)';
                     else if (r.sample === 'test') samplePart = 'Test (In-Time)';
-                    else if (r.sample === 'oot') samplePart = 'OOT (Out-of-Time 2013-2014)';
+                    else if (r.sample === 'oot') samplePart = '2014 OOT (Out-of-Time)';
 
                     const ksFormatted = (r.ks * 100).toFixed(2) + '%';
                     const brierFormatted = r.brier.toFixed(5);
@@ -1028,7 +1042,7 @@
             }
         }
 
-        /* WORKFLOW RENDERER FOR PART 4 */
+        /* WORKFLOW RENDERER FOR PIPELINE MODE */
         function renderWorkflow() {
             const container = document.getElementById('workflow-steps');
             if (!container) return;
@@ -1064,10 +1078,6 @@
                         <div class="detail-block">
                             <div class="detail-label why-lbl">WHY (DOMAIN & REGULATORY DRIVER)</div>
                             <div class="detail-val">${s.why}</div>
-                        </div>
-                        <div class="detail-block" style="grid-column: span 2;">
-                            <div class="detail-label wrong-lbl">IF THIS WERE WRONG (FAILURE MODE)</div>
-                            <div class="detail-val" style="color: var(--accent-rose);">${s.if_wrong}</div>
                         </div>
                     </div>
                 </div>
