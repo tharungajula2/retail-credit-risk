@@ -169,11 +169,12 @@ def main():
         .grid-2 {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 20px; }}
         .grid-3 {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }}
         .grid-4 {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }}
+        .grid-2 > *, .grid-3 > *, .grid-4 > * {{ min-width: 0; }}
         @media (max-width: 1024px) {{ .grid-2, .grid-3, .grid-4 {{ grid-template-columns: 1fr; }} }}
 
         .card {{
             background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 20px; margin-bottom: 20px;
+            border-radius: 10px; padding: 20px; margin-bottom: 20px; min-width: 0; width: 100%;
         }}
         .card-header {{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }}
         .card-title {{ font-size: 15px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }}
@@ -196,21 +197,22 @@ def main():
         /* KPI CARDS */
         .kpi-card {{
             background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 4px;
+            border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0;
         }}
         .kpi-label {{ font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-dim); letter-spacing: 0.5px; }}
         .kpi-val {{ font-size: 24px; font-weight: 700; color: #fff; font-family: var(--font-mono); }}
         .kpi-sub {{ font-size: 11px; color: var(--text-muted); }}
 
         /* TABLES */
-        .table-wrapper {{ overflow-x: auto; max-height: 440px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); }}
+        .table-wrapper {{ overflow-x: auto; max-height: 440px; overflow-y: auto; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); width: 100%; }}
         table {{ width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; text-align: left; }}
         th {{ background: #0f172a; color: var(--text-muted); padding: 10px 14px; font-weight: 600; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10; white-space: nowrap; }}
         td {{ padding: 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); color: var(--text-main); white-space: nowrap; }}
+        td:last-child {{ white-space: normal; min-width: 160px; }}
         tr:hover td {{ background: rgba(255, 255, 255, 0.02); }}
 
         /* CHART CONTAINER */
-        .chart-container {{ position: relative; height: 320px; width: 100%; }}
+        .chart-container {{ position: relative; height: 320px; width: 100%; min-width: 0; }}
 
         /* PIPELINE WORKFLOW (PART 4) */
         .workflow-header {{ margin-bottom: 24px; text-align: center; }}
