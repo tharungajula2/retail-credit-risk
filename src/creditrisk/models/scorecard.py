@@ -18,7 +18,7 @@ from creditrisk.features.binning import WoEBinner
 from creditrisk.models.pd_model import PDModel, load_pd_config
 
 CONFIG_PATH = Path(__file__).resolve().parents[3] / "config" / "pd_model.yaml"
-OUTPUT_TABLES_DIR = Path(__file__).resolve().parents[3] / "outputs" / "tables"
+OUTPUT_TABLES_DIR = Path(__file__).resolve().parents[3] / "outputs" / "pd_evidenced" / "tables"
 
 
 def build_scorecard(
@@ -133,21 +133,13 @@ def score_dataset(df: pd.DataFrame, scorecard: pd.DataFrame, woe_binner: WoEBinn
         var_sc = scorecard[scorecard["variable"] == var]
         points_map = dict(zip(var_sc["bin"], var_sc["points"]))
 
-        rule = woe_binner.binner_rules_[var]
-        x_col = df[var]
-
-        if rule["type"] == "numeric":
-            bins = rule["bins"]
-            missing_mask = x_col.isna()
-            labels = [f"[{bins[i]:.2f}, {bins[i+1]:.2f})" for i in range(len(bins) - 1)]
-            binned = pd.cut(x_col, bins=bins, labels=labels, include_lowest=True).astype(str)
-            binned[missing_mask] = "MISSING"
-        else:
-            freq_cats = rule["frequent_categories"]
-            x_str = x_col.astype(str).fillna("MISSING")
-            binned = x_str.apply(lambda val: val if val in freq_cats or val == "MISSING" else "OTHER")
-
-        var_pts = binned.map(points_map).fillna(0).astype(int)
+        if var not in df:
+            raise ValueError(f"Missing scorecard input: {var}")
+        binned = woe_binner.bin_values(var, df[var])
+        unknown = set(binned.dropna()) - set(points_map)
+        if unknown or binned.isna().any():
+            raise ValueError(f"No scorecard points for {var}: {sorted(unknown)}")
+        var_pts = binned.map(points_map).astype(int)
         total_scores += var_pts
 
     return total_scores

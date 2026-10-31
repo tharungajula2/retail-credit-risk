@@ -12,6 +12,7 @@ dependencies = [
     "matplotlib>=3.11.0",
     "numpy>=2.0.0",
     "pandas>=2.0.0",
+    "pyarrow>=18.0.0",
     "pypdf>=5.0.0",
     "pytest>=8.0.0",
     "PyYAML>=6.0",

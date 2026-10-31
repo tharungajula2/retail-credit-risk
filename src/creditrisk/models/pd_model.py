@@ -59,6 +59,10 @@ class PDModel:
         """
         min_iv = self.config.get("min_iv_threshold", 0.02)
         target_col = self.config.get("target_column", "default_12m")
+        if target_col not in train_df or train_df[target_col].isna().any():
+            raise ValueError("PD training requires observed, non-censored target labels")
+        if not train_df[target_col].isin([0, 1]).all():
+            raise ValueError("PD training target must contain only 0 and 1")
         drop_unstable = set(self.config.get("drop_unstable", ["tot_cur_bal", "total_rev_hi_lim"]))
 
         # Combine all excluded columns (model-specific exclusions + drop_unstable)

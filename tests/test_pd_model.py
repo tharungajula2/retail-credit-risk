@@ -67,3 +67,10 @@ def test_pd_model_predictions_bounded_between_0_and_1():
     assert len(predicted_pds) == n_samples
     assert np.all(predicted_pds >= 0.0), "Predicted PD contains values < 0.0"
     assert np.all(predicted_pds <= 1.0), "Predicted PD contains values > 1.0"
+
+
+def test_pd_model_rejects_censored_training_labels():
+    model = PDModel()
+    frame = pd.DataFrame({"annual_inc": [10000, 20000], "default_12m": [0, None]})
+    with pytest.raises(ValueError, match="non-censored"):
+        model.fit(frame, None, pd.DataFrame())

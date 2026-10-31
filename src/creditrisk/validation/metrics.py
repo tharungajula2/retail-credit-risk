@@ -39,23 +39,25 @@ def ks_statistic(y_true: np.ndarray, pd_pred: np.ndarray) -> Tuple[float, float]
     Tuple[float, float]
         (ks_statistic, cutoff_threshold)
     """
+    if (len(y_true) != len(pd_pred) or not np.isin(y_true, [0, 1]).all()
+            or not np.isfinite(pd_pred).all()):
+        raise ValueError("KS requires paired binary outcomes and finite predictions")
     df = pd.DataFrame({"y_true": y_true, "pd_pred": pd_pred})
-    df = df.sort_values("pd_pred", ascending=False).reset_index(drop=True)
-
-    n_bad = (df["y_true"] == 1).sum()
-    n_good = (df["y_true"] == 0).sum()
+    grouped = df.groupby("pd_pred", sort=True).agg(
+        n_bad=("y_true", "sum"), n_total=("y_true", "size")
+    ).sort_index(ascending=False)
+    n_bad = grouped["n_bad"].sum()
+    n_good = grouped["n_total"].sum() - n_bad
 
     if n_bad == 0 or n_good == 0:
         return 0.0, 0.0
 
-    df["cum_bad"] = (df["y_true"] == 1).cumsum() / n_bad
-    df["cum_good"] = (df["y_true"] == 0).cumsum() / n_good
-
-    df["ks_diff"] = np.abs(df["cum_bad"] - df["cum_good"])
-    max_idx = df["ks_diff"].idxmax()
-
-    ks_stat = float(df.loc[max_idx, "ks_diff"])
-    cutoff = float(df.loc[max_idx, "pd_pred"])
+    # A tied score is one attainable threshold; partial tie groups are not.
+    cum_bad = grouped["n_bad"].cumsum() / n_bad
+    cum_good = (grouped["n_total"] - grouped["n_bad"]).cumsum() / n_good
+    difference = (cum_bad - cum_good).abs()
+    cutoff = float(difference.idxmax())
+    ks_stat = float(difference.max())
 
     return ks_stat, cutoff
 

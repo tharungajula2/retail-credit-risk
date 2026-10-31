@@ -9,6 +9,8 @@ table and exports all diagnostic plots.
 from pathlib import Path
 import pandas as pd
 from creditrisk.features.binning import WoEBinner
+from creditrisk.data.pd_artifacts import (bind_artifact, require_bound_artifact,
+                                          require_evidenced_samples)
 from creditrisk.models.pd_model import PDModel
 from creditrisk.validation.metrics import (
     brier_score,
@@ -23,16 +25,19 @@ from creditrisk.validation.plots import (
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"
-WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "models" / "woe_binner.pkl"
-MODEL_A_PATH = PROJECT_ROOT / "outputs" / "models" / "pd_model_a.pkl"
-MODEL_B_PATH = PROJECT_ROOT / "outputs" / "models" / "pd_model_b.pkl"
+PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "pd_evidenced"
+WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "woe_binner.pkl"
+MODEL_A_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "pd_model_a.pkl"
+MODEL_B_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "pd_model_b.pkl"
 
-OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "tables"
-OUTPUT_FIGURES_DIR = PROJECT_ROOT / "outputs" / "figures"
+OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "tables"
+OUTPUT_FIGURES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "figures"
 
 
 def main():
+    require_evidenced_samples(PROCESSED_DATA_DIR)
+    for path in (WOE_BINNER_PATH, MODEL_A_PATH, MODEL_B_PATH):
+        require_bound_artifact(path, PROCESSED_DATA_DIR)
     OUTPUT_TABLES_DIR.mkdir(parents=True, exist_ok=True)
     OUTPUT_FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -98,6 +103,7 @@ def main():
     val_summary = pd.DataFrame(summary_rows)
     val_path = OUTPUT_TABLES_DIR / "validation_summary.csv"
     val_summary.to_csv(val_path, index=False)
+    bind_artifact(val_path, PROCESSED_DATA_DIR)
     print(f"\nValidation battery completed. Master table saved to: {val_path}")
 
     print("\n" + "=" * 75)

@@ -1,5 +1,7 @@
 # PROJECT TRUTH: Retail Credit Risk Modeling System
 
+> **Archived inventory snapshot:** The branch, commit, local paths and data/artifact counts below describe an earlier working copy. They do not describe this fresh clone or authenticate its missing LendingClub CSV. Current PD evidence limits and corrections are in [PD_TARGET_FOUNDATION.md](docs/PD_TARGET_FOUNDATION.md) and [PD_MODEL_CORRECTIONS.md](docs/PD_MODEL_CORRECTIONS.md).
+
 ## 1. Identification
 
 - **Repository Name**: `retail-credit-risk`

@@ -1,6 +1,8 @@
 # Retail Credit Risk Analytics Suite
 
-> **Persona & System Overview:** An end-to-end, production-grade Basel III Internal Ratings-Based (IRB) capital engine, IFRS 9 / CECL expected credit loss (ECL) provisioning pipeline, and Weight of Evidence (WoE) credit scorecard suite built on 466,285 real LendingClub unsecured personal loans (2007–2014). Integrates PD, LGD, and EAD modelling with an interactive executive risk dashboard and an embedding-powered RAG AI Credit Analyst.
+> **Evidence status (November 2026):** This repository preserves a historical credit-risk demonstration and its saved output tables. The exact LendingClub CSV, dated earliest-default ledger, observation endpoints and model artifacts needed to reproduce or validate the quoted PD metrics are absent. The historical `default_12m` proxy is unsuitable for a verified 12-month PD. The [corrected PD foundation](docs/PD_TARGET_FOUNDATION.md) and [Phase 4 guide](docs/PD_MODEL_CORRECTIONS.md) are synthetic-tested only; no new real-loan performance result or production/regulatory validation is claimed. Figures and “production-grade” labels in the historical sections below are archival claims, not current evidence.
+
+> **Historical system overview:** An end-to-end credit-risk demonstration with Basel III IRB and IFRS 9 / CECL calculations, WoE scorecards, a dashboard and an AI analyst interface. The committed inventory reports 466,285 LendingClub loans from 2007–2014, but the exact source snapshot is unavailable for authentication.
 
 ---
 
@@ -10,7 +12,7 @@
 
 | Metric | Value / Magnitude | Technical Context / Baseline |
 |---|---|---|
-| **Portfolio Total (OOT Cohort)** | 235,628 loans | Out-of-Time test cohort (2013–2014 vintages) |
+| **Portfolio Total (OOT Cohort)** | 235,628 loans | Saved historical table for 2014 issues; outcome coverage unverified |
 | **Total Exposure at Default (EAD)** | **$1,826,572,642** | Drawn + CCF adjusted exposure across all stages |
 | **PD Model B OOT Performance** | **Gini: 0.3845 \| AUC: 0.6923** | KS: 0.2843 \| Brier: 0.03268 \| HL p-val: 0.00117 |
 | **PD Model A OOT Performance** | Gini: 0.2715 \| AUC: 0.6357 | Baseline model (7 WoE variables without grade) |
@@ -26,7 +28,7 @@
 
 1. **IRB Capital Penalty (+67.5%) over Standardised:** Under Basel III, retail unsecured exposures receive a flat 75% risk weight under the Standardised Approach. However, because the portfolio's actual LGD is severe (mean 93.4%), the IRB supervisory formula (BCBS para 4.4) calculates an average risk weight of **125.6%**. Regulatory IRB capital requires **$183.6M** vs **$109.6M** under Standardised, properly penalising high-loss unsecured portfolios.
 2. **Extreme LGD Bimodality & Total Loss Severity:** Out of 50,968 resolved default loans, **52.2% resulted in a total write-off (LGD = 1.0)** with zero recoveries. The median LGD is 100.0%. Unsecured personal loans lack collateral, meaning default recovery efforts yield negligible returns post-charge-off.
-3. **Out-of-Time Model Generalisation:** Model B (including sub-grade and interest rate WoE features) achieves an **OOT Gini of 0.3845 (AUC 0.6923)**, which outperforms its training Gini of 0.3678 (AUC 0.6839). Feature binned Weight of Evidence transformations remained stable across 2007–2014 macro cycles without parameter degradation.
+3. **Historical OOT table, unverified:** The saved table reports Model B OOT Gini **0.3845** and AUC **0.6923** under the legacy target. The underlying data and 12-month outcome evidence are missing; this difference from the saved train figure does not establish generalisation or stable calibration.
 
 ---
 
@@ -56,7 +58,7 @@
 ========================================================================================================
                              OUTPUT LOCATIONS & DATA ARTIFACTS
 ========================================================================================================
-[ outputs/tables/ ] ------------------> 35 CSV tables (Ground truth metrics & scorecard parameters)
+[ outputs/tables/ ] ------------------> 35 CSV tables (historical, unverified metrics & scorecard parameters)
 [ outputs/models/ ] ------------------> Serialised .pkl models & FAISS/sentence-transformer RAG index
 [ docs/index.html ] ------------------> Unified standalone master interactive application (Executive Dashboard & DAG Pipeline Flow Map)
 [ index.html ] -----------------------> Root entrypoint mirror for single URL link sharing
@@ -89,12 +91,14 @@ pip install -e .
 
 ### Pipeline Execution Order
 
-To execute the entire credit risk analytics pipeline from raw datasets to report generation:
+The historical end-to-end commands below are **not reproducible from this clone** because the source data is absent. The corrected PD entry point requires an independently sourced, normalized event JSONL and reviewed policy with its SHA-256; see [PD model corrections](docs/PD_MODEL_CORRECTIONS.md). LGD/EAD and regulatory scripts still rely on the historical target and are not validated by the PD corrections.
 
 ```powershell
 # 1. Probability of Default (PD) Pipeline — Train Model A & B, score master scale
-python src/creditrisk/data/run_sampling.py
-python src/creditrisk/models/run_pd_model.py
+python -m creditrisk.data.run_sampling --evidence-jsonl <normalized-events.jsonl> --policy <reviewed-policy.json>
+python -m creditrisk.features.run_binning
+python -m creditrisk.models.run_pd_model
+python -m creditrisk.validation.run_validation
 
 # 2. Loss Given Default (LGD) Pipeline — Fit Fractional Response Model on resolved defaults
 python src/creditrisk/models/run_lgd_training.py
@@ -148,7 +152,7 @@ pytest tests/ -v
 | `outputs/tables/expected_loss_summary.csv` | Combined PD * LGD * EAD expected loss metrics aggregated by rating grade |
 | `docs/index.html` | Standalone single-URL master interactive web application (Executive Panels + DAG Flow) |
 | `index.html` | Root entrypoint mirror for GitHub Pages and single-URL link sharing |
-| `outputs/models/pd_model_b.pkl` | Serialised scikit-learn Logistic Regression model pipeline for Model B |
+| `outputs/models/pd_model_b.pkl` | Historical statsmodels logistic model artifact path; pickle absent from this clone |
 | `outputs/models/lgd_model.pkl` | Serialised statsmodels Fractional Response GLM object for LGD forecasting |
 
 ---
@@ -159,7 +163,7 @@ pytest tests/ -v
 
 Two primary PD candidate models were evaluated against regulatory standards (SR 11-7):
 - **Model A (Baseline):** Uses 7 core financial & credit bureau features (`inq_last_6mths`, `annual_inc`, `purpose`, `home_ownership`, `term`, `dti`, `revol_util`).
-- **Model B (Production Scorecard):** Incorporates credit risk pricing features (`grade`, `sub_grade`, `int_rate`) alongside Model A variables.
+- **Model B (historical platform-signal candidate):** Incorporates LendingClub grade and pricing features (`grade`, `sub_grade`, `int_rate`); their availability at the chosen decision point has not been demonstrated.
 
 | Model / Sample | AUC | Gini | KS Statistic | Brier Score | Hosmer-Lemeshow p-value |
 |---|---|---|---|---|---|
@@ -170,9 +174,11 @@ Two primary PD candidate models were evaluated against regulatory standards (SR 
 | **Model B (Test)** | 0.6817 | 0.3634 | 0.2728 | 0.03264 | **0.49418** |
 | **Model B (OOT)** | **0.6923** | **0.3845** | **0.2843** | **0.03268** | 0.00117 |
 
-*Technical Justification:* Model B was selected due to a +11.3 point Gini improvement on OOT data. Calibration (HL p-value 0.494 on test set) confirms accurate probability outputs across deciles.
+*Interpretation limit:* These are saved legacy-target outputs, not reproduced results. Comparing candidate models on OOT and then selecting one on that same cohort compromises a final independent holdout. The test-set HL p-value of 0.494 does not confirm calibration; the saved Model B OOT p-value is 0.00117.
 
 ### Rating Master Scale (Model B Scorecard)
+
+The eight-grade table below was constructed on the **training sample** (184,525 rows), not independently back-tested on OOT. Its default rates inherit the unverified legacy target.
 
 Points-to-Double-Odds (PDO) scaling: Base Score = 600 at 50:1 odds, PDO = 20. OOT Score Range: 522 to 639.
 
@@ -208,7 +214,7 @@ Points-to-Double-Odds (PDO) scaling: Base Score = 600 at 50:1 odds, PDO = 20. OO
 
 | Component | Operational Status | Data Source / Implementation Details |
 |---|---|---|
-| **PD Model (Model B)** | **Production-Grade** | Fit on 230,000+ real LendingClub loan records with OOT temporal test validation. |
+| **PD Model (Model B)** | **Historical, unverified** | Saved metrics use the legacy target; dated default and feature-timing evidence are absent. |
 | **LGD Model Engine** | **Production-Grade** | Fractional Response GLM trained on 50,968 empirical default recovery records. |
 | **EAD Observed CCF** | **Production-Grade** | Empirical drawdown ratios calculated directly from historical defaulting loans. |
 | **Basel III Capital Engine** | **Production-Grade** | Exact implementation of BCBS para 4.4 IRB retail risk-weight formula. |
@@ -234,5 +240,5 @@ Points-to-Double-Odds (PDO) scaling: Base Score = 600 at 50:1 odds, PDO = 20. OO
 ### Data Citation & Reproducibility
 
 - **Primary Source:** LendingClub Public Loan Dataset (2007–2014), available via Kaggle.
-- **Reproducibility Guarantee:** All statistical metrics, financial totals, Gini scores, and RWA figures in this document are read directly from the execution outputs in `outputs/tables/`. No figures are estimated or manually synthesized.
+- **Reproducibility limit:** The figures are copied from committed historical output tables. The original CSV and processed samples are absent, so they were not reproduced or independently verified. The current PD runners require a dated evidence panel and an artifact manifest; the historical tables remain unchanged.
 

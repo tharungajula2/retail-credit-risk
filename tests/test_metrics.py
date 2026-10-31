@@ -55,6 +55,14 @@ def test_ks_statistic_bounded_between_zero_and_one():
     assert 0.0 <= cutoff <= 1.0
 
 
+def test_ks_tied_predictions_are_one_threshold():
+    y_true = np.array([1, 0, 1, 0])
+    pd_pred = np.array([0.2, 0.2, 0.2, 0.2])
+    ks, cutoff = ks_statistic(y_true, pd_pred)
+    assert ks == 0.0
+    assert cutoff == 0.2
+
+
 def test_well_calibrated_synthetic_set_passes_hosmer_lemeshow():
     """
     Verifies that a well-calibrated synthetic dataset where y_true is drawn directly from

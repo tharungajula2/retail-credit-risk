@@ -1,14 +1,14 @@
 # PD target foundation: dated evidence and observation windows
 
-**Status:** synthetic-fixture implementation only. This module has not labelled or validated any LendingClub loan. It is intentionally separate from [`target.py`](../src/creditrisk/data/target.py) and [`sampling.py`](../src/creditrisk/data/sampling.py); historical output tables remain unchanged.
+**Status:** synthetic-fixture implementation only. This module has not labelled or validated any LendingClub loan. It remains separate from historical [`target.py`](../src/creditrisk/data/target.py). Its [Phase 4 admission function and runner](PD_MODEL_CORRECTIONS.md) now provide an evidence-gated route into the existing PD pipeline; historical output tables remain unchanged.
 
 ## 1. Provenance boundary
 
-The repository's scripts expect `datasets/loan_data_2007_2014.csv` ([`run_sampling.py`](../src/creditrisk/data/run_sampling.py), [`inspect_raw.py`](../src/creditrisk/data/inspect_raw.py)). That file and the `datasets/` directory are absent from the fresh clone and ignored by [`.gitignore`](../.gitignore). The committed [`data_inventory.txt`](../outputs/reports/data_inventory.txt) reports a **historical** input of 466,285 rows and 75 columns, with `id`, `issue_d`, `loan_status`, `last_pymnt_d`, `last_credit_pull_d` and financial/credit fields. [`config/variables.yaml`](../config/variables.yaml) is a candidate feature and outcome dictionary, not a checksum or authenticated source manifest. `README.md` names LendingClub on Kaggle but supplies no exact dataset version or download record.
+The historical scripts expected `datasets/loan_data_2007_2014.csv` ([`inspect_raw.py`](../src/creditrisk/data/inspect_raw.py)); corrected [`run_sampling.py`](../src/creditrisk/data/run_sampling.py) now requires normalized dated evidence. The original file and `datasets/` directory are absent from the fresh clone and ignored by [`.gitignore`](../.gitignore). The committed [`data_inventory.txt`](../outputs/reports/data_inventory.txt) reports a **historical** input of 466,285 rows and 75 columns, with `id`, `issue_d`, `loan_status`, `last_pymnt_d`, `last_credit_pull_d` and financial/credit fields. [`config/variables.yaml`](../config/variables.yaml) is a candidate feature and outcome dictionary, not a checksum or authenticated source manifest. `README.md` names LendingClub on Kaggle but supplies no exact dataset version or download record.
 
 Two public source leads are the [Kaggle Lending Club Loan Data dataset](https://www.kaggle.com/datasets/wendykan/lending-club-loan-data) and [All Lending Club loan data](https://www.kaggle.com/wordsforthewise/lending-club), which describes additional cleaning and broader years. They are **candidates**, not authenticated matches for the missing CSV. Row count or a similar filename cannot establish identity, including for any `Analytics-ML-Portfolio` copy. No source file, row-level comparison, SHA-256, licence chain or fixed extraction snapshot is available in this clone. No dataset was downloaded for this work.
 
-The prior path from raw data to saved metrics is: [`inspect_raw.py`](../src/creditrisk/data/inspect_raw.py) inventory → [`target.py`](../src/creditrisk/data/target.py) final-status/last-payment proxy → [`run_sampling.py`](../src/creditrisk/data/run_sampling.py) Parquet development/test/2014 cohorts → [`run_binning.py`](../src/creditrisk/features/run_binning.py) training WoE → [`run_pd_model.py`](../src/creditrisk/models/run_pd_model.py) models A/B → [`run_validation.py`](../src/creditrisk/validation/run_validation.py) saved metrics. The raw and intermediate inputs required to replay this chain are missing.
+The prior path from raw data to saved metrics was: [`inspect_raw.py`](../src/creditrisk/data/inspect_raw.py) inventory → [`target.py`](../src/creditrisk/data/target.py) final-status/last-payment proxy → the former raw-CSV sampling runner (preserved in Git history) → [`run_binning.py`](../src/creditrisk/features/run_binning.py) training WoE → [`run_pd_model.py`](../src/creditrisk/models/run_pd_model.py) models A/B → [`run_validation.py`](../src/creditrisk/validation/run_validation.py) saved metrics. The raw and intermediate inputs required to replay this chain are missing.
 
 ## 2. Why the old 12-month label is unsuitable for revalidation
 
@@ -49,7 +49,7 @@ From the repository root, using an available Python 3.11+ interpreter:
 python -m unittest discover -s tests -p test_pd_foundation.py -v
 ```
 
-`unittest` and the module use the Python standard library. Existing PD/LGD/EAD scripts still call the historical target. There is no adapter from `loan_data_2007_2014.csv` to this evidence schema because the missing snapshot has no authenticated, dated default-event ledger or observation panel.
+`unittest` and the module use the Python standard library. The existing PD sampling runner now requires normalized dated evidence; LGD/EAD and other historical scripts still use the old target. There is no adapter from `loan_data_2007_2014.csv` to this evidence schema because the missing snapshot has no authenticated, dated default-event ledger or observation panel.
 
 ## 6. Required evidence before real-data validation
 

@@ -12,7 +12,7 @@ from creditrisk.models.pd_model import PDModel
 from creditrisk.models.scorecard import build_rating_grades, build_scorecard, score_dataset
 
 
-def test_hand_computed_scorecard_points():
+def test_hand_computed_scorecard_points(tmp_path):
     """
     Verifies that build_scorecard produces exact hand-computed points based on:
     Factor = 20 / ln(2) = 28.8539008
@@ -43,7 +43,8 @@ def test_hand_computed_scorecard_points():
     model = PDModel(config=config)
     model.fit(df, binner, iv_table)
 
-    scorecard = build_scorecard(model, binner, config=config, model_name="test")
+    scorecard = build_scorecard(model, binner, config=config, model_name="test",
+                                output_dir=tmp_path)
 
     factor = 20 / np.log(2)
     offset = 600 - factor * np.log(50)
@@ -56,7 +57,7 @@ def test_hand_computed_scorecard_points():
     assert first_row["points"] == hand_pts
 
 
-def test_score_dataset_sums_feature_points_correctly():
+def test_score_dataset_sums_feature_points_correctly(tmp_path):
     """
     Verifies that score_dataset calculates total scores matching the sum of bin points.
     """
@@ -86,14 +87,35 @@ def test_score_dataset_sums_feature_points_correctly():
     model = PDModel(config=config)
     model.fit(df, binner, iv_table)
 
-    scorecard = build_scorecard(model, binner, config=config, model_name="test")
+    scorecard = build_scorecard(model, binner, config=config, model_name="test",
+                                output_dir=tmp_path)
     scores = score_dataset(df, scorecard, binner)
 
     assert len(scores) == n_samples
     assert not scores.isna().any()
 
+    # Each feature's integer point rounding contributes at most half a point.
+    factor = 20 / np.log(2)
+    offset = 600 - factor * np.log(50)
+    predicted = model.predict_pd(df, binner)
+    model_logit = np.log(predicted / (1 - predicted))
+    score_logit = (offset - scores.to_numpy()) / factor
+    assert np.max(np.abs(model_logit - score_logit)) <= len(model.features_) / (2 * factor) + 1e-10
 
-def test_rating_grades_rank_ordering_monotonicity():
+
+def test_score_dataset_rejects_missing_or_unmapped_inputs():
+    frame = pd.DataFrame({"purpose": ["home", "car", "home", "car"],
+                          "default_12m": [0, 1, 1, 0]})
+    binner = WoEBinner().fit(frame[["purpose"]], frame["default_12m"])
+    scorecard = pd.DataFrame({"variable": ["purpose", "purpose"],
+                              "bin": ["home", "car"], "points": [600, 500]})
+    with pytest.raises(ValueError, match="Missing scorecard input"):
+        score_dataset(pd.DataFrame({"other": ["home"]}), scorecard, binner)
+    with pytest.raises(ValueError, match="No scorecard points"):
+        score_dataset(pd.DataFrame({"purpose": ["unseen"]}), scorecard, binner)
+
+
+def test_rating_grades_rank_ordering_monotonicity(tmp_path):
     """
     Verifies that build_rating_grades detects monotonic default rates from Grade 1 (safest) to Grade N (riskiest).
     """
@@ -102,7 +124,8 @@ def test_rating_grades_rank_ordering_monotonicity():
     # Target default (1) increases as score decreases
     targets = pd.Series([0, 0, 0, 1, 1, 1, 1, 1] * 10)
 
-    rating_df, rank_holds = build_rating_grades(scores, targets, n_grades=4, model_name="test")
+    rating_df, rank_holds = build_rating_grades(scores, targets, n_grades=4,
+                                                model_name="test", output_dir=tmp_path)
 
     assert rank_holds is True
     # Grade 1 must have lower default rate than Grade 4

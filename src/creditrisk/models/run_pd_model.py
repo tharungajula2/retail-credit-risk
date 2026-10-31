@@ -8,17 +8,22 @@ on the training dataset, exports coefficient tables, and saves fitted model arti
 from pathlib import Path
 import pandas as pd
 from creditrisk.features.binning import WoEBinner
+from creditrisk.data.pd_artifacts import (bind_artifact, require_bound_artifact,
+                                          require_evidenced_samples)
 from creditrisk.models.pd_model import PDModel, load_pd_config
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-TRAIN_DATA_PATH = PROJECT_ROOT / "data" / "processed" / "train.parquet"
-WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "models" / "woe_binner.pkl"
-IV_SUMMARY_PATH = PROJECT_ROOT / "outputs" / "tables" / "iv_summary.csv"
-OUTPUT_MODELS_DIR = PROJECT_ROOT / "outputs" / "models"
-OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "tables"
+TRAIN_DATA_PATH = PROJECT_ROOT / "data" / "pd_evidenced" / "train.parquet"
+WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "woe_binner.pkl"
+IV_SUMMARY_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "tables" / "iv_summary.csv"
+OUTPUT_MODELS_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models"
+OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "tables"
 
 
 def main():
+    require_evidenced_samples(TRAIN_DATA_PATH.parent)
+    require_bound_artifact(WOE_BINNER_PATH, TRAIN_DATA_PATH.parent)
+    require_bound_artifact(IV_SUMMARY_PATH, TRAIN_DATA_PATH.parent)
     print(f"Loading train dataset from: {TRAIN_DATA_PATH}...")
     df_train = pd.read_parquet(TRAIN_DATA_PATH)
     print(f"Train dataset loaded ({len(df_train):,} rows).")
@@ -39,6 +44,7 @@ def main():
 
     model_a_path = OUTPUT_MODELS_DIR / "pd_model_a.pkl"
     model_a.save(model_a_path)
+    bind_artifact(model_a_path, TRAIN_DATA_PATH.parent)
     print(f"Model A saved to: {model_a_path}")
 
     summary_a = model_a.summary()
@@ -53,6 +59,7 @@ def main():
 
     model_b_path = OUTPUT_MODELS_DIR / "pd_model_b.pkl"
     model_b.save(model_b_path)
+    bind_artifact(model_b_path, TRAIN_DATA_PATH.parent)
     print(f"Model B saved to: {model_b_path}")
 
     summary_b = model_b.summary()
