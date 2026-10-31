@@ -9,6 +9,8 @@ Appends recalibrated model rows to validation_summary.csv and updates calibratio
 from pathlib import Path
 import pandas as pd
 from creditrisk.features.binning import WoEBinner
+from creditrisk.data.pd_artifacts import (bind_artifact, require_bound_artifact,
+                                          require_evidenced_samples)
 from creditrisk.models.calibration import fit_intercept_recalibration, fit_platt_scaling
 from creditrisk.models.pd_model import PDModel
 from creditrisk.validation.metrics import (
@@ -20,16 +22,20 @@ from creditrisk.validation.metrics import (
 from creditrisk.validation.plots import calibration_plot
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"
-WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "models" / "woe_binner.pkl"
-MODEL_A_PATH = PROJECT_ROOT / "outputs" / "models" / "pd_model_a.pkl"
+PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "pd_evidenced"
+WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "woe_binner.pkl"
+MODEL_A_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "pd_model_a.pkl"
 
-OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "tables"
-OUTPUT_FIGURES_DIR = PROJECT_ROOT / "outputs" / "figures"
+OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "tables"
+OUTPUT_FIGURES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "figures"
 VAL_SUMMARY_PATH = OUTPUT_TABLES_DIR / "validation_summary.csv"
 
 
 def main():
+    require_evidenced_samples(PROCESSED_DATA_DIR)
+    for path in (WOE_BINNER_PATH, MODEL_A_PATH):
+        require_bound_artifact(path, PROCESSED_DATA_DIR)
+    require_bound_artifact(VAL_SUMMARY_PATH, PROCESSED_DATA_DIR)
     print("Loading processed datasets (train, test, oot)...")
     train_df = pd.read_parquet(PROCESSED_DATA_DIR / "train.parquet")
     test_df = pd.read_parquet(PROCESSED_DATA_DIR / "test.parquet")
@@ -77,7 +83,7 @@ def main():
             new_rows.append(
                 {
                     "model": model_name,
-                    "sample": sample_name,
+                    "sample": "calibration_fit" if sample_name == "test" else sample_name,
                     "auc": auc,
                     "gini": gini,
                     "ks": ks_stat,
@@ -99,6 +105,7 @@ def main():
     updated_val_df = pd.concat([existing_clean, new_val_df], ignore_index=True)
 
     updated_val_df.to_csv(VAL_SUMMARY_PATH, index=False)
+    bind_artifact(VAL_SUMMARY_PATH, PROCESSED_DATA_DIR)
     print(f"\nUpdated master validation table saved to: {VAL_SUMMARY_PATH}")
 
     print("\n" + "=" * 80)

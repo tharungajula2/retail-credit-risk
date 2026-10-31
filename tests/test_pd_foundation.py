@@ -12,6 +12,7 @@ from creditrisk.data.pd_foundation import (  # noqa: E402
     Cohort,
     PDPolicy,
     add_calendar_months,
+    build_model_rows,
     build_pd_12m_labels,
     validate_dataset_schema,
 )
@@ -133,6 +134,57 @@ class PDFoundationTests(unittest.TestCase):
                                           default_event_source="synthetic ledger")], POLICY)
         with self.assertRaisesRegex(ValueError, "YYYY-MM-DD"):
             validate_dataset_schema([loan(origination_date="Jan-14")], POLICY)
+
+    def test_model_admission_excludes_censored_and_enforces_feature_time(self):
+        policy = PDPolicy(
+            as_of_date=date(2018, 1, 1),
+            cohorts=(Cohort("train", date(2007, 1, 1), date(2010, 1, 1)),
+                     Cohort("test", date(2011, 1, 1), date(2012, 1, 1)),
+                     Cohort("oot", date(2013, 1, 1), date(2014, 1, 1))),
+            approved_features=frozenset({"annual_inc"}),
+        )
+        def observed(identifier, issued, decided, through, **changes):
+            return loan(loan_id=identifier, origination_date=issued,
+                        decision_at=decided, observed_through=through,
+                        features={"annual_inc": 50000},
+                        feature_observed_at={"annual_inc": decided}, **changes)
+        rows = [
+            observed("train", "2009-01-01", "2008-12-31T12:00:00+00:00", "2010-01-01"),
+            observed("test", "2011-01-01", "2010-12-31T12:00:00+00:00", "2012-01-01",
+                     default_event_date="2011-06-01", default_event_type="charge_off",
+                     default_event_source="synthetic ledger"),
+            observed("oot", "2013-01-01", "2012-12-31T12:00:00+00:00", "2014-01-01"),
+            observed("censored", "2013-03-01", "2013-02-28T12:00:00+00:00", "2013-08-01"),
+        ]
+        samples, exclusions = build_model_rows(rows, policy, ["annual_inc"])
+        self.assertEqual([len(samples[name]) for name in ("train", "test", "oot")], [1, 1, 1])
+        self.assertEqual(samples["test"][0]["default_12m"], 1)
+        self.assertEqual(exclusions["censored_or_incomplete"], 1)
+        self.assertEqual(set(samples["train"][0]),
+                         {"loan_id", "origination_date", "annual_inc", "default_12m"})
+        rows[0]["feature_observed_at"]["annual_inc"] = "2009-01-02T12:00:00+00:00"
+        with self.assertRaisesRegex(ValueError, "future-data leakage"):
+            build_model_rows(rows, policy, ["annual_inc"])
+
+    def test_model_admission_rejects_missing_label_gap(self):
+        policy = PDPolicy(
+            as_of_date=date(2018, 1, 1),
+            cohorts=(Cohort("train", date(2007, 1, 1), date(2010, 1, 1)),
+                     Cohort("test", date(2010, 6, 1), date(2011, 1, 1)),
+                     Cohort("oot", date(2012, 1, 1), date(2013, 1, 1))),
+            approved_features=frozenset({"annual_inc"}),
+        )
+        with self.assertRaisesRegex(ValueError, "label-observation gap"):
+            build_model_rows([], policy, ["annual_inc"])
+        immature = PDPolicy(
+            as_of_date=date(2013, 12, 31),
+            cohorts=(Cohort("train", date(2007, 1, 1), date(2009, 1, 1)),
+                     Cohort("test", date(2010, 1, 1), date(2011, 1, 1)),
+                     Cohort("oot", date(2012, 1, 1), date(2013, 1, 1))),
+            approved_features=frozenset({"annual_inc"}),
+        )
+        with self.assertRaisesRegex(ValueError, "as-of observation window"):
+            build_model_rows([], immature, ["annual_inc"])
 
 
 if __name__ == "__main__":

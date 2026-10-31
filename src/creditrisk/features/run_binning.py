@@ -1,23 +1,25 @@
 """
 run_binning.py
 --------------
-Execution script that fits WoEBinner on the training sample (data/processed/train.parquet)
+Execution script that fits WoEBinner on the evidenced training sample
 using PD-eligible candidate features. Exports IV summary and detailed bin tables.
 """
 
 from pathlib import Path
 import pandas as pd
 from creditrisk.data.schema import get_pd_eligible_columns
+from creditrisk.data.pd_artifacts import bind_artifact, require_evidenced_samples
 from creditrisk.features.binning import WoEBinner
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-TRAIN_DATA_PATH = PROJECT_ROOT / "data" / "processed" / "train.parquet"
-OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "tables"
+TRAIN_DATA_PATH = PROJECT_ROOT / "data" / "pd_evidenced" / "train.parquet"
+OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "tables"
 BIN_TABLES_DIR = OUTPUT_TABLES_DIR / "bin_tables"
-MODEL_OUTPUT_PATH = PROJECT_ROOT / "outputs" / "models" / "woe_binner.pkl"
+MODEL_OUTPUT_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "woe_binner.pkl"
 
 
 def main():
+    require_evidenced_samples(TRAIN_DATA_PATH.parent)
     print(f"Loading train sample from: {TRAIN_DATA_PATH}...")
     df_train = pd.read_parquet(TRAIN_DATA_PATH)
     print(f"Train sample loaded successfully ({len(df_train):,} rows).")
@@ -57,6 +59,8 @@ def main():
     # 3. Save fitted WoEBinner object
     MODEL_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     binner.save(MODEL_OUTPUT_PATH)
+    bind_artifact(MODEL_OUTPUT_PATH, TRAIN_DATA_PATH.parent)
+    bind_artifact(iv_summary_path, TRAIN_DATA_PATH.parent)
     print(f"Fitted WoEBinner saved to: {MODEL_OUTPUT_PATH}")
 
     print("\n" + "=" * 65)

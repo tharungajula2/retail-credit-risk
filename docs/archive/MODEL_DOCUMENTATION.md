@@ -8,6 +8,8 @@
 
 ---
 
+> **Historical document (November 2026):** The data snapshot, dated default events and model artifacts required to verify the PD metrics below are unavailable. Its “production” and regulatory language describes the original demonstration, not validated current capability. The 12-month label used here was a final-status/last-payment proxy and is unsuitable for verified PD estimation. See the [dated PD foundation](../PD_TARGET_FOUNDATION.md) and [Phase 4 corrections](../PD_MODEL_CORRECTIONS.md). The historical tables are retained unchanged for provenance.
+
 ## Table of Contents
 
 1. [Executive Summary](#1-executive-summary)

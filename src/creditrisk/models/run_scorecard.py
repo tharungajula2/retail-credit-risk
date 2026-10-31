@@ -8,18 +8,22 @@ for Model A (borrower fundamentals) and Model B (full model) on the training set
 from pathlib import Path
 import pandas as pd
 from creditrisk.features.binning import WoEBinner
+from creditrisk.data.pd_artifacts import require_bound_artifact, require_evidenced_samples
 from creditrisk.models.pd_model import PDModel
 from creditrisk.models.scorecard import build_rating_grades, build_scorecard, score_dataset
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-TRAIN_DATA_PATH = PROJECT_ROOT / "data" / "processed" / "train.parquet"
-WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "models" / "woe_binner.pkl"
-MODEL_A_PATH = PROJECT_ROOT / "outputs" / "models" / "pd_model_a.pkl"
-MODEL_B_PATH = PROJECT_ROOT / "outputs" / "models" / "pd_model_b.pkl"
-OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "tables"
+TRAIN_DATA_PATH = PROJECT_ROOT / "data" / "pd_evidenced" / "train.parquet"
+WOE_BINNER_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "woe_binner.pkl"
+MODEL_A_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "pd_model_a.pkl"
+MODEL_B_PATH = PROJECT_ROOT / "outputs" / "pd_evidenced" / "models" / "pd_model_b.pkl"
+OUTPUT_TABLES_DIR = PROJECT_ROOT / "outputs" / "pd_evidenced" / "tables"
 
 
 def main():
+    require_evidenced_samples(TRAIN_DATA_PATH.parent)
+    for path in (WOE_BINNER_PATH, MODEL_A_PATH, MODEL_B_PATH):
+        require_bound_artifact(path, TRAIN_DATA_PATH.parent)
     print(f"Loading training data from: {TRAIN_DATA_PATH}...")
     df_train = pd.read_parquet(TRAIN_DATA_PATH)
     print(f"Train dataset loaded ({len(df_train):,} rows).")

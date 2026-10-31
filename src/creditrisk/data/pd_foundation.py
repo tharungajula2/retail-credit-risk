@@ -240,3 +240,48 @@ def build_pd_12m_labels(
             label_state=state,
         ))
     return labels
+
+
+def build_model_rows(
+    rows: Iterable[Mapping[str, object]],
+    policy: PDPolicy,
+    selected_features: Sequence[str],
+) -> tuple[dict[str, list[dict[str, object]]], dict[str, int]]:
+    """Admit evidenced, decision-time rows to chronological PD samples.
+
+    The caller must independently authenticate the event source. This function
+    does not infer an event ledger from a LendingClub status snapshot.
+    """
+    features = tuple(selected_features)
+    if not features or policy.performance_months != 12:
+        raise ValueError("PD modelling requires selected features and a 12-month target")
+    cohorts = {cohort.name: cohort for cohort in policy.cohorts}
+    if set(cohorts) != {"train", "test", "oot"}:
+        raise ValueError("PD modelling requires train, test and oot cohorts")
+    train, test, oot = (cohorts[name] for name in ("train", "test", "oot"))
+    if not (train.end <= test.start and test.end <= oot.start):
+        raise ValueError("PD cohorts must be chronological")
+    if (add_calendar_months(train.end, 12) > test.start
+            or add_calendar_months(test.end, 12) > oot.start):
+        raise ValueError("PD cohorts need a 12-month label-observation gap")
+    if add_calendar_months(oot.end, 12) > policy.as_of_date:
+        raise ValueError("OOT cohort needs a full 12-month as-of observation window")
+
+    evidence = list(rows)
+    labels = build_pd_12m_labels(evidence, policy, features)
+    samples: dict[str, list[dict[str, object]]] = {name: [] for name in cohorts}
+    exclusions = {"censored_or_incomplete": 0, "undated_default": 0,
+                  "outside_cohorts": 0}
+    for row, label in zip(evidence, labels):
+        if label.cohort is None:
+            exclusions["outside_cohorts"] += 1
+            continue
+        if label.default_12m is None:
+            exclusions[label.label_state] += 1
+            continue
+        model_row = {name: row["features"][name] for name in features}
+        model_row.update({"loan_id": label.loan_id,
+                          "origination_date": label.performance_start.isoformat(),
+                          "default_12m": label.default_12m})
+        samples[label.cohort].append(model_row)
+    return samples, exclusions

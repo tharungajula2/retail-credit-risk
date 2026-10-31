@@ -23,6 +23,20 @@ from creditrisk.data.schema import assert_no_leakage
 MIN_BIN_PCT = 0.05  # Minimum 5% of rows per bin
 
 
+def _numeric_labels(bins: List[float]) -> List[str]:
+    labels = [f"[{bins[i]:.2f}, {bins[i+1]:.2f})" for i in range(len(bins) - 1)]
+    if (len(labels) != len(set(labels))
+            or any(f"{left:.2f}" == f"{right:.2f}"
+                   for left, right in zip(bins, bins[1:]))):
+        raise ValueError("Numeric cut points collapse to the same displayed bin boundary")
+    return labels
+
+
+def _categorical_strings(x: pd.Series) -> pd.Series:
+    # Convert nulls before stringification: astype(str) would turn NaN into 'nan'.
+    return x.where(x.notna(), "MISSING").astype(str)
+
+
 def _is_monotonic(values: List[float]) -> bool:
     """Checks if a list of floats is strictly non-decreasing or non-increasing."""
     if len(values) <= 1:
@@ -110,7 +124,7 @@ class WoEBinner:
         total_rows = len(x)
         min_rows = int(np.ceil(self.min_bin_pct * total_rows))
 
-        x_str = x.astype(str).fillna("MISSING")
+        x_str = _categorical_strings(x)
         val_counts = x_str.value_counts()
 
         frequent_cats = set(val_counts[val_counts >= min_rows].index) - {"MISSING", "nan", "None"}
@@ -143,12 +157,12 @@ class WoEBinner:
             if rule["type"] == "numeric":
                 bins = rule["bins"]
                 missing_mask = x_col.isna()
-                labels = [f"[{bins[i]:.2f}, {bins[i+1]:.2f})" for i in range(len(bins) - 1)]
+                labels = _numeric_labels(bins)
                 binned_series = pd.cut(x_col, bins=bins, labels=labels, include_lowest=True).astype(str)
                 binned_series[missing_mask] = "MISSING"
             else:
                 freq_cats = rule["frequent_categories"]
-                binned_series = x_col.astype(str).fillna("MISSING")
+                binned_series = _categorical_strings(x_col)
                 binned_series = binned_series.apply(
                     lambda val: val if val in freq_cats or val == "MISSING" else "OTHER"
                 )
@@ -241,24 +255,31 @@ class WoEBinner:
                 raise ValueError(f"Column '{col}' was not fitted in WoEBinner.")
 
             rule = self.binner_rules_[col]
-            x_col = X[col]
             bin_table = rule["bin_table"]
             woe_map = dict(zip(bin_table["bin"], bin_table["woe"]))
-
-            if rule["type"] == "numeric":
-                bins = rule["bins"]
-                missing_mask = x_col.isna()
-                labels = [f"[{bins[i]:.2f}, {bins[i+1]:.2f})" for i in range(len(bins) - 1)]
-                binned = pd.cut(x_col, bins=bins, labels=labels, include_lowest=True).astype(str)
-                binned[missing_mask] = "MISSING"
-                X_woe[col] = binned.map(woe_map).astype(float)
-            else:
-                freq_cats = rule["frequent_categories"]
-                x_str = x_col.astype(str).fillna("MISSING")
-                binned = x_str.apply(lambda val: val if val in freq_cats or val == "MISSING" else "OTHER")
-                X_woe[col] = binned.map(woe_map).astype(float)
+            binned = self.bin_values(col, X[col])
+            unknown = set(binned.dropna()) - set(woe_map)
+            if unknown or binned.isna().any():
+                raise ValueError(f"No fitted WoE bin for {col}: {sorted(unknown)}")
+            X_woe[col] = binned.map(woe_map).astype(float)
 
         return X_woe
+
+    def bin_values(self, variable: str, values: pd.Series) -> pd.Series:
+        """Apply the fitted bin rule; callers must reject bins absent from fit."""
+        if not self.is_fitted_ or variable not in self.binner_rules_:
+            raise ValueError(f"Variable '{variable}' was not fitted in WoEBinner")
+        rule = self.binner_rules_[variable]
+        if rule["type"] == "numeric":
+            labels = _numeric_labels(rule["bins"])
+            binned = pd.cut(values, bins=rule["bins"], labels=labels,
+                            include_lowest=True).astype(str)
+            binned[values.isna()] = "MISSING"
+            return binned
+        categories = rule["frequent_categories"]
+        strings = _categorical_strings(values)
+        return strings.apply(lambda value: value if value in categories or value == "MISSING"
+                             else "OTHER")
 
     def fit_transform(self, X: pd.DataFrame, y: Union[pd.Series, np.ndarray]) -> pd.DataFrame:
         """Fits binner and transforms X in one step."""

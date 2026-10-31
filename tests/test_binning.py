@@ -7,7 +7,7 @@ Unit tests for WoEBinner in src/creditrisk/features/binning.py.
 import numpy as np
 import pandas as pd
 import pytest
-from creditrisk.features.binning import WoEBinner
+from creditrisk.features.binning import WoEBinner, _numeric_labels
 
 
 def test_assert_no_leakage_raises_on_recoveries():
@@ -96,3 +96,33 @@ def test_numeric_monotonicity_enforced():
     diffs = np.diff(non_missing_woes)
     is_monotonic = bool(np.all(diffs >= 0) or np.all(diffs <= 0))
     assert is_monotonic, f"Numeric WoE values are not monotonic: {non_missing_woes}"
+
+
+def test_categorical_missing_and_unseen_bins_fail_closed():
+    x = pd.DataFrame({"purpose": ["home", "car", None, "home", "car", None]})
+    y = pd.Series([0, 1, 0, 1, 0, 1])
+    binner = WoEBinner().fit(x, y)
+    assert "MISSING" in set(binner.get_bin_table("purpose")["bin"])
+    assert np.isfinite(binner.transform(pd.DataFrame({"purpose": [None]})).iloc[0, 0])
+    with pytest.raises(ValueError, match="No fitted WoE bin"):
+        binner.transform(pd.DataFrame({"purpose": ["new_category"]}))
+
+
+def test_close_numeric_boundaries_cannot_share_a_display_label():
+    with pytest.raises(ValueError, match="same displayed bin boundary"):
+        _numeric_labels([0.001, 0.002, 0.003])
+
+
+def test_holdout_transform_does_not_refit_training_woe_or_iv():
+    train = pd.DataFrame({"purpose": ["home", "car", "home", "car"]})
+    target = pd.Series([0, 1, 0, 1])
+    binner = WoEBinner().fit(train, target)
+    before = binner.get_bin_table("purpose")
+    iv_before = binner.get_iv_table()
+    transformed = binner.transform(pd.DataFrame({"purpose": ["car", "home"]}))
+    assert transformed["purpose"].tolist() == [
+        before.set_index("bin").loc["car", "woe"],
+        before.set_index("bin").loc["home", "woe"],
+    ]
+    pd.testing.assert_frame_equal(before, binner.get_bin_table("purpose"))
+    pd.testing.assert_frame_equal(iv_before, binner.get_iv_table())
