@@ -4,6 +4,8 @@
 
 > **LGD/EAD data foundation:** The [dated evidence contract](docs/LGD_EAD_DATA_FOUNDATION.md) is synthetic-tested only. It does not replace the historical LGD/EAD models, recreate missing source records or validate saved ECL and capital totals.
 
+> **Reporting-date gate:** The [ECL/Basel input guide](docs/REPORTING_DATE_INPUT_GATE.md) describes a synthetic-tested evidence validator for illustrative reporting-date inputs. It does not validate the historical ECL/capital outputs or establish regulatory compliance.
+
 > **Historical system overview:** An end-to-end credit-risk demonstration with Basel III IRB and IFRS 9 / CECL calculations, WoE scorecards, a dashboard and an AI analyst interface. The committed inventory reports 466,285 LendingClub loans from 2007–2014, but the exact source snapshot is unavailable for authentication.
 
 ---
