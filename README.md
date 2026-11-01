@@ -2,6 +2,8 @@
 
 > **Evidence status (November 2026):** This repository preserves a historical credit-risk demonstration and its saved output tables. The exact LendingClub CSV, dated earliest-default ledger, observation endpoints and model artifacts needed to reproduce or validate the quoted PD metrics are absent. The historical `default_12m` proxy is unsuitable for a verified 12-month PD. The [corrected PD foundation](docs/PD_TARGET_FOUNDATION.md) and [Phase 4 guide](docs/PD_MODEL_CORRECTIONS.md) are synthetic-tested only; no new real-loan performance result or production/regulatory validation is claimed. Figures and “production-grade” labels in the historical sections below are archival claims, not current evidence.
 
+> **LGD/EAD data foundation:** The [dated evidence contract](docs/LGD_EAD_DATA_FOUNDATION.md) is synthetic-tested only. It does not replace the historical LGD/EAD models, recreate missing source records or validate saved ECL and capital totals.
+
 > **Historical system overview:** An end-to-end credit-risk demonstration with Basel III IRB and IFRS 9 / CECL calculations, WoE scorecards, a dashboard and an AI analyst interface. The committed inventory reports 466,285 LendingClub loans from 2007–2014, but the exact source snapshot is unavailable for authentication.
 
 ---
