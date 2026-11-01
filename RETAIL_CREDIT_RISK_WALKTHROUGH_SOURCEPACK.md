@@ -1,5 +1,7 @@
 # Retail Credit Risk — Walkthrough Source Pack
 
+> **Historical source pack:** Preserved for its detailed walkthrough, formulas and saved-output references. Its old local `file://` paths, production language and performance/regulatory conclusions are not authenticated by this clone. The [current blueprint](PROJECT_BLUEPRINT.md) reconciles the source with the synthetic-tested foundations and unverified historical results.
+
 An authoritative, evidence-rich technical masterclass source pack for the `retail-credit-risk` repository. Grounded strictly in repository source code, execution outputs, configurations, and empirical test results.
 
 ---

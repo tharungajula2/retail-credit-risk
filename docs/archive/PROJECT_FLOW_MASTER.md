@@ -1,5 +1,7 @@
 # Retail Credit Risk Modeling System: Master Flow & Architecture
 
+> **Archived flow:** This describes the original demonstration, not a reproduced run on authenticated data. Its ECL/Basel paths and output claims remain illustrative. See the [current blueprint](../../PROJECT_BLUEPRINT.md) for the source-verified architecture and evidence boundaries.
+
 ## Section 1 — What this project is
 
 This repository implements an end-to-end regulatory credit risk engineering system for retail consumer unsecured term loans. The codebase evaluates a historical open dataset from LendingClub covering **466,285 loans** originated between 2007 and 2014. The pipeline processes raw loan records, engineers 12-month default targets, partitions temporal samples, fits Weight of Evidence feature binning, builds logistic Probability of Default (PD) scorecards, trains two-stage Loss Given Default (LGD) hurdle models, estimates Exposure At Default (EAD), and projects discrete-time 60-month lifetime PD hazard curves.

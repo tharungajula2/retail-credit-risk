@@ -1,5 +1,7 @@
 # Retail Credit Risk — Zero → Hero → God Mode Master Walkthrough
 
+> **Historical presentation script:** This long-form learning aid preserves the project's original explanation and reported figures. The original dataset and dated event evidence are absent, so its performance, production and regulatory statements should be read as historical claims. Use the [current blueprint](PROJECT_BLUEPRINT.md) for verified scope and corrections.
+
 ## A continuous technical + domain script for the `retail-credit-risk` project
 
 **Purpose of this document**
