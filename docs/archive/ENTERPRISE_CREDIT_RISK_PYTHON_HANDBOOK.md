@@ -1,5 +1,7 @@
 # Enterprise Credit Risk Python Handbook: From Zero to God-Mode Forward Deployed Engineer (FDE)
 
+> **Archived context and aspirations:** This broad handbook discusses enterprise patterns beyond this repository. It is not evidence that the project implements or validates those systems. See the [project blueprint](../../PROJECT_BLUEPRINT.md) for the actual code, synthetic-tested contracts and historical limitations.
+
 > **The Definitive Textbook & Systems Blueprint for Building, Scaling, and Deploying Enterprise-Grade Retail Credit Risk & Decisioning Systems in the Indian Financial Sector**
 
 ---

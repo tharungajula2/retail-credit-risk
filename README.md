@@ -1,248 +1,67 @@
-# Retail Credit Risk Analytics Suite
+# Retail Credit Risk
 
-> **Evidence status (November 2026):** This repository preserves a historical credit-risk demonstration and its saved output tables. The exact LendingClub CSV, dated earliest-default ledger, observation endpoints and model artifacts needed to reproduce or validate the quoted PD metrics are absent. The historical `default_12m` proxy is unsuitable for a verified 12-month PD. The [corrected PD foundation](docs/PD_TARGET_FOUNDATION.md) and [Phase 4 guide](docs/PD_MODEL_CORRECTIONS.md) are synthetic-tested only; no new real-loan performance result or production/regulatory validation is claimed. Figures and “production-grade” labels in the historical sections below are archival claims, not current evidence.
+**From dated loan evidence to credit scores, loss estimates and capital illustrations.**
 
-> **LGD/EAD data foundation:** The [dated evidence contract](docs/LGD_EAD_DATA_FOUNDATION.md) is synthetic-tested only. It does not replace the historical LGD/EAD models, recreate missing source records or validate saved ECL and capital totals.
+This Python project explores the full retail credit-risk chain: **probability of default (PD)**, **loss given default (LGD)**, **exposure at default (EAD)**, scorecards, monitoring, accounting expected credit loss (ECL) and Basel-style capital formulas. Its strongest current contribution is an explicit boundary between *calculations that exist* and *evidence needed to trust them*.
 
-> **Reporting-date gate:** The [ECL/Basel input guide](docs/REPORTING_DATE_INPUT_GATE.md) describes a synthetic-tested evidence validator for illustrative reporting-date inputs. It does not validate the historical ECL/capital outputs or establish regulatory compliance.
+> [!IMPORTANT]
+> **Portfolio demonstration · synthetic-tested foundations · historical outputs unverified.** The original LendingClub CSV, dated earliest-default ledger, reporting-date account panel and fitted artifacts are absent. Saved performance and financial tables predate the corrected evidence contracts; they have not been reproduced on authenticated data. The ECL and Basel engines are illustrations, not validated allowances, regulatory capital or proof of compliance.
 
-> **Historical system overview:** An end-to-end credit-risk demonstration with Basel III IRB and IFRS 9 / CECL calculations, WoE scorecards, a dashboard and an AI analyst interface. The committed inventory reports 466,285 LendingClub loans from 2007–2014, but the exact source snapshot is unavailable for authentication.
+**[Read the technical blueprint →](PROJECT_BLUEPRINT.md)** · [Explore the interactive report](index.html) · [Inspect synthetic tests](tests) · [See historical tables](outputs/tables)
 
----
+## What is implemented
 
-## 1. Headline Results & Key Technical Insights
-
-### Quantitative Performance & Capital Summary
-
-| Metric | Value / Magnitude | Technical Context / Baseline |
+| Layer | Source-backed capability | Evidence boundary |
 |---|---|---|
-| **Portfolio Total (OOT Cohort)** | 235,628 loans | Saved historical table for 2014 issues; outcome coverage unverified |
-| **Total Exposure at Default (EAD)** | **$1,826,572,642** | Drawn + CCF adjusted exposure across all stages |
-| **PD Model B OOT Performance** | **Gini: 0.3845 \| AUC: 0.6923** | KS: 0.2843 \| Brier: 0.03268 \| HL p-val: 0.00117 |
-| **PD Model A OOT Performance** | Gini: 0.2715 \| AUC: 0.6357 | Baseline model (7 WoE variables without grade) |
-| **Resolved Defaults LGD** | **Mean: 93.4% \| Median: 100.0%** | Fractional Response Regression on 50,968 defaults |
-| **Basel III 12m Expected Loss (EL)** | **$58,666,169** | 3.21% of total portfolio EAD |
-| **Basel III IRB Risk-Weighted Assets** | **$2,294,666,891** | Avg Risk Weight: **125.6%** ($183.6M capital @ 8%) |
-| **Basel Standardised RWA Baseline** | **$1,369,929,481** | Flat 75% risk weight ($109.6M capital @ 8%) |
-| **IRB vs Standardised Delta** | **+$924,737,410 (+67.5%)** | IRB capital penalty driven by 93.4% high LGD |
-| **IFRS 9 Scenario-Weighted ECL** | **$285,037,851** | 15.61% of EAD (40% Base, 30% Downside, 30% Upside) |
-| **CECL Lifetime Provision Baseline** | **$327,465,235** | 17.93% of EAD (Lifetime ECL across all performing loans) |
+| **PD and scorecard** | Train-fitted numeric/categorical [WoE and IV](src/creditrisk/features/binning.py), [statsmodels logistic PD](src/creditrisk/models/pd_model.py), [Model A/B selection](config/pd_model.yaml), good:bad odds and points-per-doubling [score scaling](src/creditrisk/models/scorecard.py), calibration and discrimination [metrics](src/creditrisk/validation/metrics.py). | A [dated 12-month target contract](src/creditrisk/data/pd_foundation.py) and [evidence-gated sampling/artifact path](docs/PD_MODEL_CORRECTIONS.md) are synthetic-tested; no corrected real-loan model fit exists. |
+| **LGD and EAD** | Historical [two-part recovery model](src/creditrisk/models/lgd_model.py), [term-loan principal proxy](src/creditrisk/models/ead_model.py) and separate [synthetic revolving CCF example](src/creditrisk/models/ccf_demo.py). | [Dated default, workout and exposure validators](docs/LGD_EAD_DATA_FOUNDATION.md) are synthetic-tested. The historical proxies are not measured default-date balances or discounted economic LGD. |
+| **ECL and capital** | [Stage assignment](src/creditrisk/regulatory/staging.py), [lifetime curve/ECL](src/creditrisk/regulatory/ecl.py), [scenario weighting](src/creditrisk/regulatory/macro_scenarios.py) and [IRB/standardised arithmetic](src/creditrisk/regulatory/basel_capital.py). | The [reporting-date input gate](docs/REPORTING_DATE_INPUT_GATE.md) separately validates illustrative accounting and capital evidence. It is not connected to the legacy engines; their regulatory interpretations and saved totals remain unvalidated. |
+| **Monitoring and reporting** | [PSI/CSI](src/creditrisk/validation/stability.py), [vintage](src/creditrisk/monitoring/vintage.py), [transition/roll-rate proxies](src/creditrisk/monitoring/transitions.py), a [table-to-HTML report builder](src/creditrisk/reporting/build_panels.py) and committed [static interactive report](index.html). | The report displays embedded historical tables; charts do not authenticate their underlying data. Browser charts/fonts use external CDNs. |
+| **Optional AI analyst** | A [Gemini CLI](src/creditrisk/ai/run_analyst.py) with [PDF retrieval and calculation-tool wiring](src/creditrisk/ai/analyst.py). | Requires a user-provided API key and locally built document index. No live AI response or regulatory citation was verified in this portfolio pass. |
 
-### Top 3 Critical Insights
+## Evidence, precisely
 
-1. **IRB Capital Penalty (+67.5%) over Standardised:** Under Basel III, retail unsecured exposures receive a flat 75% risk weight under the Standardised Approach. However, because the portfolio's actual LGD is severe (mean 93.4%), the IRB supervisory formula (BCBS para 4.4) calculates an average risk weight of **125.6%**. Regulatory IRB capital requires **$183.6M** vs **$109.6M** under Standardised, properly penalising high-loss unsecured portfolios.
-2. **Extreme LGD Bimodality & Total Loss Severity:** Out of 50,968 resolved default loans, **52.2% resulted in a total write-off (LGD = 1.0)** with zero recoveries. The median LGD is 100.0%. Unsecured personal loans lack collateral, meaning default recovery efforts yield negligible returns post-charge-off.
-3. **Historical OOT table, unverified:** The saved table reports Model B OOT Gini **0.3845** and AUC **0.6923** under the legacy target. The underlying data and 12-month outcome evidence are missing; this difference from the saved train figure does not establish generalisation or stable calibration.
-
----
-
-## 2. High-Level Architecture Diagram
-
-```
-========================================================================================================
-                                    DATA INPUTS & INGESTION
-========================================================================================================
-[ data/raw/LoanStats3a_b.csv ] (466,285 records: 2007-2014 LendingClub Loans)
-       |
-       v
-[ datasets/ ] ---------> ( temporal train / test / out-of-time splits: 184.5k train, 46.1k test, 235.6k OOT )
-
-========================================================================================================
-                                PROCESSING PIPELINES (src/creditrisk/)
-========================================================================================================
-  pd/               lgd/               ead/              capital/            ifrs9/
-  WoE Binning       Fractional         Observed CCF      Basel III IRB       3-Stage ECL
-  IV Screening      Response Regr      Drawdown Ratios   Supervisory Formula 3-Scenario Weights
-  Logistic Regr     50.9k Defaults     Term & Grade      (para 4.4) vs       Lifetime Term Struct
-  Scorecard PDO     Mean 93.4% LGD     Drawdown Stats    Standardised        CECL Baseline
-       |                 |                  |                 |                   |
-       +-----------------+------------------+-----------------+-------------------+
-                                            |
-                                            v
-========================================================================================================
-                             OUTPUT LOCATIONS & DATA ARTIFACTS
-========================================================================================================
-[ outputs/tables/ ] ------------------> 35 CSV tables (historical, unverified metrics & scorecard parameters)
-[ outputs/models/ ] ------------------> Serialised .pkl models & FAISS/sentence-transformer RAG index
-[ docs/index.html ] ------------------> Unified standalone master interactive application (Executive Dashboard & DAG Pipeline Flow Map)
-[ index.html ] -----------------------> Root entrypoint mirror for single URL link sharing
-
-========================================================================================================
-                             ANALYTICS & GOVERNANCE INTERFACES
-========================================================================================================
-[ src/creditrisk/ai/run_analyst.py ] -> Interactive CLI (RAG over docs/ + Live Python Tool Execution)
-[ docs/MODEL_DOCUMENTATION.md ] -------> Full SR 11-7 regulatory model development document
-[ docs/MANAGEMENT_DECK.md ] ----------> Executive Credit Committee presentation slides
+```mermaid
+flowchart LR
+    A[Historical loan snapshot<br/>missing from clone] --> B[Legacy PD/LGD/EAD scripts]
+    B --> C[Committed tables and dashboard<br/>historical, unverified]
+    D[Dated event records<br/>synthetic fixtures] --> E[PD target and artifact gate]
+    D --> F[LGD/EAD data contracts]
+    G[Reporting-date evidence<br/>synthetic fixtures] --> H[ECL/Basel input gate]
+    E --> I[Future authenticated integration<br/>not implemented]
+    F --> I
+    H --> I
 ```
 
----
+- **Implemented:** modular model, scorecard, validation, monitoring, reporting and illustrative regulatory code exists in `src/creditrisk/`.
+- **Synthetic-tested:** the new PD target/sampling safeguards, LGD/EAD dated contracts and reporting-date gate reject many invalid records. Tests establish software behavior on fabricated examples, not loan-level performance.
+- **Historical saved results:** [`validation_summary.csv`](outputs/tables/validation_summary.csv) reports Model B out-of-time AUC **0.6923** under the old target; [`ecl_summary.csv`](outputs/tables/ecl_summary.csv) and [`basel_capital_summary.csv`](outputs/tables/basel_capital_summary.csv) preserve old ECL/RWA totals. Their source data, outcome coverage and downstream assumptions are not independently verified.
+- **Regulatory illustrations:** Stage 2/3, lifetime ECL, discounting, scenario and capital calculations have material methodological gaps. A passing reporting-date gate does not certify the older engines. See the [audit and limits](PROJECT_BLUEPRINT.md#14-what-the-historical-calculations-can-and-cannot-show).
 
-## 3. Quickstart Execution Guide
+## Explore and reproduce what is possible
 
-### Prerequisites & Environment Setup
+1. Open [the static report](index.html) to inspect the archived visualisation, or read the [output tables](outputs/tables). Its embedded figures are historical demonstrations. Chart.js and fonts are fetched from CDNs when online.
+2. Read [PROJECT_BLUEPRINT.md](PROJECT_BLUEPRINT.md) for formulas, architecture, worked **synthetic** examples and an evidence-by-evidence walkthrough.
+3. From the repository root, with Python 3.11+ available, run the standard-library foundation tests without data downloads or model training:
 
-```powershell
-# Clone repository and navigate to workspace
-cd "d:\0000_after portfolio_25726\2_retail-credit-risk\retail-credit-risk"
+   ```powershell
+   $env:PYTHONPATH = 'src'
+   python -m unittest discover -s tests -p test_pd_foundation.py
+   python -m unittest discover -s tests -p test_lgd_ead_foundation.py
+   python -m unittest discover -s tests -p test_reporting_input_gate.py
+   ```
 
-# Create and activate virtual environment
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+The historical end-to-end runners need missing raw/processed data and model files. A corrected PD run additionally needs a reviewed, hashed, normalized event JSONL and policy; [the contract](docs/PD_MODEL_CORRECTIONS.md) explains the inputs. **Do not substitute a similar LendingClub CSV by filename or row count.** This repository contains no authenticated adapter or real-data performance rerun.
 
-# Install package and dependencies in editable mode
-pip install -e .
-```
+## Repository map
 
-### Pipeline Execution Order
-
-The historical end-to-end commands below are **not reproducible from this clone** because the source data is absent. The corrected PD entry point requires an independently sourced, normalized event JSONL and reviewed policy with its SHA-256; see [PD model corrections](docs/PD_MODEL_CORRECTIONS.md). LGD/EAD and regulatory scripts still rely on the historical target and are not validated by the PD corrections.
-
-```powershell
-# 1. Probability of Default (PD) Pipeline — Train Model A & B, score master scale
-python -m creditrisk.data.run_sampling --evidence-jsonl <normalized-events.jsonl> --policy <reviewed-policy.json>
-python -m creditrisk.features.run_binning
-python -m creditrisk.models.run_pd_model
-python -m creditrisk.validation.run_validation
-
-# 2. Loss Given Default (LGD) Pipeline — Fit Fractional Response Model on resolved defaults
-python src/creditrisk/models/run_lgd_training.py
-
-# 3. Regulatory Engine (Basel III & IFRS 9) — Calculate capital requirements & ECL staging
-python src/creditrisk/regulatory/run_staging.py
-python src/creditrisk/regulatory/run_ecl.py
-
-# 4. Master Reporting Dashboard — Generate unified single-page interactive application
-python src/creditrisk/reporting/build_panels.py
-```
-
-### Launch Interactive Application & Dashboards
-
-```powershell
-# Open the self-contained unified master application in default browser
-Start-Process docs/index.html
-
-# Set API Key and run the AI Credit Analyst CLI
-$env:GEMINI_API_KEY = "your-api-key-here"
-
-# Build RAG embeddings index (First run only; downloads ~80MB local model)
-python src/creditrisk/ai/rag_index.py
-
-# Launch interactive RAG CLI with live tool invocation
-python src/creditrisk/ai/run_analyst.py
-```
-
-### Run Automated Test Suite
-
-```powershell
-# Execute all pytest verification suites (PD, LGD, EAD, Capital, IFRS9, Reporting)
-pytest tests/ -v
-```
-
----
-
-## 4. File & Output Inventory Table
-
-| Output File Path | Primary Description & Key Contents |
+| Location | Purpose |
 |---|---|
-| `outputs/tables/validation_summary.csv` | AUC, Gini, KS, Brier score, and Hosmer-Lemeshow p-values across Train/Test/OOT for all models |
-| `outputs/tables/rating_grades_model_b.csv` | 8-grade master scale definitions, score boundaries, loan counts, and empirical default rates |
-| `outputs/tables/scorecard_model_b.csv` | Fine-classing WoE binning points and scorecard points mapping for Model B features |
-| `outputs/tables/lgd_distribution_summary.csv` | Summary statistics of empirical LGD (Mean: 93.4%, Median: 100.0%, 0-loss %, 100%-loss %) |
-| `outputs/tables/ead_summary.csv` | Observed CCF drawdown ratios segmented by loan term and risk grade |
-| `outputs/tables/basel_capital_summary.csv` | Basel III IRB capital requirements, RWA, K-factor, and Standardised comparisons by rating grade |
-| `outputs/tables/staging_summary.csv` | IFRS 9 loan count, EAD, ECL, and coverage percentage breakdown across Stage 1, 2, and 3 |
-| `outputs/tables/ecl_scenario_weighted.csv` | IFRS 9 ECL comparison under Base (40%), Downside (30%), Upside (30%), and weighted totals |
-| `outputs/tables/ifrs9_vs_cecl.csv` | Comparative evaluation between IFRS 9 staged ECL ($285.0M) and CECL full lifetime provision ($327.5M) |
-| `outputs/tables/expected_loss_summary.csv` | Combined PD * LGD * EAD expected loss metrics aggregated by rating grade |
-| `docs/index.html` | Standalone single-URL master interactive web application (Executive Panels + DAG Flow) |
-| `index.html` | Root entrypoint mirror for GitHub Pages and single-URL link sharing |
-| `outputs/models/pd_model_b.pkl` | Historical statsmodels logistic model artifact path; pickle absent from this clone |
-| `outputs/models/lgd_model.pkl` | Serialised statsmodels Fractional Response GLM object for LGD forecasting |
+| [`src/creditrisk/data/`](src/creditrisk/data) | Legacy target plus corrected dated target, sample and artifact contracts |
+| [`src/creditrisk/features/`](src/creditrisk/features), [`models/`](src/creditrisk/models) | WoE/IV, PD scorecards, LGD and EAD demonstrations |
+| [`src/creditrisk/validation/`](src/creditrisk/validation), [`monitoring/`](src/creditrisk/monitoring) | Model diagnostics and portfolio drift/transition views |
+| [`src/creditrisk/regulatory/`](src/creditrisk/regulatory) | Illustrative staging/ECL/Basel formulas and standalone input gate |
+| [`src/creditrisk/reporting/`](src/creditrisk/reporting), [`ai/`](src/creditrisk/ai) | Static reporting build and optional retrieval-assisted CLI |
+| [`config/`](config), [`tests/`](tests), [`outputs/`](outputs) | Assumptions, synthetic/unit checks and preserved historical artifacts |
 
----
-
-## 5. Key Technical & Model Decisions
-
-### Model Selection & Validation Comparison
-
-Two primary PD candidate models were evaluated against regulatory standards (SR 11-7):
-- **Model A (Baseline):** Uses 7 core financial & credit bureau features (`inq_last_6mths`, `annual_inc`, `purpose`, `home_ownership`, `term`, `dti`, `revol_util`).
-- **Model B (historical platform-signal candidate):** Incorporates LendingClub grade and pricing features (`grade`, `sub_grade`, `int_rate`); their availability at the chosen decision point has not been demonstrated.
-
-| Model / Sample | AUC | Gini | KS Statistic | Brier Score | Hosmer-Lemeshow p-value |
-|---|---|---|---|---|---|
-| **Model A (Train)** | 0.6507 | 0.3013 | 0.2193 | 0.03278 | 0.00115 |
-| **Model A (Test)** | 0.6484 | 0.2969 | 0.2233 | 0.03283 | 0.23634 |
-| **Model A (OOT)** | 0.6357 | 0.2715 | 0.1955 | 0.03296 | < 0.00001 |
-| **Model B (Train)** | 0.6839 | 0.3678 | 0.2736 | 0.03263 | 0.00040 |
-| **Model B (Test)** | 0.6817 | 0.3634 | 0.2728 | 0.03264 | **0.49418** |
-| **Model B (OOT)** | **0.6923** | **0.3845** | **0.2843** | **0.03268** | 0.00117 |
-
-*Interpretation limit:* These are saved legacy-target outputs, not reproduced results. Comparing candidate models on OOT and then selecting one on that same cohort compromises a final independent holdout. The test-set HL p-value of 0.494 does not confirm calibration; the saved Model B OOT p-value is 0.00117.
-
-### Rating Master Scale (Model B Scorecard)
-
-The eight-grade table below was constructed on the **training sample** (184,525 rows), not independently back-tested on OOT. Its default rates inherit the unverified legacy target.
-
-Points-to-Double-Odds (PDO) scaling: Base Score = 600 at 50:1 odds, PDO = 20. OOT Score Range: 522 to 639.
-
-| Grade | Score Boundary | Loan Count | Total EAD ($) | Empirical Default Rate | PD_12m Model Avg |
-|---|---|---|---|---|---|
-| **Grade 1** | 614 – 639 | 21,930 | $264,120,450 | 0.86% | 0.82% |
-| **Grade 2** | 604 – 613 | 23,998 | $239,810,125 | 1.34% | 1.31% |
-| **Grade 3** | 597 – 603 | 22,475 | $198,430,900 | 1.94% | 1.89% |
-| **Grade 4** | 591 – 596 | 21,074 | $175,200,350 | 2.52% | 2.48% |
-| **Grade 5** | 584 – 590 | 24,353 | $191,450,800 | 3.08% | 3.12% |
-| **Grade 6** | 577 – 583 | 22,564 | $169,320,600 | 4.31% | 4.25% |
-| **Grade 7** | 568 – 576 | 23,203 | $172,110,400 | 5.19% | 5.34% |
-| **Grade 8** | 522 – 567 | 24,928 | $176,129,017 | 7.72% | 7.85% |
-
-### IFRS 9 Staging & Provisioning Breakdown
-
-| Stage | Definition & Trigger | Loan Count | Total EAD ($) | Total ECL ($) | ECL Coverage (%) |
-|---|---|---|---|---|---|
-| **Stage 1** | Performing (12-month ECL) | 189,633 | $1,417,178,212 | $30,342,109 | 2.14% |
-| **Stage 2** | Significant Increase in Credit Risk (SICR: PD > 7.64%) | 26,554 | $169,425,120 | $24,411,890 | 14.41% |
-| **Stage 3** | Credit Impaired / Defaulted (Lifetime ECL) | 19,441 | $240,024,400 | $223,828,300 | 93.25% |
-| **Total** | Portfolio Aggregate | **235,628** | **$1,826,572,642** | **$285,037,851** | **15.61%** |
-
-### Modeling & Engineering Decisions
-
-1. **Why 12-Month Target Window for PD?** Aligns strictly with Basel III retail definition (BCBS para 447) and IFRS 9 Stage 1. Analysis of default timing shows 68% of defaults occur between months 6 and 18. Shorter windows (e.g. 6 months) truncate defaults, while longer windows (e.g. 36 months) introduce right-censoring in recent vintages.
-2. **Why Fractional Response Regression for LGD?** LGD bounded in $[0, 1]$ displays extreme point mass at $1.0$ ($52.2\%$ total losses). Standard OLS linear regression predicts values $<0$ or $>1$ and violates homoscedasticity. Fractional Logit with quasi-maximum likelihood estimation (QMLE) handles boundary spikes while preserving valid conditional expectation predictions.
-3. **Why WoE Binning & Scorecard Framework?** Weight of Evidence (WoE) transforms non-linear relationships and missing values into monotonic logarithmic odds ratios. Scorecard PDO mapping provides non-technical stakeholders (Risk Committees, Auditors) full explainability per feature point contributions.
-
----
-
-## 6. Real vs. Synthetic / Illustrative Disclaimers
-
-| Component | Operational Status | Data Source / Implementation Details |
-|---|---|---|
-| **PD Model (Model B)** | **Historical, unverified** | Saved metrics use the legacy target; dated default and feature-timing evidence are absent. |
-| **LGD Model Engine** | **Production-Grade** | Fractional Response GLM trained on 50,968 empirical default recovery records. |
-| **EAD Observed CCF** | **Production-Grade** | Empirical drawdown ratios calculated directly from historical defaulting loans. |
-| **Basel III Capital Engine** | **Production-Grade** | Exact implementation of BCBS para 4.4 IRB retail risk-weight formula. |
-| **IFRS 9 / CECL Provisioning** | **Production-Grade** | Full 3-stage ECL framework, 3 macro scenarios (Base/Down/Up), lifetime term structures. |
-| **CCF Regression Model** | *Illustrative / Synthetic* | Marked `SYNTHETIC` in outputs; linear CCF regression provided as placeholder for revolving line data. |
-| **SICR Threshold (7.64%)** | *Illustrative* | Calibrated at 85th percentile PD proxy; production implementation requires lifetime PD ratios. |
-| **Downturn LGD Add-on** | *Illustrative* | +8 percentage point add-on applied; production requires severe macroeconomic downturn calibration. |
-| **AI Credit Analyst CLI** | *Experimental* | Decision-support tool using RAG and Gemini LLM API; for analytical exploration only. |
-
----
-
-## 7. Dependencies & Reproduction Notes
-
-### Core Software Stack
-
-- **Python Environment:** Python 3.10+
-- **Data & Analytics:** `pandas >= 2.0.0`, `numpy >= 1.24.0`, `scipy >= 1.10.0`
-- **Machine Learning & Econometrics:** `scikit-learn >= 1.2.0`, `statsmodels >= 0.14.0`
-- **AI & RAG Engine:** `sentence-transformers >= 2.2.0`, `google-generativeai >= 0.3.0`, `pypdf >= 3.0.0`
-- **Testing & Quality Assurance:** `pytest >= 7.0.0`
-- **UI & Dashboard:** Chart.js v4.4 (loaded via CDN inside self-contained HTML artifact)
-
-### Data Citation & Reproducibility
-
-- **Primary Source:** LendingClub Public Loan Dataset (2007–2014), available via Kaggle.
-- **Reproducibility limit:** The figures are copied from committed historical output tables. The original CSV and processed samples are absent, so they were not reproduced or independently verified. The current PD runners require a dated evidence panel and an artifact manifest; the historical tables remain unchanged.
-
+**Start with the [blueprint](PROJECT_BLUEPRINT.md)** for the distinction between a mathematically useful demonstration and a validated credit-risk system. Historical walkthroughs and model manuals remain in the repository for provenance; the blueprint is the current interpretation.

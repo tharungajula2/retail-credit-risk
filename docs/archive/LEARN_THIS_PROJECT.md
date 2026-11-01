@@ -1,5 +1,7 @@
 # LEARN THIS PROJECT: Comprehensive Retail Credit Risk Onboarding Manual
 
+> **Archived manual:** Its production-grade, performance and compliance wording predates the corrected PD/LGD/EAD/reporting-date evidence contracts. The underlying historical work remains preserved, but the source data and regulatory results are unverified. Read the [current blueprint](../../PROJECT_BLUEPRINT.md) for the maintained interpretation.
+
 Welcome to `retail-credit-risk`. This repository is a production-grade, end-to-end regulatory credit risk engineering system built in Python. It evaluates **466,285 consumer unsecured term loans** originated by LendingClub between 2007 and 2014.
 
 This document is your single, self-contained guide to mastering the whole codebase from zero. By reading this manual, you will be fully prepared to:

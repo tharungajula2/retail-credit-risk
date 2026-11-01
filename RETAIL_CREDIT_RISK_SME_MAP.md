@@ -1,5 +1,7 @@
 # Retail Credit Risk — SME Companion & Domain Mapping
 
+> **Historical domain map:** This companion describes the original demonstration and includes asserted thresholds and regulatory interpretations that are not validated for a named institution or rulebook. Use the [current blueprint](PROJECT_BLUEPRINT.md) for the implemented methods, evidence limits and source-linked corrections.
+
 This companion document maps the implementation evidence in `retail-credit-risk` directly to fundamental banking, econometric, regulatory, and credit-risk domain principles. It provides the exact bridge needed to explain **what the code does** alongside **the underlying domain theory behind it**.
 
 ---
